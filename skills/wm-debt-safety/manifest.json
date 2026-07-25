@@ -1,0 +1,50 @@
+{
+  "id": "wm-debt-safety",
+  "name": "负债安全",
+  "version": "1.0.2",
+  "tier": 1,
+  "visibility": "opt_in",
+  "description": "检视资产负债率、有息负债与偿债比率。用户问杠杆、偿债能力或会不会爆雷时使用。",
+  "inputs_schema": {
+    "type": "object",
+    "required": [
+      "symbol"
+    ],
+    "properties": {
+      "symbol": {
+        "type": "string"
+      }
+    }
+  },
+  "runtime": {
+    "mode": "skill_run",
+    "script_ref": "scr_wm_debt_safety",
+    "path": "xs/skillhub/wm_debt_safety.xs"
+  },
+  "required_scopes": [
+    "analysis:skills:run"
+  ],
+  "icon": "债",
+  "category": "财务质量",
+  "author": "赢麻了官方",
+  "official": true,
+  "summary": "检视负债与偿债压力，并对照行业，判断安不安全。",
+  "sample_prompts": [
+    "某某负债安不安全？",
+    "有没有偿债压力信号？"
+  ],
+  "outputs_schema": {
+    "type": "object",
+    "x-envelope": "skills_run",
+    "description": "Body = data.result (XS return). HTTP prefix: data.result. Flat snapshot fields; see SKILL.",
+    "x-primary_path": ".",
+    "properties": {
+      "symbol": {
+        "type": "string"
+      },
+      "message": {
+        "type": "string"
+      }
+    }
+  }
+}

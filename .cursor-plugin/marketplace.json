@@ -1,0 +1,58 @@
+{
+  "name": "open-winmale",
+  "owner": {
+    "name": "WinMale",
+    "email": "support@winmale.com"
+  },
+  "metadata": {
+    "description": "赢麻了（WinMale）官方 Agent Skills 市场",
+    "version": "0.1.0",
+    "pluginRoot": "plugins"
+  },
+  "plugins": [
+    {
+      "name": "winmale-skillhub",
+      "source": "winmale-skillhub",
+      "description": "赢麻了投研技能入口：配置 API 凭证、浏览并安装/更新官方技能与 Role。请先装本插件。",
+      "version": "1.0.29",
+      "keywords": [
+        "winmale",
+        "skillhub",
+        "finance",
+        "equity-research"
+      ],
+      "category": "productivity",
+      "homepage": "https://open.winmale.com"
+    },
+    {
+      "name": "winmale-stock-check",
+      "source": "winmale-stock-check",
+      "description": "看懂一只票：公司卡片、生意解读、估值、公告、股息、负债与现金流、营收利润；含统一发现。",
+      "version": "1.3.3",
+      "keywords": [
+        "winmale",
+        "stock",
+        "fundamentals",
+        "valuation",
+        "equity-research"
+      ],
+      "category": "productivity",
+      "homepage": "https://open.winmale.com"
+    },
+    {
+      "name": "winmale-my-desk",
+      "source": "winmale-my-desk",
+      "description": "我的关注、提醒、条件选股与回测一站跟进，对齐日常投研台面。",
+      "version": "1.9.0",
+      "keywords": [
+        "winmale",
+        "watchlist",
+        "screener",
+        "backtest",
+        "portfolio"
+      ],
+      "category": "productivity",
+      "homepage": "https://open.winmale.com"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "id": "wm-company-business",
+  "name": "生意解读卡",
+  "version": "1.1.4",
+  "tier": 1,
+  "visibility": "opt_in",
+  "description": "这门生意怎么样：赚钱模式、护城河与隐患，用人话讲清楚。别和「贵不贵」估值卡搞混。",
+  "inputs_schema": {
+    "type": "object",
+    "required": [
+      "symbol"
+    ],
+    "properties": {
+      "symbol": {
+        "type": "string",
+        "description": "证券代码"
+      },
+      "market": {
+        "type": "string",
+        "enum": [
+          "cn",
+          "hk"
+        ],
+        "description": "可选；缺省按代码启发式（5 位倾向 hk）"
+      }
+    }
+  },
+  "runtime": {
+    "mode": "skill_run",
+    "script_ref": "scr_wm_company_business",
+    "path": "xs/skillhub/insight/company_business/run.xs"
+  },
+  "required_scopes": [
+    "analysis:skills:run"
+  ],
+  "icon": "生",
+  "category": "行情与公司",
+  "author": "赢麻了官方",
+  "official": true,
+  "summary": "用白话讲清公司靠什么赚钱、核心矛盾与定价位置（A/H）。",
+  "sample_prompts": [
+    "用白话讲讲某某靠什么赚钱？",
+    "生意模式一句话总结。"
+  ],
+  "outputs_schema": {
+    "type": "object",
+    "x-envelope": "skills_run",
+    "description": "Body = data.result (XS return). HTTP prefix: data.result.",
+    "x-primary_path": "sections",
+    "properties": {
+      "methodology": {
+        "type": "object"
+      },
+      "snapshot": {
+        "type": "object"
+      },
+      "sections": {
+        "type": "array"
+      },
+      "freshness": {
+        "type": "object"
+      }
+    }
+  }
+}

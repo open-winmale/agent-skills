@@ -1,0 +1,66 @@
+{
+  "id": "wm-cashflow-quality",
+  "name": "现金流质量",
+  "version": "1.0.4",
+  "tier": 1,
+  "visibility": "opt_in",
+  "description": "评估经营现金流与利润是否匹配。用户问「赚的是现金还是纸面利润」时使用。",
+  "inputs_schema": {
+    "type": "object",
+    "required": [
+      "symbol"
+    ],
+    "properties": {
+      "symbol": {
+        "type": "string"
+      }
+    }
+  },
+  "runtime": {
+    "mode": "skill_run",
+    "script_ref": "scr_wm_cashflow_quality",
+    "path": "xs/skillhub/wm_cashflow_quality.xs"
+  },
+  "required_scopes": [
+    "analysis:skills:run"
+  ],
+  "icon": "现",
+  "category": "财务质量",
+  "author": "赢麻了官方",
+  "official": true,
+  "summary": "看经营现金流是否撑得住利润，判断现金质量好不好。",
+  "sample_prompts": [
+    "某某现金流质量怎么样？",
+    "利润有没有现金支撑？"
+  ],
+  "outputs_schema": {
+    "type": "object",
+    "x-envelope": "skills_run",
+    "description": "Dual-read: prefer flat data.<field> after skills/run flatten; compat data.result.<field>. x-envelope skills_run means relative to either.",
+    "x-primary_path": "ncfo_np_ratio",
+    "properties": {
+      "symbol": {
+        "type": "string"
+      },
+      "ncfo_current": {
+        "type": "number"
+      },
+      "ncfo_np_ratio": {
+        "type": "number"
+      },
+      "pcf": {
+        "type": "number"
+      },
+      "ps_ncfo": {
+        "type": "number",
+        "description": "每股经营现金流，非总量"
+      },
+      "cf_kind": {
+        "type": "string"
+      },
+      "annual": {
+        "type": "array"
+      }
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "open-winmale",
+  "owner": {
+    "name": "WinMale",
+    "email": "support@winmale.com"
+  },
+  "metadata": {
+    "description": "WinMale official agent skills marketplace"
+  },
+  "plugins": [
+    {
+      "name": "winmale-skillhub",
+      "source": "./plugins/winmale-skillhub",
+      "version": "1.0.29",
+      "description": "赢麻了投研技能入口：配置 API 凭证、浏览并安装/更新官方技能与 Role。请先装本插件。"
+    },
+    {
+      "name": "winmale-stock-check",
+      "source": "./plugins/winmale-stock-check",
+      "version": "1.3.3",
+      "description": "看懂一只票：公司卡片、生意解读、估值、公告、股息、负债与现金流、营收利润；含统一发现。"
+    },
+    {
+      "name": "winmale-my-desk",
+      "source": "./plugins/winmale-my-desk",
+      "version": "1.9.0",
+      "description": "我的关注、提醒、条件选股与回测一站跟进，对齐日常投研台面。"
+    }
+  ]
+}

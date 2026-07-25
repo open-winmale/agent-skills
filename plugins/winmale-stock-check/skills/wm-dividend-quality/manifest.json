@@ -1,0 +1,77 @@
+{
+  "id": "wm-dividend-quality",
+  "name": "股息与分红",
+  "version": "1.0.7",
+  "tier": 1,
+  "visibility": "opt_in",
+  "description": "股息率与分红质量快照、历史与门槛判定。用户问高股息、分红是否可持续时使用。",
+  "inputs_schema": {
+    "type": "object",
+    "required": [
+      "symbol"
+    ],
+    "properties": {
+      "symbol": {
+        "type": "string"
+      },
+      "mode": {
+        "type": "string",
+        "enum": [
+          "snapshot",
+          "history",
+          "quality",
+          "high_yield"
+        ],
+        "default": "snapshot"
+      },
+      "min_yield": {
+        "type": "number",
+        "default": 0.03
+      },
+      "payout_min": {
+        "type": "number",
+        "default": 0.3
+      },
+      "payout_max": {
+        "type": "number",
+        "default": 0.7
+      },
+      "limit": {
+        "type": "integer",
+        "default": 20,
+        "maximum": 100
+      }
+    }
+  },
+  "runtime": {
+    "mode": "skill_run",
+    "script_ref": "scr_wm_dividend_quality",
+    "path": "xs/skillhub/wm_dividend_quality.xs"
+  },
+  "required_scopes": [
+    "analysis:skills:run"
+  ],
+  "depends_libs": [
+    "sys/bonus"
+  ],
+  "icon": "息",
+  "category": "财务质量",
+  "author": "赢麻了官方",
+  "official": true,
+  "summary": "看股息率与分红是否靠谱，适合红利思路初筛。",
+  "sample_prompts": [
+    "某某分红靠不靠谱？",
+    "股息率与分红稳定性如何？"
+  ],
+  "outputs_schema": {
+    "type": "object",
+    "x-envelope": "skills_run",
+    "description": "Body = data.result (XS return). HTTP prefix: data.result.",
+    "x-primary_path": ".",
+    "properties": {
+      "symbol": {
+        "type": "string"
+      }
+    }
+  }
+}

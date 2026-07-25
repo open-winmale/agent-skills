@@ -1,0 +1,7 @@
+{
+  "name": "我的关注列表",
+  "source": "skillhub",
+  "version": "0.2.2",
+  "slug": "wm-watchlist",
+  "description_zh": "查看或整理我的关注列表：返回公司名称、分组与关键指标快照，不是裸代码列表。加/删用增量；整理前默认预览。统一跨市场 SoT。"
+}

@@ -1,0 +1,7 @@
+interface:
+  display_name: "估值解读卡"
+  short_description: "看估值松不松、贵不贵：结合盈利能力与价格匹配给出口径清晰的判断"
+  default_prompt: "Use $wm-valuation to help with: 看估值松不松、贵不贵：结合盈利能力与价格匹配给出口径清晰的判断"
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,114 @@
+{
+  "symbol": "600519",
+  "market": "cn",
+  "is_financial": false,
+  "finance_subkind": "",
+  "title": "贵州茅台 · 600519 · 食品饮料 · 白酒",
+  "methodology": {
+    "card": "valuation",
+    "market": "cn",
+    "variant": "industrial",
+    "finance_subkind": "",
+    "lens_group": "pricing",
+    "blocked_reason": ""
+  },
+  "quality": {
+    "data_completeness": "full",
+    "missing_fields": [],
+    "contract_ok": true
+  },
+  "enrich_plan": {
+    "required_reads": [
+      "references/workflow.md",
+      "references/instruction-cn-industrial.md",
+      "references/lens-pricing.md",
+      "references/readability.md",
+      "references/output-skeleton.md"
+    ],
+    "optional_reads": ["references/terminology.md"],
+    "verify_reads": ["references/verify-checklist.md"],
+    "do_not_load": [
+      "references/instruction-cn-financial.md",
+      "references/lens-pricing-financial.md"
+    ]
+  },
+  "flags": {
+    "is_loss": false,
+    "is_financial": false,
+    "growth_decel": false,
+    "harvest_candidate": true,
+    "shiller_fork": false,
+    "fake_cheap_risk": false,
+    "fake_expensive_risk": false
+  },
+  "metrics_bar": [
+    { "label": "PE(日)", "value": 25.3, "hint": "TTM" },
+    { "label": "PB(日)", "value": 8.7, "hint": "" },
+    { "label": "PE 5年分位", "value": 0.12, "format": "pct" },
+    { "label": "ROE TTM", "value": 0.31, "format": "pct" },
+    { "label": "市值(亿)", "value": 21000, "hint": "CNY" }
+  ],
+  "sections": [
+    {
+      "id": "headline",
+      "title": "30秒读懂",
+      "kind": "callout",
+      "facts": {
+        "verdict_enum": "公允|偏低|偏高|数据不足",
+        "as_of": "2026-07-15",
+        "note": "裁决必含四枚举整词之一；禁明显偏低/偏高、真便宜；截至 as_of"
+      }
+    }
+  ],
+  "snapshot": {
+    "identity": {
+      "name": "贵州茅台",
+      "industry_l1_tag": "食品饮料",
+      "industry_l3_tag": "白酒",
+      "industry_l1_code": "industry.S37",
+      "period": "2026-03-31"
+    },
+    "valuation": {
+      "as_of": "2026-07-15",
+      "pe_daily": 25.3,
+      "pb_daily": 8.7,
+      "pe_pct5y": 0.12,
+      "pb_pct5y": 0.20,
+      "mv": 21000,
+      "earnings_yield": 0.0395,
+      "dividend_yield": 0.035,
+      "payout": 0.52,
+      "roe_ttm": 0.31,
+      "roe_avgipo": 0.31,
+      "fcf_yield": 0.021,
+      "goodwill_ratio": 0.001,
+      "ppe_ratio": 0.08,
+      "shiller_npts_avg10": 520,
+      "shiller_pe_avg10": 30.1,
+      "shiller_pe_avg5": 28.5,
+      "shiller_fork_ratio": 0.05
+    },
+    "growth": {
+      "np_yoy": 0.15,
+      "tr_yoy": 0.12
+    },
+    "industry": {
+      "pe": 22.1,
+      "pb": 6.2,
+      "roe": 0.18,
+      "bonus_rate": 0.025,
+      "pe_avg10": 28.5,
+      "period": "2026-03-31"
+    }
+  },
+  "follow_ups": [
+    { "skill_id": "wm-debt-safety", "label": "负债安全" },
+    { "skill_id": "wm-cashflow-quality", "label": "现金流质量" },
+    { "skill_id": "wm-company-business", "label": "生意解读卡" },
+    { "skill_id": "wm-company-card", "label": "公司卡片（App一页纸）" }
+  ],
+  "render": {
+    "preferred": "markdown",
+    "markdown_skeleton": "按 enrich_plan 读 references 后写：标题→商业模式→30秒→核心观点（裁决四枚举）→一二三章。数字只引自本 JSON。"
+  }
+}

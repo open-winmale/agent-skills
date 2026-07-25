@@ -1,0 +1,36 @@
+{
+  "symbol": "600519",
+  "market": "cn",
+  "is_financial": false,
+  "finance_subkind": "",
+  "title": "贵州茅台 · 600519 · 食品饮料 · 白酒",
+  "methodology": {
+    "card": "company_snapshot",
+    "market": "cn",
+    "variant": "industrial",
+    "lens_group": "profitability",
+    "blocked_reason": ""
+  },
+  "quality": {
+    "data_completeness": "full",
+    "missing_fields": [],
+    "contract_ok": true
+  },
+  "enrich_plan": {
+    "required_reads": [
+      "references/workflow.md",
+      "references/instruction-cn-industrial.md",
+      "references/lens-profitability.md",
+      "references/readability.md",
+      "references/output-skeleton.md"
+    ],
+    "verify_reads": ["references/verify-checklist.md"],
+    "do_not_load": [
+      "references/instruction-cn-financial.md",
+      "references/lens-profitability-financial.md"
+    ]
+  },
+  "snapshot": {
+    "business": { "top_name": "茅台酒", "top_share": 0.8677 }
+  }
+}

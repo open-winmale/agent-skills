@@ -1,0 +1,164 @@
+{
+  "id": "wm-watchlist",
+  "name": "我的关注列表",
+  "version": "0.2.2",
+  "tier": 1,
+  "visibility": "opt_in",
+  "l1_family": "user_asset",
+  "asset_domain": "watchlist",
+  "description": "查看或整理我的关注列表：返回公司名称、分组与关键指标快照，不是裸代码列表。加/删用增量；整理前默认预览。统一跨市场 SoT。",
+  "inputs_schema": {
+    "type": "object",
+    "properties": {
+      "action": {
+        "type": "string",
+        "enum": [
+          "view",
+          "add",
+          "remove",
+          "group_add",
+          "group_create",
+          "group_rename",
+          "group_delete",
+          "organize"
+        ],
+        "default": "view"
+      },
+      "market": {
+        "type": "string",
+        "enum": [
+          "cn",
+          "hk",
+          "us",
+          "all",
+          ""
+        ],
+        "description": "可选；写可空（按代码推断）；view 可空/all 全量；cn|hk|us 为投影或写 hint"
+      },
+      "symbol": {
+        "type": "string"
+      },
+      "symbols": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "cascade": {
+        "type": "boolean",
+        "default": true,
+        "description": "action=remove 时是否同步踢出各分组；默认 true"
+      },
+      "group_id": {
+        "type": "string"
+      },
+      "group_name": {
+        "type": "string"
+      },
+      "metrics": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "可选指标码（标注用）；默认内置 PE/ROE/涨跌等"
+      },
+      "organize_plan": {
+        "type": "object",
+        "description": "action=organize 时的目标全量快照（对齐 watchlist.apply）"
+      },
+      "dry_run": {
+        "type": "boolean",
+        "default": true
+      },
+      "confirm": {
+        "type": "boolean",
+        "default": false
+      },
+      "allow_removals": {
+        "type": "boolean",
+        "default": false,
+        "description": "organize 含删除时须用户明确允许"
+      }
+    }
+  },
+  "runtime": {
+    "mode": "skill_run",
+    "script_ref": "scr_wm_watchlist",
+    "path": "xs/skillhub/wm_watchlist.xs"
+  },
+  "required_scopes": [
+    "analysis:skills:run",
+    "user:watchlist:read"
+  ],
+  "required_scopes_by_action": {
+    "add": [
+      "user:watchlist:write"
+    ],
+    "remove": [
+      "user:watchlist:write"
+    ],
+    "group_add": [
+      "user:watchlist:write"
+    ],
+    "group_create": [
+      "user:watchlist:write"
+    ],
+    "group_rename": [
+      "user:watchlist:write"
+    ],
+    "group_delete": [
+      "user:watchlist:write"
+    ],
+    "organize": [
+      "user:watchlist:write"
+    ]
+  },
+  "icon": "关",
+  "category": "组合与跟踪",
+  "author": "赢麻了官方",
+  "official": true,
+  "summary": "查看或整理我的关注列表（名称、分组与关键指标）。",
+  "sample_prompts": [
+    "看看我的关注列表里有什么。",
+    "把某某加进关注列表。",
+    "把某某从关注列表删掉。",
+    "整理一下我的关注分组。"
+  ],
+  "expertise_tags": [
+    "关注列表"
+  ],
+  "outputs_schema": {
+    "type": "object",
+    "x-envelope": "skills_run",
+    "description": "Body = data.result (XS return). HTTP prefix: data.result.",
+    "x-primary_path": "holdings",
+    "properties": {
+      "action": {
+        "type": "string"
+      },
+      "holdings": {
+        "type": "array",
+        "description": "HTTP: data.result.holdings (view)"
+      },
+      "groups": {
+        "type": "array"
+      },
+      "apply": {
+        "type": "object",
+        "description": "HTTP: data.result.apply (writes)"
+      },
+      "diff": {
+        "type": "object"
+      },
+      "deeplinks": {
+        "type": "array"
+      },
+      "response_guide": {
+        "type": "string"
+      },
+      "error": {
+        "type": "string"
+      }
+    }
+  }
+}

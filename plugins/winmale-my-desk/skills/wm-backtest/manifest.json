@@ -1,0 +1,135 @@
+{
+  "id": "wm-backtest",
+  "name": "量化策略回测师",
+  "version": "0.3.3",
+  "tier": 1,
+  "visibility": "opt_in",
+  "l1_family": "user_asset",
+  "asset_domain": "backtest",
+  "description": "把自然语言里的选股池、关注列表或交易想法收成可跑的回测任务，确认后发起，输出收益回撤等标准指标与结果解读，并指出偏差与下一轮改法。不是模拟炒股。",
+  "inputs_schema": {
+    "type": "object",
+    "properties": {
+      "action": {
+        "type": "string",
+        "enum": [
+          "list",
+          "status",
+          "summary",
+          "from_universe",
+          "from_strategy",
+          "from_watchlist"
+        ],
+        "default": "list",
+        "description": "list/status/summary=盘点跟踪解读；from_universe|from_strategy|from_watchlist=意图转任务（须 confirm）"
+      },
+      "run_id": {
+        "type": "string"
+      },
+      "symbols": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "strategy_id": {
+        "type": "string"
+      },
+      "group_id": {
+        "type": "string",
+        "description": "from_watchlist 可选；该 backtest_market 下的关注分组 id"
+      },
+      "group_name": {
+        "type": "string",
+        "description": "from_watchlist 可选；按分组名解析（精确优先，其次唯一模糊）；与 group_id 二选一"
+      },
+      "group": {
+        "type": "string",
+        "description": "group_name 别名"
+      },
+      "backtest_market": {
+        "type": "string",
+        "enum": [
+          "cn",
+          "hk",
+          "us"
+        ],
+        "default": "cn",
+        "description": "回测单市场；关注可跨市场展示，回测默认只用 cn（A股）"
+      },
+      "market": {
+        "type": "string",
+        "enum": [
+          "cn",
+          "hk",
+          "us"
+        ],
+        "description": "backtest_market 别名"
+      },
+      "template_unit_id": {
+        "type": "string"
+      },
+      "confirm": {
+        "type": "boolean",
+        "default": false
+      },
+      "limit": {
+        "type": "integer",
+        "default": 10,
+        "maximum": 50
+      }
+    }
+  },
+  "runtime": {
+    "mode": "skill_run",
+    "script_ref": "scr_wm_backtest",
+    "path": "xs/skillhub/wm_backtest.xs"
+  },
+  "required_scopes": [
+    "analysis:skills:run",
+    "analysis:backtest:read"
+  ],
+  "required_scopes_by_action": {
+    "from_universe": [
+      "analysis:backtest:run"
+    ],
+    "from_strategy": [
+      "analysis:backtest:run"
+    ],
+    "from_watchlist": [
+      "user:watchlist:read",
+      "analysis:backtest:run"
+    ]
+  },
+  "icon": "测",
+  "category": "组合与跟踪",
+  "author": "赢麻了官方",
+  "official": true,
+  "summary": "把策略、股票池或关注列表说清楚，确认后回测；关注默认按 A 股切市场。不是模拟炒股。",
+  "sample_prompts": [
+    "用我的关注列表做一趟 A 股回测，先预览。",
+    "用我刚筛的高 ROE 池子等权月调仓，2023–2024 先预览再回测。",
+    "用我保存的选股策略看这三年历史表现。",
+    "最近一次回测收益回撤怎样，下一轮怎么改？"
+  ],
+  "expertise_tags": [
+    "回测",
+    "策略回测",
+    "量化分析",
+    "关注列表"
+  ],
+  "outputs_schema": {
+    "type": "object",
+    "x-envelope": "skills_run",
+    "description": "Body = data.result (XS return). HTTP prefix: data.result.",
+    "x-primary_path": ".",
+    "properties": {
+      "action": {
+        "type": "string"
+      },
+      "deeplinks": {
+        "type": "array"
+      }
+    }
+  }
+}

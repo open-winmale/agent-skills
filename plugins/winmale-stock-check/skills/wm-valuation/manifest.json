@@ -1,0 +1,72 @@
+{
+  "id": "wm-valuation",
+  "name": "估值解读卡",
+  "version": "1.0.7",
+  "tier": 1,
+  "visibility": "opt_in",
+  "description": "看估值松不松、贵不贵：结合盈利能力与价格匹配给出口径清晰的判断。别和「这门生意怎么样」那张卡搞混。",
+  "inputs_schema": {
+    "type": "object",
+    "required": [
+      "symbol"
+    ],
+    "properties": {
+      "symbol": {
+        "type": "string",
+        "description": "证券代码"
+      },
+      "market": {
+        "type": "string",
+        "enum": [
+          "cn",
+          "hk"
+        ],
+        "description": "可选；缺省按代码启发式（5 位倾向 hk）"
+      }
+    }
+  },
+  "runtime": {
+    "mode": "skill_run",
+    "script_ref": "scr_wm_valuation",
+    "path": "xs/skillhub/insight/valuation/run.xs"
+  },
+  "required_scopes": [
+    "analysis:skills:run"
+  ],
+  "icon": "估",
+  "category": "行情与公司",
+  "author": "赢麻了官方",
+  "official": true,
+  "summary": "盈利能力与价格是否匹配：多角度估值判断（含市赚率）；给出口径清晰的松紧结论。",
+  "sample_prompts": [
+    "某某现在贵不贵？相对历史与同业怎么看？",
+    "给一份估值结论，别堆术语。",
+    "对比两家公司的估值位置。"
+  ],
+  "expertise_tags": [
+    "估值"
+  ],
+  "outputs_schema": {
+    "type": "object",
+    "x-envelope": "skills_run",
+    "description": "Dual-read: prefer flat data.<field> after skills/run flatten; compat data.result.<field>. x-envelope skills_run means relative to either.",
+    "x-primary_path": "sections",
+    "properties": {
+      "methodology": {
+        "type": "object"
+      },
+      "snapshot": {
+        "type": "object"
+      },
+      "sections": {
+        "type": "array"
+      },
+      "metrics_bar": {
+        "type": "object"
+      },
+      "freshness": {
+        "type": "object"
+      }
+    }
+  }
+}
