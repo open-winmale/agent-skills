@@ -5,9 +5,9 @@
 | 渠道 | 动作 | 状态 |
 |------|------|------|
 | **skills.sh** | `npx skills add open-winmale/agent-skills`；靠安装量上榜 | 仓已就绪，需种子安装 |
-| **SkillsMP** | 爬取公开 GitHub `SKILL.md`；补 Topics | 见下方 Topics |
+| **SkillsMP** | 爬取公开 GitHub `SKILL.md`；补 Topics | Topics 已由仓库维护者添加 |
 | **CodeBuddy / WorkBuddy** | `/plugin marketplace add open-winmale/agent-skills` | `.codebuddy-plugin/` 已生成 |
-| **ClawHub** | CLI 发布旗舰 skill | 见 [CLAWHUB.md](./CLAWHUB.md) |
+| **ClawHub** | CLI 发布旗舰 skill | **已发** `wm-skillhub` / `wm-company-card`（待 moderation 全量可见） |
 | **Claude Directory** | 网页表单提交本仓 | 待人工提交 |
 | **Cursor Marketplace** | [publish](https://cursor.com/marketplace/publish) | 待人工提交 |
 
