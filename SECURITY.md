@@ -2,7 +2,7 @@
 
 ## Reporting
 
-If you believe you have found a security issue in these skill packs or related install scripts, please email **support@winmale.com** (do not open a public issue with secrets or exploit details).
+If you believe you have found a security issue in these skill packs or related install scripts, please email **support@yamaltech.cn** (do not open a public issue with secrets or exploit details).
 
 ## What this repo contains
 
