@@ -1,0 +1,19 @@
+{
+  "name": "winmale-skillhub",
+  "version": "1.0.29",
+  "description": "赢麻了投研技能入口：配置 API 凭证、浏览并安装/更新官方技能与 Role。请先装本插件。",
+  "author": {
+    "name": "WinMale",
+    "email": "support@yamaltech.cn"
+  },
+  "homepage": "https://open.winmale.com",
+  "repository": "https://github.com/open-winmale/agent-skills",
+  "license": "MIT",
+  "keywords": [
+    "winmale",
+    "skillhub",
+    "finance",
+    "equity-research"
+  ],
+  "skills": "./skills/"
+}
