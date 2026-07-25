@@ -21,16 +21,16 @@
 ## 步骤
 
 ```bash
-# 1. 安装 CLI
-npm i -g clawhub
-# 或: npx clawhub ...
+# 0. CLI（若未装）
+npm i -g clawhub --registry=https://registry.npmjs.org
 
-# 2. 登录
+# 1. 登录（须本机浏览器 / token；Agent 无法代登）
 clawhub login
+# 或: clawhub login --token '<CLAWHUB_TOKEN>'
 clawhub whoami
 
-# 3. 干跑（不上传）
-cd /path/to/agent-skills
+# 2. 干跑（不上传）
+cd /Users/jerry/yepless/open/agent-skills
 clawhub skill publish ./skills/wm-skillhub \
   --slug wm-skillhub \
   --name "SkillHub 管家" \
@@ -45,7 +45,24 @@ clawhub skill publish ./skills/wm-company-card \
   --changelog "WinMale company snapshot card" \
   --dry-run
 
-# 4. 确认无误后去掉 --dry-run 正式发布
+# 3. 确认无误后去掉 --dry-run 正式发布
+```
+
+**进度（2026-07-25）**
+
+| 项 | 状态 |
+|----|------|
+| CLI | 已装 |
+| 登录 | JerryZhou |
+| `wm-skillhub@1.0.29` | 已发布 → https://clawhub.ai/skills/wm-skillhub |
+| `wm-company-card@1.2.9` | 已发布 → https://clawhub.ai/skills/wm-company-card |
+| 审核 | `verdict: clean`，仍 `pending.publication`（页可开，搜索可能暂不可见） |
+
+安装（公开后）：
+
+```bash
+clawhub install wm-skillhub
+clawhub install wm-company-card
 ```
 
 版本号与 `skills/*/manifest.json` → `version` 对齐（见 `SYNC_MANIFEST.json`）。
