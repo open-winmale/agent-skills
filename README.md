@@ -55,9 +55,13 @@ unzip -o /tmp/wm-skillhub.zip -d ~/.workbuddy/skills
 
 ### 插件市场（可选）
 
-部分海外客户端支持 marketplace 一键装插件：
-
 ```text
+# WorkBuddy / CodeBuddy（国内优先）
+/plugin marketplace add open-winmale/agent-skills
+/plugin install winmale-skillhub@open-winmale
+/plugin install winmale-stock-check@open-winmale
+/plugin install winmale-my-desk@open-winmale
+
 # Claude Code
 /plugin marketplace add open-winmale/agent-skills
 /plugin install winmale-skillhub@open-winmale
@@ -67,6 +71,16 @@ codex plugin marketplace add open-winmale/agent-skills
 ```
 
 Cursor Team：Dashboard → Plugins → Import `https://github.com/open-winmale/agent-skills`
+
+### 开放发现目录
+
+| 渠道 | 说明 |
+|------|------|
+| [skills.sh](https://skills.sh) | `npx skills add open-winmale/agent-skills`（安装遥测上榜） |
+| [SkillsMP](https://skillsmp.com) | 索引公开 GitHub `SKILL.md` |
+| [ClawHub](https://clawhub.ai) | OpenClaw 注册中心；发布步骤见 [`docs/CLAWHUB.md`](./docs/CLAWHUB.md) |
+
+更多渠道与投稿状态：[`docs/MARKETPLACES.md`](./docs/MARKETPLACES.md)。
 
 ## 第一批插件
 

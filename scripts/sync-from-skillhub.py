@@ -80,6 +80,26 @@ def write_claude_plugin(plugin_dir: Path, plugin: dict, author: dict) -> None:
     path.write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n")
 
 
+def write_codebuddy_plugin(
+    plugin_dir: Path, plugin: dict, author: dict, homepage: str
+) -> None:
+    # CodeBuddy / WorkBuddy share .codebuddy-plugin layout.
+    meta = {
+        "name": plugin["id"],
+        "version": plugin.get("_version", "0.1.0"),
+        "description": plugin["description"],
+        "author": {"name": author["name"], "email": author.get("email")},
+        "homepage": homepage,
+        "repository": "https://github.com/open-winmale/agent-skills",
+        "license": "MIT",
+        "keywords": plugin.get("keywords", []),
+        "skills": "./skills/",
+    }
+    path = plugin_dir / ".codebuddy-plugin" / "plugin.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n")
+
+
 def write_marketplaces(cfg: dict, plugin_versions: dict[str, str]) -> None:
     author = cfg["author"]
     homepage = cfg["homepage"]
@@ -151,6 +171,32 @@ def write_marketplaces(cfg: dict, plugin_versions: dict[str, str]) -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(codex, ensure_ascii=False, indent=2) + "\n")
 
+    # CodeBuddy / WorkBuddy
+    codebuddy = {
+        "name": "open-winmale",
+        "owner": {"name": author["name"], "email": author.get("email")},
+        "description": "赢麻了（WinMale）官方 Agent Skills — WorkBuddy / CodeBuddy",
+        "version": "0.1.0",
+        "plugins": [
+            {
+                "name": p["id"],
+                "source": f"./plugins/{p['id']}",
+                "description": p["description"],
+                "version": plugin_versions[p["id"]],
+                "homepage": homepage,
+                "repository": "https://github.com/open-winmale/agent-skills",
+                "license": "MIT",
+                "keywords": p.get("keywords", []),
+                "category": p.get("category", "productivity"),
+                "skills": "./skills/",
+            }
+            for p in plugins
+        ],
+    }
+    out = ROOT / ".codebuddy-plugin" / "marketplace.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(codebuddy, ensure_ascii=False, indent=2) + "\n")
+
 
 def main() -> None:
     cfg = json.loads(PLUGINS_PATH.read_text())
@@ -193,6 +239,7 @@ def main() -> None:
         write_cursor_plugin(plugin_dir, plugin, cfg["author"], cfg["homepage"])
         write_codex_plugin(plugin_dir, plugin, cfg["author"])
         write_claude_plugin(plugin_dir, plugin, cfg["author"])
+        write_codebuddy_plugin(plugin_dir, plugin, cfg["author"], cfg["homepage"])
 
         # Flat skills/ alias at plugin root is already under skills/ — good for discovery.
 
