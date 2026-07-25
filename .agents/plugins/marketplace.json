@@ -1,0 +1,41 @@
+{
+  "name": "open-winmale",
+  "interface": {
+    "displayName": "WinMale Agent Skills"
+  },
+  "plugins": [
+    {
+      "name": "winmale-skillhub",
+      "source": {
+        "path": "./plugins/winmale-skillhub"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "REQUIRED"
+      },
+      "category": "productivity"
+    },
+    {
+      "name": "winmale-stock-check",
+      "source": {
+        "path": "./plugins/winmale-stock-check"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "REQUIRED"
+      },
+      "category": "productivity"
+    },
+    {
+      "name": "winmale-my-desk",
+      "source": {
+        "path": "./plugins/winmale-my-desk"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "REQUIRED"
+      },
+      "category": "productivity"
+    }
+  ]
+}

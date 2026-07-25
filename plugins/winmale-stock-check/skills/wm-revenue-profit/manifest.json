@@ -1,0 +1,47 @@
+{
+  "id": "wm-revenue-profit",
+  "name": "营收与利润",
+  "version": "1.0.2",
+  "tier": 1,
+  "visibility": "opt_in",
+  "description": "追踪营收与净利润水平、同比及行业分位/份额。用户问成长性、收入利润走势时使用。",
+  "inputs_schema": {
+    "type": "object",
+    "required": [
+      "symbol"
+    ],
+    "properties": {
+      "symbol": {
+        "type": "string"
+      }
+    }
+  },
+  "runtime": {
+    "mode": "skill_run",
+    "script_ref": "scr_wm_revenue_profit",
+    "path": "xs/skillhub/wm_revenue_profit.xs"
+  },
+  "required_scopes": [
+    "analysis:skills:run"
+  ],
+  "icon": "营",
+  "category": "财务质量",
+  "author": "赢麻了官方",
+  "official": true,
+  "summary": "看营收利润水平、增速与行业位置，观察成长是否在变。",
+  "sample_prompts": [
+    "某某近年营收利润怎么走？",
+    "利润质量有没有变差？"
+  ],
+  "outputs_schema": {
+    "type": "object",
+    "x-envelope": "skills_run",
+    "description": "Body = data.result (XS return). HTTP prefix: data.result.",
+    "x-primary_path": ".",
+    "properties": {
+      "symbol": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+interface:
+  display_name: "公告搜索"
+  short_description: "查询 A 股公司公告，或按类别/减持回购信号扫描。用户问公告、业绩预告、减持回购、全市场公告汇总时使用。"
+  default_prompt: "Use $wm-notice-radar to help with: 查询 A 股公司公告，或按类别/减持回购信号扫描。用户问公告、业绩预告、减持回购、全市场公告汇总时使用。"
+
+policy:
+  allow_implicit_invocation: true

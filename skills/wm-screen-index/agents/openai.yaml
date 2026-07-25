@@ -1,0 +1,7 @@
+interface:
+  display_name: "条件选股"
+  short_description: "统一选股：索引指标、现拼条件筛池、列出/跑/保存策略"
+  default_prompt: "Use $wm-screen-index for product stock screening. Align fields via action=indicators (default market=cn). Never use wm-discover for screener fields. Prefer action=conditions; hand unsupported residual to role-financial-analyst after narrowing. Always paste deeplinks; offer save_strategy after success."
+
+policy:
+  allow_implicit_invocation: true

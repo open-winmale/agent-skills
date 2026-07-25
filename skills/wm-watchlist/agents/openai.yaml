@@ -1,0 +1,7 @@
+interface:
+  display_name: "我的关注列表"
+  short_description: "查看或整理我的关注列表：返回公司名称、分组与关键指标快照，不是裸代码列表"
+  default_prompt: "Use $wm-watchlist to help with: 查看或整理我的关注列表：返回公司名称、分组与关键指标快照，不是裸代码列表"
+
+policy:
+  allow_implicit_invocation: true

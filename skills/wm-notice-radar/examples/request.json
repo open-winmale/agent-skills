@@ -1,0 +1,8 @@
+{
+  "symbol": "600519",
+  "args": {
+    "mode": "list",
+    "window": "1m",
+    "limit": 20
+  }
+}

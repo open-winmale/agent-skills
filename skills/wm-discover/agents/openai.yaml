@@ -1,0 +1,7 @@
+interface:
+  display_name: "统一发现"
+  short_description: "用自然语言找公司/证券代码、行业与指数、SkillHub 技能、指标定义、XS 函数(vfunc，含 call_spec/re…"
+  default_prompt: "Use $wm-discover to help with: 用自然语言找公司/证券代码、行业与指数、SkillHub 技能、指标定义、XS 函数(vfunc，含 call_spec/re…"
+
+policy:
+  allow_implicit_invocation: true

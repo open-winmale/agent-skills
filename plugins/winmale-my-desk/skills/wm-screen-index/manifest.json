@@ -1,0 +1,215 @@
+{
+  "id": "wm-screen-index",
+  "name": "条件选股",
+  "version": "1.9.0",
+  "tier": 1,
+  "visibility": "opt_in",
+  "description": "按选股索引条件批量筛股票池；也可列出/跑/保存我的策略。不是单只公司查询。",
+  "summary": "按选股索引条件批量筛股票池，也可列出/跑/保存我的策略；不是单只公司查询。",
+  "inputs_schema": {
+    "type": "object",
+    "properties": {
+      "action": {
+        "type": "string",
+        "enum": [
+          "search",
+          "indicators",
+          "indicator_distinct",
+          "market_meta",
+          "indexes",
+          "preview_count",
+          "template",
+          "conditions",
+          "list",
+          "run_strategy",
+          "run",
+          "save_strategy"
+        ],
+        "description": "search=字段/取值；conditions=现筛；list/run_strategy=我的策略。nl 已禁用。"
+      },
+      "market": {
+        "type": "string",
+        "enum": [
+          "cn",
+          "hk",
+          "us"
+        ],
+        "default": "cn",
+        "description": "选股市场；默认 cn。"
+      },
+      "q": {
+        "type": "string",
+        "description": "action=search 口语词（如 湖南 / PCB / 股息）"
+      },
+      "keyword": {
+        "type": "string",
+        "description": "action=indicators 字段关键词；search 时可作为 q 别名"
+      },
+      "category": {
+        "type": "string",
+        "description": "action=indicators 分类过滤"
+      },
+      "tag": {
+        "type": "string",
+        "description": "action=indicators 标签过滤"
+      },
+      "field": {
+        "type": "string",
+        "description": "action=indicator_distinct 必填"
+      },
+      "name": {
+        "type": "string",
+        "description": "action=save_strategy 策略名（须用户确认）"
+      },
+      "description": {
+        "type": "string",
+        "description": "action=save_strategy 可选描述"
+      },
+      "conditions": {
+        "type": "array",
+        "description": "action=conditions|save_strategy|preview_count 时的选股条件树"
+      },
+      "strategy_id": {
+        "type": "string",
+        "description": "action=run_strategy|run 必填"
+      },
+      "fields": {
+        "type": "array",
+        "description": "action=conditions 投影列"
+      },
+      "offset": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "action=conditions 分页偏移"
+      },
+      "pe_max": {
+        "type": "number",
+        "default": 20,
+        "minimum": 1,
+        "maximum": 80
+      },
+      "pb_max": {
+        "type": "number",
+        "default": 2,
+        "minimum": 0.1,
+        "maximum": 20
+      },
+      "roe_min": {
+        "type": "number",
+        "default": 0.15,
+        "minimum": 0,
+        "maximum": 1,
+        "description": "小数，如 0.15=15%；仅 template"
+      },
+      "top_n": {
+        "type": "integer",
+        "default": 50,
+        "minimum": 1,
+        "maximum": 200
+      },
+      "limit": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 200,
+        "description": "top_n / list / indicators / search 条数别名"
+      }
+    }
+  },
+  "runtime": {
+    "mode": "skill_run",
+    "script_ref": "scr_wm_screen_index",
+    "path": "xs/skillhub/wm_screen_index.xs"
+  },
+  "required_scopes": [
+    "analysis:skills:run"
+  ],
+  "required_scopes_by_action": {
+    "search": [
+      "user:screener:indicator:read"
+    ],
+    "indicators": [
+      "user:screener:indicator:read"
+    ],
+    "indicator_distinct": [
+      "user:screener:indicator:read"
+    ],
+    "market_meta": [
+      "user:screener:indicator:read"
+    ],
+    "indexes": [
+      "user:screener:indicator:read"
+    ],
+    "preview_count": [
+      "user:screener:indicator:read",
+      "user:screener:run"
+    ],
+    "conditions": [
+      "user:screener:indicator:read",
+      "user:screener:run"
+    ],
+    "list": [
+      "user:screener:strategy:read"
+    ],
+    "run_strategy": [
+      "user:screener:run"
+    ],
+    "run": [
+      "user:screener:run"
+    ],
+    "save_strategy": [
+      "user:screener:strategy:write"
+    ]
+  },
+  "depends_libs": [],
+  "icon": "选",
+  "category": "选股与发现",
+  "author": "赢麻了官方",
+  "official": true,
+  "sample_prompts": [
+    "湖南地区上市公司按估值排一下。",
+    "做 PCB 的企业有哪些？",
+    "按高 ROE、合理估值筛一批。",
+    "我以前存过哪些选股策略？"
+  ],
+  "expertise_tags": [
+    "选股"
+  ],
+  "outputs_schema": {
+    "type": "object",
+    "x-envelope": "skills_run",
+    "description": "Body = data.result (XS return). HTTP prefix: data.result.",
+    "x-primary_path": "rows",
+    "properties": {
+      "action": {
+        "type": "string"
+      },
+      "rows": {
+        "type": "array",
+        "description": "HTTP: data.result.rows (conditions)"
+      },
+      "row_ids": {
+        "type": "array"
+      },
+      "page_hit_count": {
+        "type": "integer"
+      },
+      "response_guide": {
+        "type": "string"
+      },
+      "items": {
+        "type": "array",
+        "description": "indicators"
+      },
+      "fetch": {
+        "type": "object",
+        "description": "run_strategy"
+      },
+      "deeplinks": {
+        "type": "array"
+      },
+      "error": {
+        "type": "string"
+      }
+    }
+  }
+}

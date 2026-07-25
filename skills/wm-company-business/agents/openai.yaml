@@ -1,0 +1,7 @@
+interface:
+  display_name: "生意解读卡"
+  short_description: "这门生意怎么样：赚钱模式、护城河与隐患，用人话讲清楚"
+  default_prompt: "Use $wm-company-business to help with: 这门生意怎么样：赚钱模式、护城河与隐患，用人话讲清楚"
+
+policy:
+  allow_implicit_invocation: true

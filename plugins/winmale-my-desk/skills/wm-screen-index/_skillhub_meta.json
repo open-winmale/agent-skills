@@ -1,0 +1,7 @@
+{
+  "name": "条件选股",
+  "source": "skillhub",
+  "version": "1.9.0",
+  "slug": "wm-screen-index",
+  "description_zh": "按选股索引条件批量筛股票池；也可列出/跑/保存我的策略。不是单只公司查询。"
+}

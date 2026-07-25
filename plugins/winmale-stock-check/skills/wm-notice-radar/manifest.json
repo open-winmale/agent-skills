@@ -1,0 +1,82 @@
+{
+  "id": "wm-notice-radar",
+  "name": "公告搜索",
+  "version": "1.1.1",
+  "tier": 1,
+  "visibility": "opt_in",
+  "description": "查询 A 股公司公告，或按类别/减持回购信号扫描。用户问公告、业绩预告、减持回购、全市场公告汇总时使用。",
+  "inputs_schema": {
+    "type": "object",
+    "properties": {
+      "symbol": {
+        "type": "string"
+      },
+      "mode": {
+        "type": "string",
+        "enum": [
+          "list",
+          "category",
+          "signal"
+        ],
+        "default": "list"
+      },
+      "category": {
+        "type": "string",
+        "description": "mode=category 时：forecast/buyback/reduction 等"
+      },
+      "signal": {
+        "type": "string",
+        "enum": [
+          "reduction",
+          "buyback"
+        ],
+        "description": "mode=signal 时"
+      },
+      "window": {
+        "type": "string",
+        "default": "1m"
+      },
+      "limit": {
+        "type": "integer",
+        "default": 20,
+        "maximum": 100
+      }
+    }
+  },
+  "runtime": {
+    "mode": "skill_run",
+    "script_ref": "scr_wm_notice_radar",
+    "path": "xs/skillhub/wm_notice_radar.xs"
+  },
+  "required_scopes": [
+    "analysis:skills:run"
+  ],
+  "depends_libs": [
+    "sys/notice"
+  ],
+  "icon": "公",
+  "category": "资讯与公告",
+  "author": "赢麻了官方",
+  "official": true,
+  "summary": "查公司公告与大事线索（减持、回购等），快速抓住披露要点。",
+  "sample_prompts": [
+    "某某公司最近有什么重要公告？",
+    "关注列表里谁有大事？",
+    "帮我扫一眼最近的风险类公告。"
+  ],
+  "expertise_tags": [
+    "公告",
+    "大事"
+  ],
+  "outputs_schema": {
+    "type": "object",
+    "x-envelope": "skills_run",
+    "description": "Body = data.result (XS return). HTTP prefix: data.result.",
+    "x-primary_path": "items",
+    "properties": {
+      "items": {
+        "type": "array"
+      }
+    }
+  }
+}

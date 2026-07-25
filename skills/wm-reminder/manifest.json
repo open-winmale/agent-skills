@@ -1,0 +1,124 @@
+{
+  "id": "wm-reminder",
+  "name": "到时候提醒我",
+  "version": "0.2.2",
+  "tier": 1,
+  "visibility": "opt_in",
+  "l1_family": "user_asset",
+  "asset_domain": "reminder",
+  "description": "列出/创建/管理我的研究提醒；支持个股、选股、榜单与任意 XS（call return 控推送）。不是调度引擎文档。",
+  "inputs_schema": {
+    "type": "object",
+    "properties": {
+      "action": {
+        "type": "string",
+        "enum": [
+          "list",
+          "create",
+          "get",
+          "update",
+          "enable",
+          "cancel"
+        ],
+        "default": "list"
+      },
+      "limit": {
+        "type": "integer",
+        "default": 20,
+        "maximum": 50
+      },
+      "sub_id": {
+        "type": "string",
+        "description": "get/update/enable/cancel 时的提醒 id"
+      },
+      "update": {
+        "type": "object",
+        "description": "action=update 的 patch"
+      },
+      "create": {
+        "type": "object",
+        "description": "action=create：name/type + xs|pr_stock|…；title 兼容为 name",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "pr_stock",
+              "strategy_screening",
+              "xs",
+              "pr_rank",
+              "market_rank"
+            ]
+          },
+          "script_content": {
+            "type": "string"
+          },
+          "script_path": {
+            "type": "string"
+          },
+          "xs": {
+            "type": "object"
+          },
+          "pr_stock": {
+            "type": "object"
+          },
+          "push_control": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  },
+  "runtime": {
+    "mode": "skill_run",
+    "script_ref": "scr_wm_reminder",
+    "path": "xs/skillhub/wm_reminder.xs"
+  },
+  "required_scopes": [
+    "analysis:skills:run",
+    "user:reminder:read"
+  ],
+  "required_scopes_by_action": {
+    "create": [
+      "user:reminder:write"
+    ],
+    "update": [
+      "user:reminder:write"
+    ],
+    "enable": [
+      "user:reminder:write"
+    ],
+    "cancel": [
+      "user:reminder:write"
+    ]
+  },
+  "icon": "提",
+  "category": "组合与跟踪",
+  "author": "赢麻了官方",
+  "official": true,
+  "summary": "列出或创建研究提醒（如财报前），到点叫你。",
+  "sample_prompts": [
+    "帮我设一个跌幅提醒。",
+    "看看我有哪些提醒。",
+    "用 XS 自定义提醒条件。"
+  ],
+  "outputs_schema": {
+    "type": "object",
+    "x-envelope": "skills_run",
+    "description": "Body = data.result (XS return). HTTP prefix: data.result.",
+    "x-primary_path": "items",
+    "properties": {
+      "action": {
+        "type": "string"
+      },
+      "items": {
+        "type": "array"
+      }
+    }
+  }
+}
