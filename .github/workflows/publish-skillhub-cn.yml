@@ -1,0 +1,67 @@
+name: Publish SkillHub.cn
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "skills/**"
+      - "plugins/**/skills/**"
+      - "scripts/publish-skillhub-cn.py"
+      - "scripts/publish-skillhub-cn.sh"
+      - ".github/workflows/publish-skillhub-cn.yml"
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    # Allow maintenance + discovery mirror; forks without secret skip below.
+    if: >
+      github.repository == 'JerryZhou/agent-skills' ||
+      github.repository == 'open-winmale/agent-skills'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check secret
+        id: secret
+        env:
+          SKILLHUB_KEY: ${{ secrets.SKILLHUB_KEY }}
+        run: |
+          if [ -z "${SKILLHUB_KEY}" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "SKILLHUB_KEY secret missing — skip publish (ok for forks / unset repos)."
+          else
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "SKILLHUB_KEY secret present (masked)."
+          fi
+
+      - name: Install skillhub CLI
+        if: steps.secret.outputs.present == 'true'
+        run: |
+          curl -fsSL https://skillhub-1388575217.cos.ap-guangzhou.myqcloud.com/install/install.sh | bash -s -- --cli-only
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          skillhub --version
+
+      - name: Publish pending skills
+        if: steps.secret.outputs.present == 'true'
+        env:
+          SKILLHUB_KEY: ${{ secrets.SKILLHUB_KEY }}
+          SKILLHUB_HOST: https://api.skillhub.cn
+        run: |
+          python3 scripts/publish-skillhub-cn.py --batch first
+
+      - name: Commit publish state if changed
+        if: steps.secret.outputs.present == 'true'
+        continue-on-error: true
+        run: |
+          if git diff --quiet -- docs/SKILLHUB_CN_PUBLISH_STATE.json; then
+            echo "No state file changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/SKILLHUB_CN_PUBLISH_STATE.json
+          git commit -m "chore: update SkillHub.cn publish state"
+          git push

@@ -1,0 +1,117 @@
+{
+  "skills": {
+    "wm-watchlist": {
+      "version": "0.2.7",
+      "displayName": "我的关注列表",
+      "url": "https://skillhub.cn/s/user_d83d7c97/wm-watchlist",
+      "published_at": "2026-08-11T07:37:33Z",
+      "git_sha": "fd55a16",
+      "reviewStatus": "pending"
+    },
+    "wm-reminder": {
+      "version": "0.2.6",
+      "displayName": "到时候提醒我",
+      "url": "https://skillhub.cn/s/user_d83d7c97/wm-reminder",
+      "published_at": "2026-08-11T07:37:33Z",
+      "git_sha": "fd55a16",
+      "reviewStatus": "approved"
+    },
+    "wm-notice-radar": {
+      "version": "1.2.0",
+      "displayName": "公告搜索",
+      "url": "https://skillhub.cn/s/user_d83d7c97/wm-notice-radar",
+      "published_at": "2026-08-11T07:37:33Z",
+      "git_sha": "fd55a16",
+      "reviewStatus": "approved"
+    },
+    "wm-discover": {
+      "version": "1.4.1",
+      "displayName": "统一发现",
+      "url": "https://skillhub.cn/s/user_d83d7c97/wm-discover",
+      "published_at": "2026-08-11T07:37:33Z",
+      "git_sha": "fd55a16",
+      "reviewStatus": "approved"
+    },
+    "wm-valuation": {
+      "version": "1.0.10",
+      "displayName": "估值解读卡",
+      "url": "https://skillhub.cn/s/user_d83d7c97/wm-valuation",
+      "published_at": "2026-08-11T07:37:33Z",
+      "git_sha": "fd55a16",
+      "reviewStatus": "pending"
+    },
+    "wm-skillhub": {
+      "version": "1.1.14",
+      "displayName": "SkillHub 管家",
+      "url": "https://skillhub.cn/s/user_d83d7c97/wm-skillhub",
+      "published_at": "2026-08-11T07:37:33Z",
+      "git_sha": "fd55a16",
+      "reviewStatus": "pending"
+    },
+    "wm-dividend-quality": {
+      "version": "1.0.9",
+      "displayName": "股息与分红",
+      "url": "https://skillhub.cn/s/user_d83d7c97/wm-dividend-quality",
+      "published_at": "2026-08-11T07:37:33Z",
+      "git_sha": "fd55a16",
+      "reviewStatus": "approved"
+    },
+    "wm-backtest": {
+      "version": "0.3.24",
+      "displayName": "量化策略回测师",
+      "url": "https://skillhub.cn/s/user_d83d7c97/wm-backtest",
+      "published_at": "2026-08-11T07:37:33Z",
+      "git_sha": "fd55a16",
+      "reviewStatus": "approved"
+    },
+    "wm-screen-index": {
+      "version": "2.0.5",
+      "displayName": "条件选股",
+      "url": "https://skillhub.cn/s/user_d83d7c97/wm-screen-index",
+      "published_at": "2026-08-11T07:37:33Z",
+      "git_sha": "fd55a16",
+      "reviewStatus": "pending"
+    },
+    "wm-revenue-profit": {
+      "version": "1.0.6",
+      "displayName": "营收与利润",
+      "url": "https://skillhub.cn/s/user_d83d7c97/wm-revenue-profit",
+      "published_at": "2026-08-11T07:37:33Z",
+      "git_sha": "fd55a16",
+      "reviewStatus": "pending"
+    },
+    "wm-company-card": {
+      "version": "1.3.4",
+      "displayName": "公司卡片",
+      "url": "https://skillhub.cn/s/user_d83d7c97/wm-company-card",
+      "published_at": "2026-08-11T07:37:33Z",
+      "git_sha": "fd55a16",
+      "reviewStatus": "approved"
+    },
+    "wm-debt-safety": {
+      "version": "1.0.6",
+      "displayName": "负债安全",
+      "url": "https://skillhub.cn/s/user_d83d7c97/wm-debt-safety",
+      "published_at": "2026-08-11T07:37:33Z",
+      "git_sha": "fd55a16",
+      "reviewStatus": "approved"
+    },
+    "wm-company-business": {
+      "version": "1.1.8",
+      "displayName": "生意解读卡",
+      "url": "https://skillhub.cn/s/user_d83d7c97/wm-company-business",
+      "published_at": "2026-08-11T07:37:33Z",
+      "git_sha": "fd55a16",
+      "reviewStatus": "approved"
+    },
+    "wm-cashflow-quality": {
+      "version": "1.0.8",
+      "displayName": "现金流质量",
+      "url": "https://skillhub.cn/s/user_d83d7c97/wm-cashflow-quality",
+      "published_at": "2026-08-11T07:37:33Z",
+      "git_sha": "fd55a16",
+      "reviewStatus": "approved"
+    }
+  },
+  "updated_at": "2026-08-11T07:37:33Z"
+}

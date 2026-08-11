@@ -8,6 +8,7 @@
 | **SkillsMP** | 爬取公开 GitHub `SKILL.md`；补 Topics | Topics 已由仓库维护者添加 |
 | **CodeBuddy / WorkBuddy** | `/plugin marketplace add open-winmale/agent-skills` | `.codebuddy-plugin/` 已生成 |
 | **ClawHub** | CLI 发布旗舰 skill | **已发** `wm-skillhub` / `wm-company-card`（待 moderation 全量可见） |
+| **SkillHub.cn** | `./scripts/publish-skillhub-cn.sh`；CI 用 secret `SKILLHUB_KEY` | 自动化发布（见 [`SKILLHUB_CN.md`](./SKILLHUB_CN.md)） |
 | **Claude Directory** | 网页表单提交本仓 | 待人工提交 |
 | **Cursor Marketplace** | [publish](https://cursor.com/marketplace/publish) | 待人工提交 |
 

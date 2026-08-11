@@ -83,6 +83,8 @@ Cursor Team：Dashboard → Plugins → Import `https://github.com/open-winmale/
 
 更多渠道与投稿状态：[`docs/MARKETPLACES.md`](./docs/MARKETPLACES.md)。
 
+国内 SkillHub.cn 发布见 [`docs/SKILLHUB_CN.md`](./docs/SKILLHUB_CN.md)（脚本 `scripts/publish-skillhub-cn.sh`；勿提交 `.env.skillhub.cn`）。
+
 ## 第一批插件
 
 | Plugin | 用途 | 含技能 |
