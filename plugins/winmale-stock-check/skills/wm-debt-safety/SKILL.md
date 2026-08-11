@@ -1,26 +1,36 @@
 ---
 name: wm-debt-safety
 display_name: "负债安全"
-version: 1.0.2
-description: 检视资产负债率、有息负债与偿债比率。用户问杠杆、偿债能力或会不会爆雷时使用。
+version: 1.0.6
+description: 检视资产负债率、有息负债与偿债比率。用户问杠杆、偿债能力、债务风险或会不会爆雷时使用。
 ---
 
 # 负债安全
 
 ## 何时使用
 
-- 「负债高吗」「有息负债占比」「短期偿债能力」
+- 「负债高吗」「有息负债占比」「短期偿债能力」「债务风险」「会不会爆雷」
 - 需要杠杆与流动性一览，而不是完整资产负债表逐行
+
+## 何时不要用 (When NOT to use)
+
+- **常规公司摸底/初印象** → 使用 `wm-company-card`（一站式全景卡片已包含核心负债指标，不要额外扇出本卡）
+- **完整资产负债表多期查看** → 使用 `wm-statements`
 
 ## 调用
 
-`POST {WINMALE_API_BASE}/v1/skills/wm-debt-safety/run`
+**优先**用统一门面 `wm.sh run`（**禁止**手搓 `curl` / 自行拼鉴权 HTTP）：
+
+```bash
+bash .cursor/skills/wm-skillhub/scripts/wm.sh run wm-debt-safety \
+  '{}' --symbol 600519 --result
+```
+
+业务参数进 JSON（即 HTTP `args`）；标的优先 `--symbol`。
+等价 HTTP 由脚本发出，Agent 勿直接拼鉴权。
 
 ```json
-{
-  "symbol": "600519",
-  "args": {}
-}
+{"symbol": "600519", "args": {}}
 ```
 
 Scope：`analysis:skills:run`。

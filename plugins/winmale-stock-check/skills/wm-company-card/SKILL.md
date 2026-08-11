@@ -1,22 +1,32 @@
 ---
 name: wm-company-card
 display_name: "公司卡片"
-version: 1.2.9
-description: 公司一页纸摸底（行情+身份+估值成长）。深度研读/备忘请走 Role；全行业比价走 wm-industry-members。
+version: 1.3.4
+description: 公司一页纸摸底/初印象/行情+基本面全景/快看（默认全模块 insight_pack；支持多票 symbols 批量）。深度研读走 Role，选股走 wm-screen-index。
 ---
 
 # 公司卡片
 
-公司摸底的 **L1 入口**（行情 + 基本面一页纸）。旧 `wm-quote-snapshot` 已市场下架。  
+公司摸底的 **L1 一站式入口**（行情 + 基本面一页纸）。  
 深度研读 / 生意全貌备忘 / 行业格局 → **不要停在本卡**，见下方「下一步」。
 
 ## 何时使用
 
+- **一站式全景摸底 (One-Shot Insight Pack)**：「这家公司怎么样 / 一页纸 / 摸底 / 简单看下 / 初印象 / 靠不靠谱 / 概况」→ **省略 include / 空 / `default`**（= 一站式全模块，含行情+K线+身份+估值+成长+质量+股东）
+  - ⚠️ **强硬约束**：遇到全景摸底意图，**必须**一次性获取全模块，**禁止**拆分成“先调行情，再调估值，再调财务”的多轮 HTTP 请求！
 - 「现在多少钱 / 今天涨跌」→ `include=quote` 或 `quote,kline`
-- 「这家公司怎么样 / 一页纸」→ 默认 `include=default`（quote+identity+valuation+growth）
 - 「看看走势 / 过往交易 / K线」→ 贴返回的 `company.kline` markdown；或只 `POST /v1/deeplinks/resolve`（不必跑全卡）
-- 要股东 / 现金流负债 → 加 `shareholder` / `quality`，或 `include=full`
-- **多只一起看**：`args.symbols`（≤50）
+- 只要部分模块 → 显式传 csv（如 `valuation,growth`）；`full`/`all` 与 default 相同
+- **多只一起看**：`args.symbols`（≤50）—— **严格禁止循环单跑**，多票必须一次 `symbols` 批量下发。
+  - **跨市场批量**（CN+HK+US 混装）：`skills/run` **自动按市场分 ExprEngine 再合并 `items`**（抹平 AT 跨市场行情/市值错乱）。响应可带 `markets_partitioned` / `cross_market_merged`。
+  - 仍建议同市场一批更省 EC；其它未列入宿主分市场清单的技能若混市场异常，请**分市场各调一次**。
+
+## 何时不要用 (When NOT to use)
+
+- **全市场条件选股 / 筛选** → 使用 `wm-screen-index` 或 `westock-tool`（不要用本卡拉多票手工过滤）
+- **深度生意解读正文** → `wm-company-business`（可先本卡摸底）
+- **行业全成分 / 同行比价** → `wm-industry-members`
+- **平台分析脚本树** → `wm-analysis-nav`
 
 ## 返回要点（给助手）
 
@@ -24,7 +34,7 @@ description: 公司一页纸摸底（行情+身份+估值成长）。深度研�
 - 推荐：`data.card.*` / `data.freshness` / `data.deeplinks`（信封扁平后业务键在 `data`）
 - 兼容：`data.result.card.*`（旧路径仍可用）
 
-`identity` / default 路径字段在 **`card`** 内：
+默认 / 全量路径字段在 **`card`** 内：
 
 | 字段 | HTTP 路径（推荐） | 用途 |
 |------|-------------------|------|
@@ -55,34 +65,27 @@ description: 公司一页纸摸底（行情+身份+估值成长）。深度研�
 
 ## 调用
 
-`POST {WINMALE_API_BASE}/v1/skills/wm-company-card/run`
-
-```json
-{
-  "symbol": "600519",
-  "args": { "include": "default" }
-}
+```bash
+bash .cursor/skills/wm-skillhub/scripts/wm.sh run wm-company-card \
+  '{"include":"default"}' --symbol 600519 --result
 ```
 
-轻量行情：
+轻量行情：`--symbol` + `'{"include":["quote"]}'`。
 
-```json
-{
-  "args": {
-    "symbols": ["600519", "000858"],
-    "include": "quote,kline"
-  }
-}
+**禁止** Agent 手搓 `curl` / 裸 `POST`；等价 HTTP 合同由包装脚本发出，业务在 `args`。
+
+```bash
+# 多票轻量行情（一次 symbols，勿循环单跑）
+bash .cursor/skills/wm-skillhub/scripts/wm.sh run wm-company-card \
+  '{"symbols":["600519","000858"],"include":"quote,kline"}' --result
 ```
 
 | include | 含义 |
 |---------|------|
-| `default` | quote + identity + valuation + growth |
-| `full` | 全部模块 |
+| 省略 / `""` / `default` / `full` / `all` | **全模块**（quote+kline+identity+valuation+growth+quality+shareholder） |
 | `quote` | 现价量额市值 |
 | `quote,kline` | 再加均线与区间涨跌 |
-| `…,shareholder` | 加上股东 |
-| `…,quality` | 加上现金/负债 |
+| `valuation,growth` 等 csv | 显式裁剪 |
 
 模块：`quote` `kline` `identity` `valuation` `growth` `quality` `shareholder`。
 
@@ -104,3 +107,4 @@ description: 公司一页纸摸底（行情+身份+估值成长）。深度研�
 - 新接入再装 `wm-quote-snapshot`（请用本技能）
 - 多票循环 run；应一次 `symbols`
 - 用本卡冒充实业「研读备忘」或「行业格局」长文（须交 Role / members）
+- **把指数当股票**：勿传 `399001`/`399006`/`000300`/`000688.INDEX`/`上证指数`/`index.hs300` 等；指数 → `wm-index-members`。**注意**：裸码 `000001` 在本卡是**平安银行**（个股），不是上证指数；要上证请用「上证」/ `shzs` + `wm-index-members`

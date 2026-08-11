@@ -18,8 +18,21 @@
 - 默认**元**；大数在 WHERE/XS 可用 `Y`/`W` 等字面量（见 XS 文档）
 - UI「亿」是展示换算，不是存储单位
 
+## 选股 `indicators` / discover screener 投影
+
+`action=indicators` 与 screener search 已做 **Agent 投影**（UI 目录仍为人话刻度）：
+
+| 字段 | 含义 |
+|------|------|
+| `value_scale` | `ratio` / `yi` / `wan` / `absolute` |
+| `default_value` / `example_condition_value` | **存储口径**，可直接进 `scalar.value` |
+| `display_unit` / `display_default_val` | UI 展示用；**禁止**原样抄进 conditions |
+
+例：ROE `display_unit:%` + `display_default_val:15` → `value_scale:ratio` + `default_value:"0.15"`。
+
 ## Agent 纪律
 
-- 不要猜单位；以指标 `unit` / 本原则 / 技能 playbook 为准
+- 不要猜单位；以 `value_scale` + `default_value` / 本原则 / playbook 为准
+- **不要**用 `display_unit` 或裸 `display_default_val` 拼条件
 - 选股细则见 `wm-screen-index/references/playbook.md` §0
-- 短 XS 见 `wm-xs-eval-guide/references/grammar-cheatsheet.md`
+- 短 XS 见 `wm-xs/references/grammar-cheatsheet.md`

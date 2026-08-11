@@ -1,28 +1,30 @@
 {
   "id": "wm-notice-radar",
   "name": "公告搜索",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "tier": 1,
   "visibility": "opt_in",
-  "description": "查询 A 股公司公告，或按类别/减持回购信号扫描。用户问公告、业绩预告、减持回购、全市场公告汇总时使用。",
+  "description": "查询 A 股/港股公司公告，或按类别/减持回购信号扫描。用户问公告、业绩预告、减持回购、全市场公告汇总时使用。仅交易所公告，不含财经媒体/舆情新闻。美股暂不支持（返回 UNSUPPORTED_MARKET）。",
   "inputs_schema": {
     "type": "object",
     "properties": {
       "symbol": {
-        "type": "string"
+        "type": "string",
+        "description": "单票代码；6 位 A 股 / 1–5 位港股自动分表；美股返回 UNSUPPORTED_MARKET"
       },
       "mode": {
         "type": "string",
         "enum": [
           "list",
           "category",
-          "signal"
+          "signal",
+          "digest"
         ],
         "default": "list"
       },
       "category": {
         "type": "string",
-        "description": "mode=category 时：forecast/buyback/reduction 等"
+        "description": "mode=category 时：forecast/buyback/reduction；watch|worth 等价 digest"
       },
       "signal": {
         "type": "string",
@@ -30,7 +32,7 @@
           "reduction",
           "buyback"
         ],
-        "description": "mode=signal 时"
+        "description": "mode=signal 时；无 symbol 则降级为全市场 category"
       },
       "window": {
         "type": "string",
@@ -40,6 +42,14 @@
         "type": "integer",
         "default": 20,
         "maximum": 100
+      },
+      "market": {
+        "type": "string",
+        "enum": [
+          "cn",
+          "hk"
+        ],
+        "description": "全市场 digest/category 扫描市场；默认 cn。单票由 symbol 形态推断，可省略"
       }
     }
   },
@@ -76,6 +86,17 @@
     "properties": {
       "items": {
         "type": "array"
+      },
+      "by_category": {
+        "type": "object",
+        "description": "mode=digest 时按类别分组的公告列表"
+      },
+      "resolved_mode": {
+        "type": "string",
+        "description": "实际执行模式（signal 无标的时可能为 category）"
+      },
+      "note": {
+        "type": "string"
       }
     }
   }

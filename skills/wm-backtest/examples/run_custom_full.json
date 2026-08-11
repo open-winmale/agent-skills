@@ -1,0 +1,20 @@
+{
+  "_comment": "引擎·自定义：run_custom 全阶段。阶段正文见 examples/xs/run_custom_full/（@pack:）。复杂自写 → ~/.winmale/workspace/projects/backtest/<name>/ + @xs:projects/backtest/…；依赖 push scripts/；语法归 wm-xs。先 preview；确认后 run_custom+confirm。",
+  "mode": "call",
+  "script_ref": "xs/skillhub/wm_backtest.xs",
+  "symbol": "600519",
+  "market": "cn",
+  "args": {
+    "action": "preview_custom",
+    "from_unit_id": "equal_weight_buy_hold",
+    "backtest_market": "cn",
+    "symbols": ["600519", "000858", "600036"],
+    "start": "2023-01-01",
+    "end": "2024-12-31",
+    "selector": "@pack:wm-backtest/examples/xs/run_custom_full/selector.xs",
+    "selector_rank": "@pack:wm-backtest/examples/xs/run_custom_full/selector_rank.xs",
+    "trading": "@pack:wm-backtest/examples/xs/run_custom_full/trading.xs",
+    "risk": "@pack:wm-backtest/examples/xs/run_custom_full/risk.xs",
+    "confirm": false
+  }
+}

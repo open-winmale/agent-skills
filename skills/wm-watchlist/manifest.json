@@ -1,12 +1,12 @@
 {
   "id": "wm-watchlist",
   "name": "我的关注列表",
-  "version": "0.2.2",
+  "version": "0.2.7",
   "tier": 1,
   "visibility": "opt_in",
   "l1_family": "user_asset",
   "asset_domain": "watchlist",
-  "description": "查看或整理我的关注列表：返回公司名称、分组与关键指标快照，不是裸代码列表。加/删用增量；整理前默认预览。统一跨市场 SoT。",
+  "description": "查看或整理我的关注列表：返回公司名称、分组与关键指标快照，不是裸代码列表。加/删/分组加删用增量；整理前默认预览。统一跨市场 SoT。",
   "inputs_schema": {
     "type": "object",
     "properties": {
@@ -17,6 +17,7 @@
           "add",
           "remove",
           "group_add",
+          "group_remove",
           "group_create",
           "group_rename",
           "group_delete",
@@ -98,6 +99,9 @@
       "user:watchlist:write"
     ],
     "group_add": [
+      "user:watchlist:write"
+    ],
+    "group_remove": [
       "user:watchlist:write"
     ],
     "group_create": [

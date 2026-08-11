@@ -46,7 +46,11 @@
 | 分母收缩抬分位 / 假贵 | **仅** `flags.fake_expensive_risk=true` 时 |
 | 席勒分叉 / 席勒分叉显著 | **仅** `flags.shiller_fork=true` 时 |
 | 收割候选 | **仅** `flags.harvest_candidate=true` 时 |
+| 周期顶部 | **仅** `flags.is_cycle_top=true` 时；强制走持续性三问 |
+| PB-ROE顶部错配 | **仅** `flags.has_pb_roe_top_mismatch=true` 时；强制走持续性三问 |
 | 无旗标 | 只写分位数字 + 利润/价格事实（用语限「利润分母效应」）+ ≠低估/≠高估；禁点名、禁「分母扩张」、禁否定/教学句 |
+
+**周期顶部持续性三问**：`is_cycle_top`/`has_pb_roe_top_mismatch` 任一为 true 时，顶部的反面不是「贵」是「持续时间短」，须走三问（供给刚性/PB隐含持续期/非价格收益）而非默认回避/数据不足；详见 `instruction-cn-industrial.md`。
 
 ## 输出形态（估值小表为主 + 对照表为辅）
 

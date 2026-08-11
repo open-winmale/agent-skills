@@ -1,6 +1,6 @@
 interface:
   display_name: "营收与利润"
-  short_description: "追踪营收与净利润水平、同比及行业分位/份额。用户问成长性、收入利润走势时使用。"
+  short_description: "看营收利润水平、增速与行业位置，观察成长是否在变。"
   default_prompt: "Use $wm-revenue-profit to help with: 追踪营收与净利润水平、同比及行业分位/份额。用户问成长性、收入利润走势时使用。"
 
 policy:

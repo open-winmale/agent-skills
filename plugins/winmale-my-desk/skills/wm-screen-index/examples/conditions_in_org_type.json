@@ -1,0 +1,17 @@
+{
+  "action": "conditions",
+  "market": "cn",
+  "top_n": 20,
+  "conditions": [
+    {
+      "type": "INDICATOR",
+      "field": "$ORG_TYPE_TAG",
+      "operator": "IN",
+      "value": {
+        "set": {
+          "values": ["央企", "地方国企"]
+        }
+      }
+    }
+  ]
+}

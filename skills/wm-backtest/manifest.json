@@ -1,7 +1,7 @@
 {
   "id": "wm-backtest",
   "name": "量化策略回测师",
-  "version": "0.3.3",
+  "version": "0.3.24",
   "tier": 1,
   "visibility": "opt_in",
   "l1_family": "user_asset",
@@ -16,12 +16,16 @@
           "list",
           "status",
           "summary",
+          "resume",
           "from_universe",
           "from_strategy",
-          "from_watchlist"
+          "from_watchlist",
+          "lint",
+          "preview_custom",
+          "run_custom"
         ],
         "default": "list",
-        "description": "list/status/summary=盘点跟踪解读；from_universe|from_strategy|from_watchlist=意图转任务（须 confirm）"
+        "description": "盘点/跟踪；from_*=意图转任务；lint/preview_custom/run_custom=自定义脚本；resume=恢复"
       },
       "run_id": {
         "type": "string"
@@ -30,7 +34,8 @@
         "type": "array",
         "items": {
           "type": "string"
-        }
+        },
+        "description": "股票池；写入 ConfigOverride.universe"
       },
       "strategy_id": {
         "type": "string"
@@ -41,7 +46,7 @@
       },
       "group_name": {
         "type": "string",
-        "description": "from_watchlist 可选；按分组名解析（精确优先，其次唯一模糊）；与 group_id 二选一"
+        "description": "from_watchlist 可选；按分组名解析；与 group_id 二选一"
       },
       "group": {
         "type": "string",
@@ -55,7 +60,7 @@
           "us"
         ],
         "default": "cn",
-        "description": "回测单市场；关注可跨市场展示，回测默认只用 cn（A股）"
+        "description": "回测单市场；默认 cn"
       },
       "market": {
         "type": "string",
@@ -66,12 +71,83 @@
         ],
         "description": "backtest_market 别名"
       },
+      "start": {
+        "type": "string",
+        "description": "窗口起点 YYYY-MM-DD"
+      },
+      "end": {
+        "type": "string",
+        "description": "窗口终点 YYYY-MM-DD"
+      },
+      "script_params": {
+        "type": "object",
+        "description": "按 role 数值覆盖，写入 ConfigOverride.script_params"
+      },
       "template_unit_id": {
+        "type": "string",
+        "description": "from_* 模板；默认 equal_weight_buy_hold"
+      },
+      "unit_id": {
+        "type": "string",
+        "description": "run_custom 目标 unit；省略则自动 agent_<request_id>；已存在则默认覆盖迭代"
+      },
+      "overwrite": {
+        "type": "boolean",
+        "default": true,
+        "description": "run_custom：unit 已存在时是否覆盖写脚本再跑；默认 true"
+      },
+      "benchmark": {
+        "type": "string",
+        "description": "ConfigOverride 基准；CN 默认 index.hs300（可不传）"
+      },
+      "from_unit_id": {
+        "type": "string",
+        "description": "自定义种子官方/已有 unit；默认 equal_weight_buy_hold"
+      },
+      "script": {
+        "type": "string",
+        "description": "lint 脚本正文"
+      },
+      "body": {
+        "type": "string",
+        "description": "lint 脚本正文别名"
+      },
+      "file_name": {
+        "type": "string",
+        "description": "lint 文件名，如 trading.xs"
+      },
+      "level": {
+        "type": "string",
+        "description": "lint 级别，默认 L2（与 xs/check、publish 同严格取向）"
+      },
+      "selector": {
+        "type": "string",
+        "description": "自定义 selector 阶段脚本"
+      },
+      "selector_filter": {
+        "type": "string",
+        "description": "selector 别名"
+      },
+      "selector_rank": {
         "type": "string"
+      },
+      "trading": {
+        "type": "string"
+      },
+      "risk": {
+        "type": "string"
+      },
+      "scripts": {
+        "type": "object",
+        "description": "可选 MAP：selector/selector_rank/trading/risk 正文"
       },
       "confirm": {
         "type": "boolean",
         "default": false
+      },
+      "idempotency_key": {
+        "type": "string",
+        "description": "resume 可选稳定幂等键"
       },
       "limit": {
         "type": "integer",
@@ -99,6 +175,15 @@
     "from_watchlist": [
       "user:watchlist:read",
       "analysis:backtest:run"
+    ],
+    "resume": [
+      "analysis:backtest:control"
+    ],
+    "run_custom": [
+      "analysis:backtest:project:write",
+      "workspace:write",
+      "workspace:publish",
+      "analysis:backtest:run"
     ]
   },
   "icon": "测",
@@ -107,25 +192,35 @@
   "official": true,
   "summary": "把策略、股票池或关注列表说清楚，确认后回测；关注默认按 A 股切市场。不是模拟炒股。",
   "sample_prompts": [
-    "用我的关注列表做一趟 A 股回测，先预览。",
-    "用我刚筛的高 ROE 池子等权月调仓，2023–2024 先预览再回测。",
-    "用我保存的选股策略看这三年历史表现。",
-    "最近一次回测收益回撤怎样，下一轮怎么改？"
+    "用我的关注列表做一趟 A 股等权买入持有回测，先预览。",
+    "用我刚筛的高 ROE 池子，2023–2024 等权持有，先预览再回测。",
+    "帮我 lint 这段 trading 脚本，再 preview_custom。",
+    "最近一次回测收益回撤怎样，下一轮怎么改？",
+    "刚才那趟回测额度暂停了，帮我恢复。"
   ],
   "expertise_tags": [
     "回测",
     "策略回测",
     "量化分析",
-    "关注列表"
+    "关注列表",
+    "等权买入持有"
   ],
   "outputs_schema": {
     "type": "object",
     "x-envelope": "skills_run",
-    "description": "Body = data.result (XS return). HTTP prefix: data.result.",
+    "description": "XS return flattened onto data.*；完整副本仍在 data.result。读 data.lint / data.run / data.mode 等。",
     "x-primary_path": ".",
     "properties": {
       "action": {
         "type": "string"
+      },
+      "mode": {
+        "type": "string",
+        "description": "run_custom: create | update"
+      },
+      "effective_config": {
+        "type": "object",
+        "description": "预览/发起时回显将应用的宇宙/窗口/参数/基准"
       },
       "deeplinks": {
         "type": "array"

@@ -1,6 +1,6 @@
 interface:
   display_name: "股息与分红"
-  short_description: "股息率与分红质量快照、历史与门槛判定。用户问高股息、分红是否可持续时使用。"
+  short_description: "看股息率与分红是否靠谱，适合红利思路初筛。"
   default_prompt: "Use $wm-dividend-quality to help with: 股息率与分红质量快照、历史与门槛判定。用户问高股息、分红是否可持续时使用。"
 
 policy:

@@ -1,0 +1,14 @@
+{
+  "_comment": "引擎·自定义：lint 阶段脚本（复杂正文用 wm-xs 起草）。默认 L2 + market=cn，须能识别 $IS_ST。",
+  "mode": "call",
+  "script_ref": "xs/skillhub/wm_backtest.xs",
+  "symbol": "600519",
+  "market": "cn",
+  "args": {
+    "action": "lint",
+    "script": "return !$IS_ST && $ROE_TTM >= 0.10",
+    "file_name": "selector_filter.xs",
+    "level": "L2",
+    "backtest_market": "cn"
+  }
+}

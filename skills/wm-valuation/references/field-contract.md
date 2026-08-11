@@ -18,7 +18,8 @@
 | 行业 PE/PB/ROE | `snapshot.industry.pe` / `pb` / `roe` | 对照表「行业」列 |
 | 行业股息 | `snapshot.industry.bonus_rate` | 近3年均值；散文 |
 | 行业 PE 10年均值 | `snapshot.industry.pe_avg10` | 对照表行业列 |
-| 诊断旗标 | `flags.*` | **专名门依据**；语义键（`fake_cheap_risk`/`harvest_candidate`/`shiller_fork`/`growth_decel`） |
+| 诊断旗标 | `flags.*` | **专名门依据**；语义键（`fake_cheap_risk`/`harvest_candidate`/`shiller_fork`/`growth_decel`/`is_cycle_top`/`has_pb_roe_top_mismatch`） |
+| 周期非价格收益 | `cyclical_nonprice_facts` | 供三问③「非价格收益能否对冲价差回落」；含 `tr_yoy`/`payout`/`dividend_yield` |
 | 裁决枚举 | `sections[].facts.verdict_enum` | 核心观点#2 必含整词 |
 | 路由 / 缺数字 | `methodology.*` / `quality.missing_fields` | 不写入读者正文 / 不写该点 |
 
@@ -37,5 +38,9 @@
 | 分母收缩 / 假贵 | `fake_expensive_risk=true` |
 | 席勒分叉 / 席勒分叉显著 | `shiller_fork=true` |
 | 收割候选 | `harvest_candidate=true` |
+| 周期顶部 | `is_cycle_top=true` |
+| PB-ROE顶部错配 | `has_pb_roe_top_mismatch=true` |
 
 无对应 flag → 禁点名；只写分位数字 + "利润分母效应" + ≠低估/≠高估。
+
+**周期顶部持续性三问（`is_cycle_top`/`has_pb_roe_top_mismatch` 任一为 true 时强制启用）**：顶部的反面不是「贵」是「持续时间短」——供给刚性可让顶部持续多年，回避多年即踏空多年。须走三问而非默认回避/数据不足；证据未闭合时可落「周期分母待定区」，但顶部本身永不作为回避理由。

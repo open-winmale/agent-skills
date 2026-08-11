@@ -1,10 +1,10 @@
 {
   "id": "wm-revenue-profit",
   "name": "营收与利润",
-  "version": "1.0.2",
+  "version": "1.0.6",
   "tier": 1,
   "visibility": "opt_in",
-  "description": "追踪营收与净利润水平、同比及行业分位/份额。用户问成长性、收入利润走势时使用。",
+  "description": "追踪营收与净利润水平、同比及行业分位/份额。用户问成长性、收入利润走势、营收行业分位与份额时使用。",
   "inputs_schema": {
     "type": "object",
     "required": [

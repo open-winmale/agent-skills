@@ -1,6 +1,6 @@
 interface:
   display_name: "现金流质量"
-  short_description: "评估经营现金流与利润是否匹配。用户问「赚的是现金还是纸面利润」时使用。"
+  short_description: "看经营现金流是否撑得住利润，判断现金质量好不好。"
   default_prompt: "Use $wm-cashflow-quality to help with: 评估经营现金流与利润是否匹配。用户问「赚的是现金还是纸面利润」时使用。"
 
 policy:

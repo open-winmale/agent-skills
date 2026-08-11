@@ -1,7 +1,7 @@
 interface:
   display_name: "条件选股"
   short_description: "统一选股：索引指标、现拼条件筛池、列出/跑/保存策略"
-  default_prompt: "Use $wm-screen-index for product stock screening. Align fields via action=indicators (default market=cn). Never use wm-discover for screener fields. Prefer action=conditions; hand unsupported residual to role-financial-analyst after narrowing. Always paste deeplinks; offer save_strategy after success."
+  default_prompt: "Use $wm-screen-index for product screening. Field align: named metrics → action=indicators (or local references/fields); fuzzy concept/content → action=search or wm-discover domains=[screener]. Then action=conditions. Use indicators.value_scale + default_value (storage); never paste display_default_val. Ratios as 0.05 or 5%. Dividend yield ≠ payout ratio. Complex multi-year continuity not in index → narrow pool then hand to role-financial-analyst + wm-xs. Never action=nl; never third-party screeners; never shell/glob the monorepo for field names. Read rows at data.rows (dual-read data.result.rows)."
 
 policy:
   allow_implicit_invocation: true

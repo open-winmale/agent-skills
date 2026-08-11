@@ -1,0 +1,12 @@
+{
+  "_comment": "管理·查历史：默认 audit 首页（page_limit=50）。翻页用 page_view=field + page_field + page_cursor。过程日志先 _backtest_trace page_view=summary。替换 run_id。",
+  "mode": "call",
+  "script_ref": "xs/ops/_backtest_deep.xs",
+  "symbol": "600519",
+  "market": "cn",
+  "args": {
+    "run_id": "REPLACE_WITH_RUN_ID",
+    "page_view": "audit",
+    "page_limit": 50
+  }
+}

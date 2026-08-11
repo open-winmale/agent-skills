@@ -24,4 +24,4 @@
 
 ## 超出时
 
-全市场红利排行、行业对比、自定义 INDEX 组合 → **金融分析师** + `wm-xs-eval-guide`，优先复用 `bonus.index_where_*`，勿硬凑本卡单票 mode 冒充排行。
+全市场红利排行、行业对比、自定义 INDEX 组合 → **金融分析师** + `wm-xs`，优先复用 `bonus.index_where_*`，勿硬凑本卡单票 mode 冒充排行。

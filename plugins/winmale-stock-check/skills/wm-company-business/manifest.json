@@ -1,10 +1,10 @@
 {
   "id": "wm-company-business",
   "name": "生意解读卡",
-  "version": "1.1.4",
+  "version": "1.1.8",
   "tier": 1,
   "visibility": "opt_in",
-  "description": "这门生意怎么样：赚钱模式、护城河与隐患，用人话讲清楚。别和「贵不贵」估值卡搞混。",
+  "description": "这门生意怎么样：赚钱模式、商业模式、靠什么赚钱、护城河与核心矛盾，用买方视角人话讲清楚。别和「贵不贵」估值卡搞混。",
   "inputs_schema": {
     "type": "object",
     "required": [

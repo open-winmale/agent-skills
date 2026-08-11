@@ -1,8 +1,8 @@
 ---
 name: wm-watchlist
 display_name: "我的关注列表"
-version: 0.2.2
-description: 查看或整理我的关注列表：返回公司名称、分组与关键指标快照，不是裸代码列表。加/删用增量；整理前默认预览。统一跨市场 SoT。
+version: 0.2.7
+description: 查看或整理我的关注列表：返回公司名称、分组与关键指标快照，不是裸代码列表。加/删/分组加删用增量；整理前默认预览。统一跨市场 SoT。
 ---
 
 # 我的关注列表
@@ -12,6 +12,11 @@ description: 查看或整理我的关注列表：返回公司名称、分组与�
 - 「我关注了哪些」「池子里现在怎样」
 - 「把茅台加进自选 / 从自选删掉 / 建分组 / 整理分组」（先预览再确认）
 - 「删组 / 改名」
+
+## 何时不要用 (When NOT to use)
+
+- **全市场条件选股/按指标找股票** → 使用 `wm-screen-index`（条件选股）
+- **单只股票的深入基本面/估值/多期三表** → 使用 `wm-company-card` / `wm-valuation` / `wm-statements`
 
 ## 库主人
 
@@ -32,7 +37,12 @@ description: 查看或整理我的关注列表：返回公司名称、分组与�
 
 ## 调用
 
-`POST {WINMALE_API_BASE}/v1/skills/wm-watchlist/run`
+**优先**用统一门面 `wm.sh run`（**禁止**手搓 `curl` / 自行拼鉴权 HTTP）：
+
+```bash
+bash .cursor/skills/wm-skillhub/scripts/wm.sh run wm-watchlist \
+  '{"action":"view"}' --result
+```
 
 ### view
 
@@ -60,15 +70,41 @@ description: 查看或整理我的关注列表：返回公司名称、分组与�
 
 或单码：`"symbol": "601633"`。默认 `cascade=true`（同步踢出各分组）；仅主列表删、留在分组传 `"cascade": false`。
 
-### 建分组 / 加入 / 改名 / 删组
+### 建分组 / 加入分组 / 移出分组 / 改名 / 删组
 
 ```json
 { "args": { "action": "group_create", "group_name": "重点关注" } }
 ```
 
+一步建组并入标的（可选）：
+
+```json
+{ "args": { "action": "group_create", "group_name": "重点关注", "symbols": ["600519", "00700"] } }
+```
+
+回执**始终**含非空 `group_id`（空组亦然）；再用 `group_add` 追加标的。
+
+**批量/单票加入分组**：
+
+```json
+{ "args": { "action": "group_add", "group_id": "<id>", "symbols": ["601633", "00700"] } }
+```
+
 ```json
 { "args": { "action": "group_add", "group_id": "<id>", "symbol": "601633" } }
 ```
+
+**批量/单票移出分组**（仅从指定分组移出，保留在主关注列表）：
+
+```json
+{ "args": { "action": "group_remove", "group_id": "<id>", "symbols": ["601633", "00700"] } }
+```
+
+```json
+{ "args": { "action": "group_remove", "group_id": "<id>", "symbol": "601633" } }
+```
+
+**改名与删组**：
 
 ```json
 { "args": { "action": "group_rename", "group_id": "<id>", "group_name": "核心池" } }
@@ -82,7 +118,23 @@ description: 查看或整理我的关注列表：返回公司名称、分组与�
 
 ### organize（全量替换，危险）
 
-仅用于真·整池整理。删几只请用 `remove`。正式提交：`confirm=true` 且 `dry_run=false`；含删除时还须 `allow_removals=true`。
+仅用于真·整池整理。计划键名固定为 **`organize_plan`**，其中 `symbols` 是完整主关注列表，`groups` 是完整分组列表；先用 `view` 的 `holdings` / `groups` 合并成完整计划。删几只请用 `remove`。
+
+```json
+{
+  "args": {
+    "action": "organize",
+    "organize_plan": {
+      "symbols": ["600519", "00700"],
+      "groups": [{"id": "<id>", "name": "核心池", "symbols": ["600519"]}]
+    }
+  }
+}
+```
+
+大计划用 CLI 文件输入，避免命令行转义或截断：`bash .cursor/skills/wm-skillhub/scripts/wm.sh run wm-watchlist @organize_plan.json --result`（文件 JSON 仍须包在 `{"args": {...}}` 中）。
+
+**固定流程**：先 `action=organize`（默认 `dry_run=true`）检查 `apply.diff` / `symbols_removed`；用户确认后，以同一完整计划传 `confirm=true`、`dry_run=false`。含删除时还须 `allow_removals=true`。
 
 回执：`apply` + 顶层 `diff` / `symbols_removed`。
 

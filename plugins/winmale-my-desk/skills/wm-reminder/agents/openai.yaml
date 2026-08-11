@@ -1,6 +1,6 @@
 interface:
   display_name: "到时候提醒我"
-  short_description: "列出/创建/管理我的研究提醒；支持个股、选股、榜单与任意 XS（call return 控推送）"
+  short_description: "列出或创建研究提醒（如财报前），到点叫你。"
   default_prompt: "Use $wm-reminder to help with: 列出/创建/管理我的研究提醒；支持个股、选股、榜单与任意 XS（call return 控推送）"
 
 policy:

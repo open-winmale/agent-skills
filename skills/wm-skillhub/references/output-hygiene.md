@@ -18,6 +18,7 @@
 - **禁止** Agent 自己拼装 URL、手搓 `panel=` / `vs=` / `/embed/v1/`；禁止使用已废弃 id `portfolio`（用 `watchlist`）
 - 反馈入口只用白名单 id：`feedback` / `feedback.new` / `feedback.detail` / `wechat.follow` / `community.group`（或 `feedback.create` 返回的 deeplinks）；禁止手搓 `/feedback…` `/wechat…` `/community`
 - 工具失败 / 可复现数据问题 → **自主** `feedback.create` / `POST /v1/feedback`，再贴返回 markdown；若 `!notify_channel.subscribed` 必贴 `wechat.follow`；勿等用户催
+- 反馈正文键必须是 **`detail`**（`title`=短摘要）；禁止 `body`/`content`/`description`（后台会空内容）
 - 自写短 XS → 留下可复跑入口（`wm-analysis-persist` 路径，或可再 `mode=call` 的语句）；口头-only 须声明不可复跑
 - 需要人眼核对图表 / 自选 / 回测时：只贴技能已解析的站内链接，禁止外站链接当证据
 - K 线 / 交易回顾 → 白名单 id `company.kline`（技能返回或 resolve），勿手搓 `panel=kline`

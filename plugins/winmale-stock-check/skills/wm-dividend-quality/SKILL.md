@@ -1,7 +1,7 @@
 ---
 name: wm-dividend-quality
 display_name: "股息与分红"
-version: 1.0.7
+version: 1.0.9
 description: 股息率与分红质量快照、历史与门槛判定。用户问高股息、分红是否可持续时使用。
 ---
 
@@ -22,7 +22,7 @@ description: 股息率与分红质量快照、历史与门槛判定。用户问�
 
 ```text
 1) 先单票 snapshot/history/quality/high_yield
-2) 全市场红利排行 / 行业对比 → role-financial-analyst + wm-xs-eval-guide，优先 bonus.index_where_*
+2) 全市场红利排行 / 行业对比 → role-financial-analyst + wm-xs，优先 bonus.index_where_*
 3) 产品条件筛池（股息+估值）→ wm-screen-index，不要用本卡硬扫
 4) 禁止硬凑「系统没有的排行」；禁止把 15 当 15% 传 min_yield
 ```
@@ -34,49 +34,40 @@ description: 股息率与分红质量快照、历史与门槛判定。用户问�
 
 ## 调用
 
-`POST {WINMALE_API_BASE}/v1/skills/wm-dividend-quality/run`
+**优先**用统一门面 `wm.sh run`（**禁止**手搓 `curl` / 自行拼鉴权 HTTP）：
+
+```bash
+bash .cursor/skills/wm-skillhub/scripts/wm.sh run wm-dividend-quality \
+  '{"mode":"snapshot"}' --symbol 600519 --result
+```
+
+业务参数进 JSON（即 HTTP `args`）；标的优先 `--symbol`。
+等价 HTTP 由脚本发出，Agent 勿直接拼鉴权。
 
 **所有 mode / 门槛参数必须放在 `args`。**
 
 ### snapshot（默认）
 
 ```json
-{
-  "symbol": "600519",
-  "args": { "mode": "snapshot" }
-}
+{"symbol": "600519", "args": {"mode": "snapshot"}}
 ```
 
 ### quality（门槛判定）
 
 ```json
-{
-  "symbol": "600519",
-  "args": {
-    "mode": "quality",
-    "min_yield": 0.03,
-    "payout_min": 0.3,
-    "payout_max": 0.7
-  }
-}
+{"symbol": "600519", "args": {"mode": "quality", "min_yield": 0.03, "payout_min": 0.3, "payout_max": 0.7}}
 ```
 
 ### high_yield
 
 ```json
-{
-  "symbol": "600519",
-  "args": { "mode": "high_yield", "min_yield": 0.03 }
-}
+{"symbol": "600519", "args": {"mode": "high_yield", "min_yield": 0.03}}
 ```
 
 ### history
 
 ```json
-{
-  "symbol": "600519",
-  "args": { "mode": "history", "limit": 20 }
-}
+{"symbol": "600519", "args": {"mode": "history", "limit": 20}}
 ```
 
 Scope：`analysis:skills:run`。收益率/分红率参数均为**小数**（`0.03` = 3%）。

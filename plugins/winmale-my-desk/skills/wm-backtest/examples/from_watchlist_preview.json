@@ -1,0 +1,15 @@
+{
+  "_comment": "管理·模板跑批：关注列表预览。默认 A 股；可加 group_name/group_id。确认后 confirm:true。期望 watchlist_counts / available_groups / effective_config。",
+  "mode": "call",
+  "script_ref": "xs/skillhub/wm_backtest.xs",
+  "symbol": "600519",
+  "market": "cn",
+  "args": {
+    "action": "from_watchlist",
+    "backtest_market": "cn",
+    "group_name": "重点关注",
+    "start": "2023-01-01",
+    "end": "2025-12-31",
+    "confirm": false
+  }
+}

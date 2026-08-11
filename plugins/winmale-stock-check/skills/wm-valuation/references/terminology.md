@@ -13,7 +13,7 @@
 ## 分红率 vs 股息率（禁止互换）
 
 - **分红率**（payout）= 现金分红 ÷ 净利润。字段 `payout`（`$BONUS_TTM_RATE`）。量级常 30%~70%。带 %。
-- **股息率**（dividend yield）= 现金分红 ÷ 市值。字段 `dividend_yield`（`$BONUS_RATE_TTM_LAST`）。量级常 1%~6%。带 %。
+- **股息率**（dividend yield）= 现金分红 ÷ 市值。字段 `dividend_yield`（`$BONUS_RATE_TTM_LAST_REAL`，锚定报告期窗口完整；`$BONUS_RATE_TTM_LAST` 除权后漏末期分红，仅作 fallback）。量级常 1%~6%。带 %。
 - 禁止把 3% 量级股息率标为「分红率」；禁止把 50%+ payout 标为「股息率」。
 
 ## Period 对用户展示

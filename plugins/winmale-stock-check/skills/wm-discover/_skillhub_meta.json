@@ -1,7 +1,7 @@
 {
   "name": "统一发现",
   "source": "skillhub",
-  "version": "1.3.3",
+  "version": "1.4.1",
   "slug": "wm-discover",
-  "description_zh": "用自然语言找公司/证券代码、行业与指数、SkillHub 技能、指标定义、XS 函数(vfunc，含 call_spec/returns_shape/ex 与域库 notice|filings|kline…)/测试示例、选股字段。不确定 wm-* 时先 discover（domain=skill），再 skills/run。"
+  "description_zh": "用自然语言找公司/证券代码、行业与指数、SkillHub 技能、指标定义、XS 函数(vfunc，含 example_call_xs/call_spec 与域库 kline|notice|filings…；稳定域库已随 init 预载)/测试示例、选股字段。不确定 wm-* 时先 discover（domain=skill），再 wm.sh run。"
 }

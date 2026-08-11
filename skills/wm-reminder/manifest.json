@@ -1,7 +1,7 @@
 {
   "id": "wm-reminder",
   "name": "到时候提醒我",
-  "version": "0.2.2",
+  "version": "0.2.6",
   "tier": 1,
   "visibility": "opt_in",
   "l1_family": "user_asset",
