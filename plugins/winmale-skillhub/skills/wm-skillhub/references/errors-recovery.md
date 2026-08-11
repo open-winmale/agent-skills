@@ -30,9 +30,9 @@
 
 | `error.code` | 对用户说 | Agent 动作 |
 |--------------|----------|------------|
-| `INVALID_CLIENT` | 凭证不对或已轮换 | 打开 **[/skillhub/creds](https://open.winmale.com/skillhub/creds)**，复制 **App ID** 与 **API Key**，写入本机 `WINMALE_CLIENT_ID` / `WINMALE_API_KEY`（或管家 `.env`）。**升级技能时勿覆盖已有密钥**；丢失才引导重拷。 |
+| `INVALID_CLIENT` | 凭证不对或已轮换 | 打开 **[/skillhub/creds](https://open.winmale.com/skillhub/creds)**，复制 **App ID** 与 **API Key**，写入 `~/.winmale/credentials.env`（`WINMALE_CLIENT_ID` / `WINMALE_API_KEY`）。**禁止**写进技能包目录；升级勿覆盖已有用户态密钥。 |
 | （无凭证 / 空 env） | 还没配开放平台应用 | 打开 **[/get-started](https://open.winmale.com/get-started)**：登录 → 自动建默认应用 → 去凭证页复制。 |
-| `INVALID_TOKEN` | 令牌过期 | 重新 `POST /v1/oauth/token`；勿把过期 token 当密钥。 |
+| `INVALID_TOKEN` | 令牌过期 | `WM_AUTH_FORCE_REFRESH=1 bash …/wm-auth.sh` **至多一次**；勿拿过期 token 再试；勿手搓 oauth。 |
 | `INSUFFICIENT_SCOPE` | 应用权限不够 | 打开 **`grant_url`**（优先用错误体里的链接）或 `https://open.winmale.com/console?appId={WINMALE_CLIENT_ID}&action=scopes&scope={need_scope}` → 勾选保存 → **重新换票**。禁止长篇手操步骤。 |
 | `EC_BALANCE_EXHAUSTED` | 算力点（EC）用完 | 打开 **[/billing](https://open.winmale.com/billing)** 或 `/console?action=recharge` 充值；或等周补。**禁止**空转重试。 |
 | `DAILY_EC_CAP_EXCEEDED` | 今日 EC 日顶用尽 | 说明等 UTC 日切，或充值/提档；见 `/docs?key=rate-limits`。 |
@@ -62,18 +62,23 @@
 2. 已有管家时：用 **升级话术** `GET .../install-prompt?kind=skillhub&mode=update`（不含密钥），或 `bash scripts/update-from-catalog.sh`
 3. 若已丢：打开 https://open.winmale.com/skillhub/creds  
    - 未登录 → 先登录（会自动建默认应用）  
-   - 在「我的凭证」复制 **App ID**、**API Key** 粘回 `.env`
+   - 在「我的凭证」复制 **App ID**、**API Key** 粘回 `~/.winmale/credentials.env`
 4. 若页面提示轮换：仅当用户明确要求轮换时再点；轮换后旧 Key 立即失效
 
 ---
 
 ## Agent 话术模板（可直接改写）
 
-**丢密钥：**  
-「请打开 https://open.winmale.com/skillhub/creds ，登录后在页面复制 App ID 和 API Key，发给我写入本地配置（我不会在回复里完整回显密钥）。」
+回复时**必须带 Markdown 链接**（不要只给裸域名或口述路径）：
+
+**丢密钥 / 密钥失效：**  
+「当前凭证无效或已轮换。请打开 [我的凭证](https://open.winmale.com/skillhub/creds) ，登录后复制 **App ID** 和 **API Key** 发给我写入本地配置（我不会在回复里完整回显密钥）。」
 
 **EC 耗尽：**  
-「当前应用的算力点（EC）已用完。请打开 https://open.winmale.com/billing 登录后充值，或到「我的应用」看余额；充好后告诉我再继续。」
+「当前应用的算力点（EC）已用完。请打开 [充值页](https://open.winmale.com/billing) 或 [控制台充值](https://open.winmale.com/console?action=recharge) 完成充值；充好后告诉我再继续。——**不会**在额度恢复前自动重试。」
 
 **未登录 / 未建应用：**  
-「请先打开 https://open.winmale.com/get-started 用赢麻了账号登录；系统会自动创建免费档默认应用，再到凭证页复制密钥。」
+「请先打开 [开始使用](https://open.winmale.com/get-started) 用赢麻了账号登录；系统会自动创建免费档默认应用，再到 [凭证页](https://open.winmale.com/skillhub/creds) 复制密钥。」
+
+**缺 scope：**  
+「当前应用缺权限 `{need_scope}`。请打开 `{grant_url}` 勾选并保存，然后让我重新换票再试。」

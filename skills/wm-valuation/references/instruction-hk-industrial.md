@@ -23,6 +23,8 @@
 
 席勒分叉仅当 `flags.shiller_fork=true` 时一句。
 
+**周期顶部持续性三问**（同 CN 实业）：`is_cycle_top`/`has_pb_roe_top_mismatch` 为 true 时强制走三问（供给刚性/PB隐含持续期/非价格收益），不得直接落「数据不足」或回避；周期顶部豁免盈利收益率绝对锚（峰值 EPS 抬高=假便宜口径），改用 PB/席勒。详见 `instruction-cn-industrial.md` 同名段落。港股行业中枢缺失不影响三问（三问基于本公司 ROE 分位 + PB 分位 + 非价格收益，非行业对照）。
+
 ## 输出结构
 
 见 `output-skeleton.md`（港股缺行业时：估值小表 + 零对照表；行业对照优先中位数，缺失时省略对照句）。

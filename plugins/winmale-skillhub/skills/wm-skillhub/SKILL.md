@@ -1,8 +1,8 @@
 ---
 name: wm-skillhub
 display_name: "SkillHub 管家"
-version: 1.0.29
-description: 配置赢麻了 API 凭证、浏览官方技能与 Role 目录，或安装/更新其它官方技能与 Role 时使用。请先安装本技能，再由它管理其余条目。
+version: 1.1.14
+description: 配置赢麻了 API 凭证、浏览官方技能与 Role 目录，或安装/更新其它官方技能与 Role 时使用。请先安装本技能，再由它管理其余条目。金融场景优先加载 wm-finance-router。
 ---
 
 # SkillHub 管家
@@ -17,16 +17,16 @@ description: 配置赢麻了 API 凭证、浏览官方技能与 Role 目录，�
 
 开放平台复制的首装话术默认走 **hub 整包**（单次下载 + `install/bootstrap/install.sh|.ps1`），装齐全部可见 skill 与 role，避免逐个安装与现场依赖分析。逐个 pack / install Markdown 仅为次要路径。
 
-## 使用心智（先四 Role）
+## 使用心智（场景 Role）
 
 装好全量后，**对话时优先用四个场景 Role**（L1 砖已在本机，按需调用即可）：
 
 | 工程 id | 对外主名 | 一句话 |
 |---------|----------|--------|
-| `role-fundamentals-check` | **个股核对专家** | 单票读懂 / 说法对账 / 贵贱 / 公告 |
-| `role-retail-tracker` | **投研管家** | 我的关注 · 提醒 · 策略 · 回测 |
+| `role-fundamentals-check` | **个股核对专家** | 单票读懂 / 说法对账 / 贵贱 / 公告（**不含**产品选股） |
+| `role-retail-tracker` | **投研管家** | 我的关注 · 提醒 · 我的策略 · 回测 |
 | `role-company-research-memo` | **公司深读专家** | 研究一家公司：读分析页 → 投资备忘 |
-| `role-financial-analyst` | **金融分析师** | 个股 · 行业 · 指数 · 行情开分析（可写短查询） |
+| `role-financial-analyst` | **金融分析师** | 开分析 + **产品选股**（`wm-screen-index`）+ 个性化查询（`wm-xs`） |
 
 深度卡 `wm-cashflow` / `wm-debt`、以及已并入统一选股的 `wm-screener-mine`，均为 `visibility=deprecated`（目录/更新不主推）；日常用质量/安全简单版与 `wm-screen-index`。
 
@@ -40,11 +40,11 @@ description: 配置赢麻了 API 凭证、浏览官方技能与 Role 目录，�
 
 | 做 | 不做 |
 |----|------|
-| 保存 `WINMALE_*`，用 OAuth + discover 做连通性检查 | 代替子技能杜撰财务口径 |
+| 保存 `WINMALE_*`，用 **`scripts/wm-auth.sh`**（见 [auth.md](references/auth.md)）换票 + discover 连通性检查 | 代替子技能杜撰财务口径；让 Agent 手搓多种 oauth 试探 |
 | 用官方 `pack_url` / install 合同安装或更新 skill 与 role，并做 frontmatter + sidecar 验收 | 使用来路不明的第三方 zip；留下剥光 YAML 的损坏 `SKILL.md`；用 `install/skills/` 装 Role |
 | 把请求路由到已安装子技能 / Role，或提示先安装 | 对公开租户启用 internal overlay；对 Role 调 `skills/run` |
 
-本技能 **没有** `POST /v1/skills/wm-skillhub/run`。发现用 discover；具体业务走各子技能的 `/v1/skills/{id}/run` 或 eval。
+本技能 **没有** 可执行 run。发现用 `wm.sh discover`；具体业务走各子技能的 **`wm.sh run`**（或 `wm-xs-*.sh`），**禁止**手搓 `curl` / 自行拼鉴权 HTTP。
 
 ## 证券代码约定
 
@@ -55,12 +55,43 @@ description: 配置赢麻了 API 凭证、浏览官方技能与 Role 目录，�
 ## 版本
 
 - 本技能版本见 frontmatter / `manifest.json` 的 `version`（semver）
-- 远端总表：`GET https://open.winmale.com/api/skills` → `hub_version`，以及 `skills[]` / `roles[]` 各自的 `version`
+- 远端总表：`GET https://open.winmale.com/api/skills` → 响应多为 **`{ data: { hub_version, skills[], roles[], … }, meta: {…} }`**；读 `data.hub_version` / `data.skills`（脚本已 unwrap）。扁平字段是文档简写，不是裸响应根。
 - 约定见 SkillHub 仓 `docs/VERSIONING.md`
+- 升级预演：`bash scripts/update-from-catalog.sh --check`（或 `--dry-run`）只对比版本 / 打印 changelog，不下载
 
 ## 前置：凭证
 
-**首装**：从用户粘贴的安装话术中解析并持久化（环境变量或本目录 `.env`；勿提交到 git，勿在对话中回显完整 Key）：
+**运行时目录（硬）**：凭证、token 缓存与 **Agent 本地 workspace 镜像** 写在 **`~/.winmale/`**，**不要**写进 `skills/*`（升级 zip 会覆盖）。
+
+| 路径 | 用途 |
+|------|------|
+| `~/.winmale/credentials.env` | API 凭证（或 `WM_SKILLHUB_ENV`） |
+| `~/.winmale/cache/` | access token |
+| `~/.winmale/workspace/` | 云用户 workspace 镜像（`WM_WORKSPACE_HOME` / 兼容 `WM_XS_HOME`） |
+
+布局与云一致：`scripts/` · `skills/` · `projects/{analysis,backtest,screener,reminders,watchlist}/` · `tmp/` · `tests/`。
+
+**本地引用**（`wm.sh run` / `xs-eval --args` 自动展开正文）：
+
+| 前缀 | 解析 |
+|------|------|
+| `@xs:scripts/foo.xs` | `~/.winmale/workspace/scripts/foo.xs` |
+| `@xs:projects/backtest/<id>/trading.xs` | 拨测阶段 |
+| `@file:path.xs` | 绝对或相对 cwd |
+| `@pack:wm-backtest/examples/xs/...` | 已装 skill pack 内文件 |
+
+兼容：`@xs:backtest/…` → `projects/backtest/…`；旧 `~/.winmale/xs/` 在 `workspace init` 时迁移。
+
+```bash
+$WM workspace init              # 创建镜像目录
+$WM workspace path
+$WM workspace push scripts      # 同步到云（需 workspace:write；或设 WINMALE_USER_TOKEN）
+$WM workspace pull scripts
+```
+
+多文件 `xs.require`：本地试跑由 `xs-eval` 打成 `script_files`（`my/…`）；**拨测 / skills/run 不带 overlay**，依赖须先 `workspace push`。
+
+**首装**：解析安装话术后写入 `~/.winmale/credentials.env`（或已 export 的 `WINMALE_*`；勿回显完整 Key）：
 
 ```text
 WINMALE_API_BASE=https://api.winmale.com
@@ -68,51 +99,78 @@ WINMALE_CLIENT_ID=...
 WINMALE_API_KEY=...
 ```
 
-**已有凭证时（硬）**：若本目录已有 `.env`（或环境已有 `WINMALE_*`），**保留勿覆盖**。仅当用户明确说「轮换 / 换密钥 / 重新签发」时才重写。丢失密钥时引导用户打开 https://open.winmale.com/skillhub/creds 复制（默认不轮换）。
+**已有凭证时（硬）**：若 `~/.winmale/credentials.env` 已存在（或环境已有 `WINMALE_*`），**保留勿覆盖**。仅当用户明确说「轮换 / 换密钥 / 重新签发」时才重写。丢失密钥时引导 https://open.winmale.com/skillhub/creds。
 
 **升级 vs 首装（硬）**：
 
 | 场景 | 用什么 | 禁止 |
 |------|--------|------|
-| 本机**已有**管家 / `.env` | `install-prompt?kind=skillhub&mode=update`（**不含密钥**），或 `bash scripts/update-from-catalog.sh` | 再粘贴含 `WINMALE_API_KEY=` 的首装话术 |
-| 本机**尚未**装管家 | 首装话术（含凭证） | 用 update 话术却跳过写 `.env` |
+| 本机**已有**管家 / 用户态凭证 | `install-prompt?kind=skillhub&mode=update`（**不含密钥**），或 `bash scripts/update-from-catalog.sh` | 再粘贴含 `WINMALE_API_KEY=` 的首装话术 |
+| 本机**尚未**装管家 | 首装话术（含凭证）→ 写入 `~/.winmale/credentials.env` | 把密钥写进技能包目录 |
 
 有 shell 时优先：
 
 ```bash
 # 在 skills/wm-skillhub 目录
-bash scripts/update-from-catalog.sh          # 升级已装且落后的 skill/role（含本管家）
+bash scripts/update-from-catalog.sh --check   # 预演：本地 vs 远端 + changelog，不下载
+bash scripts/update-from-catalog.sh          # 全量管理：补装缺失的 public/opt_in + 升级已装落后包（含 roles）
+bash scripts/update-from-catalog.sh --installed-only  # 仅升级本机已装
 bash scripts/update-from-catalog.sh --hub-only
+bash scripts/update-from-catalog.sh wm-xs     # 安装或升级单个 id（含未装的 opt_in）
 ```
 
-脚本会备份并恢复 `.env`；官方 zip **不含** `.env`。
+官方 zip **不含**凭证与 `~/.winmale/workspace/`；升级**不碰**用户态目录（`credentials.env` / `cache/` / `workspace/`）。更新前会把旧包装份到 `~/.winmale/backups/skills/{id}/{timestamp}/`（保留最近 3 份）；管家自身放在队列末尾更新。旧版若仍有 `wm-skillhub/.env`，`wm-auth.sh` 会迁到用户态。
 
 **尚未登录 / 未建应用**：引导 https://open.winmale.com/get-started（登录后自动创建免费档默认应用，再去凭证页复制）。
 
-换票：`POST {WINMALE_API_BASE}/v1/oauth/token`  
-`grant_type=client_credentials`，使用 client_id / client_secret（`WINMALE_API_KEY` = app 的 client_secret）。
+## 鉴权与执行（全体 wm-* 共用）
 
-连通性检查：
+Agent **不要**手搓 oauth / `curl …/skills/…/run`。**统一一门面**：
 
-```http
-POST /v1/analysis/xs/discover
-{"q":"贵州茅台","domains":["symbol"],"limit":5}
+```bash
+WM="bash .cursor/skills/wm-skillhub/scripts/wm.sh"   # 或 skills/wm-skillhub/scripts/wm.sh
+$WM discover '{"q":"贵州茅台","domains":["symbol"],"limit":5}' --result
+$WM run wm-company-card '{}' --symbol 600519 --result
+$WM xs-eval -c 'return MAP{"roe": $ROE_TTM_LAST}' 600519 --result
+$WM xs-eval @xs:scripts/demo.xs 600519 --result
+$WM workspace init
+$WM workspace push scripts
+$WM xs-fmt path.xs
+$WM hub list|rename|cleanup|doctor
 ```
 
-期望命中 `600519`。
+旧 shim（`wm.sh discover` / `wm.sh run` / `wm-xs-*.sh`）仍可用，**新文档只教 `wm.sh`**。  
+内部换票见 [auth.md](references/auth.md)。连通性：`$WM discover` 查「贵州茅台」应命中 `600519`。
 
-## 错误恢复（网关 + 技能体）
+## 错误恢复（网关 + 技能体）— **必须给人落地页**
 
-遇到 `INVALID_CLIENT`、`EC_BALANCE_EXHAUSTED`、`SCOPE_DENIED`、`CAPABILITY_NOT_MOUNTED`、升级丢密钥等：**先读** [errors-recovery.md](references/errors-recovery.md)，按表给人话 + 落地页（`/get-started`、`/skillhub/creds`、`/billing`）。  
-**禁止** EC 耗尽后空转重试；**禁止**用安装话术覆盖用户已有密钥。
+遇到失败时：**先读** [errors-recovery.md](references/errors-recovery.md)，**禁止**只甩错误码或空转重试。对用户必须：
+
+1. **一句话人话**说明卡在哪（凭证 / 额度 / 权限 / 系统）
+2. **原样给出可点开的落地页**（Markdown 链接），让用户自己去修
+3. 修完后告诉你再继续（EC 耗尽后**禁止**盲目重试）
+
+| 场景 | 对用户说 + 落地页 |
+|------|-------------------|
+| 未登录 / 未建应用 | [开始使用](https://open.winmale.com/get-started) — 登录后自动建免费档默认应用 |
+| 密钥失效 / `INVALID_CLIENT` / 丢凭证 | [我的凭证](https://open.winmale.com/skillhub/creds) — 复制 App ID + API Key 写入 `~/.winmale/credentials.env` |
+| EC 额度用尽 `EC_BALANCE_EXHAUSTED` | [充值算力点](https://open.winmale.com/billing) 或 [控制台充值](https://open.winmale.com/console?action=recharge) |
+| 日顶 `DAILY_EC_CAP_EXCEEDED` / 限速 | 说明等日切或提档；文档 [限速说明](https://open.winmale.com/docs?key=rate-limits) |
+| 权限不够 `INSUFFICIENT_SCOPE` / `SCOPE_DENIED` | **优先贴错误体里的 `grant_url`**；否则 `https://open.winmale.com/console?appId={CLIENT_ID}&action=scopes&scope={need}` → 勾选保存 → **重新换票** |
+| 能力未挂载 `CAPABILITY_NOT_MOUNTED` | 确认用 App 凭证（非匿名）；[控制台](https://open.winmale.com/console) 查应用与 scope 后换票 |
+| 其它网关错误 | [错误码文档](https://open.winmale.com/docs?key=errors) |
+
+**禁止**用安装话术覆盖用户已有密钥；**禁止** EC 耗尽后空转重试。
+
+话术模板见 [errors-recovery.md](references/errors-recovery.md) 末尾。
 
 ## 调用公约（所有子技能）
 
-1. Base：`WINMALE_API_BASE`
-2. `skills/run`：**除可选顶层 `symbol` 外，业务参数一律放进 `args`**
-3. 标的码 / 指标名 / **选股字段与枚举取值**不明时 → 先 `wm-discover`（选股用 `domains=["screener"]`；与 `wm-screen-index` `search` 同源）。已知 field 可直接 `conditions`
-4. **写/读 XS 函数**（含 `notice.*` / `filings.*` / `screener.*` 等）→ `wm-discover` `domains=["vfunc"]`，读命中的 **`ex` + `call_spec`（含 `returns_shape`）** 再 eval；细则见 `wm-discover`
-5. 无现成投资 Skill、或选股索引缺口（已缩小池仍缺口径）→ `role-financial-analyst` + `wm-xs-eval-guide`；**禁止**改走 westock / 同花顺 / 东财等第三方选股·指标工具补洞
+1. 执行面：**仅** `wm.sh`（`discover` / `run` / `xs-eval` / `xs-check` / `xs-fmt` / `workspace` / `hub`）；勿手搓 HTTP
+2. 业务参数进 **`args` 嵌套**（`--symbol` 为顶层标的）。skills/run 正确形如 `{"args":{"action":"…",…}}`；**禁止**扁平 `{"action":"…"}`（会 `ARGS_REQUIRED` 或静默错路径）。复杂 XS 字段用 `@xs:` / `@pack:` / `@file:`；多文件依赖试跑用 xs-eval 闭包，正式跑先 `workspace push`
+3. 标的码 / 指标名 / **选股字段与枚举取值**不明时 → `$WM discover`（选股用 `domains=["screener"]`）
+4. **写/读 XS 函数** → `$WM discover` `domains=["vfunc"]`，读 **`example_call_xs` + `call_spec`**（稳定域库已预载，`require` 可忽略）再 `$WM xs-eval`；领域库见 `wm-xs/references/domain-libs.md`
+5. 需要编写 XS / 开分析查询 / **产品选股** → `role-financial-analyst`（选股走 `wm-screen-index`；个性化查询走 `wm-xs`）；**禁止**改走 westock / 同花顺 / 东财等第三方选股·指标工具补洞
 6. 公开清单：`GET https://open.winmale.com/api/skills`（只读，无需 Key）
 
 ## 技能反馈（统一 Feedback）
@@ -137,18 +195,30 @@ Agent **应自主**使用反馈能力，不要等用户说「帮我提个 bug」
 7. **闭环由运营处理** → Agent **勿伪造**「已解决 / 已修复」
 8. **禁止**手搓反馈 / 关注 / 进群 URL（见 [output-hygiene.md](references/output-hygiene.md)）
 
+**字段硬规则（正文）**：
+
+| 字段 | 用途 | 注意 |
+|------|------|------|
+| `title` | 短摘要（一行） | 必填；不要把复现步骤塞进 title |
+| `detail` | **正文**（复现 / 期望 / 实际 / 上下文） | **唯一规范键**；运营后台「内容」读的就是它 |
+| `skill_id` / `repro` | 归属与复现 | 有则填 |
+
+**禁止**用 `body` / `content` / `description` / `message` / `text` 当正文键——Agent 常误写导致后台内容为空。服务端会对这些别名做兜底映射到 `detail`，仍应写 `detail`。
+
 ```http
 POST /v1/feedback
-{"kind":"bug","severity":"P2","title":"…","detail":"…","skill_id":"wm-watchlist","repro":{"expect":"…","actual":"…"}}
+{"kind":"bug","severity":"P2","title":"短摘要","detail":"复现步骤 / 期望 / 实际…","skill_id":"wm-watchlist","repro":{"expect":"…","actual":"…"}}
 ```
+
+`kind` 允许值：`bug` | `data` | `docs` | `ux` | `feature` | `other`（无 `suggestion`；产品建议用 `feature`，体验建议用 `ux`）。默认应用 scope 已含 `feedback:read` / `feedback:write`；亦可用 `analysis:xs:eval` bootstrap。
 
 ```xs
 feedback.create(MAP{
-  "kind": "bug",
-  "severity": "P2",
-  "title": "…",
-  "detail": "…",
-  "skill_id": "wm-watchlist"
+  "kind": "feature",
+  "severity": "P3",
+  "title": "短摘要",
+  "detail": "复现步骤 / 期望 / 实际…",
+  "skill_id": "wm-skillhub"
 })
 feedback.list(MAP{"domain": "skill", "limit": 20})
 ```
@@ -250,7 +320,7 @@ unzip -o /tmp/wm-skillhub.zip -d "<skills_root>"
 2. **路径 A（推荐）：** `pack_url` 或 `GET /api/roles/{id}/pack` → `unzip -o` 到 skills 根（顶层 `role-*/`）
 3. **路径 B（无 shell）：** 读 `https://open.winmale.com/api/install/roles/{id}`，复制围栏正文到 `SKILL.md`，并按合同写 references
 4. 写 `_skillhub_meta.json`、`agents/openai.yaml`、`.wm-skill-meta.json`（**必须**含 `"kind":"role"`）
-5. 验收门禁；**禁止** `POST /v1/skills/{roleId}/run` — Role 只编排 allowed_skills
+5. 验收门禁；**禁止**对 Role id 执行 skills run — Role 只编排 allowed_skills（用 `wm.sh run`）
 
 ### 验收门禁（每次安装/更新必做）
 
@@ -267,11 +337,11 @@ unzip -o /tmp/wm-skillhub.zip -d "<skills_root>"
 4. 若本地仍装着带 `replaced_by` 的旧 Pack（如 `wm-screener-mine` → `wm-screen-index`）：**更新/确保安装 `replaced_by`**，并告知用户旧 id 已下架，可选删除本地旧目录；**不要**再给旧 id 升版本
 5. 落后则按对应类型安装流程覆盖 pack（skill → skill pack；role → role pack），并更新 `.wm-skill-meta.json`
 6. **本地密钥与标记（硬）**
-   - 官方 zip **不含** `.env`；`unzip -o` **只覆盖** pack 内文件（`SKILL.md` / manifest / sidecar / references…）
-   - **禁止**升级时重写已有 `wm-skillhub/.env` 或改写环境里的 `WINMALE_*`，除非用户明确要求轮换密钥
-   - 升级前若存在 `.env` → 备份（如 `.env.bak`）；升级后确认仍在；若被误删则从备份恢复，并引导用户到凭证页复制（勿擅自轮换）
-   - **优先** `bash scripts/update-from-catalog.sh` 或 `mode=update` 升级话术；**禁止**对已有 `.env` 的机器再跑含密钥的首装话术
-7. 可先更新本管家，再 `update_all`（**必须覆盖可见的 roles，不能只装 wm-***；且遵守上面的 deprecated 跳过规则）
+   - 官方 zip **不含**凭证；`unzip -o` **只覆盖** pack 内文件（`SKILL.md` / manifest / sidecar / references…）
+   - 凭证与 token 在 **`~/.winmale/`**；升级**不得**改写该目录，除非用户明确要求轮换密钥
+   - 若仍发现遗留 `wm-skillhub/.env`：迁到 `~/.winmale/credentials.env` 后可删技能目录内副本（`wm-auth.sh` 也会自动迁）
+   - **优先** `bash scripts/update-from-catalog.sh` 或 `mode=update` 升级话术；**禁止**对已有用户态凭证的机器再跑含密钥的首装话术
+7. 可先更新本管家，再跑无参 `update-from-catalog.sh`（= `update_all`：**补装**可见 skill/role，含 `opt_in`；**升级**落后包；跳过 deprecated；旧 id 有 `replaced_by` / 别名时装新 id）
 8. 抽查 frontmatter / `_skillhub_meta.json`；损坏则改走 pack
 
 ### 路由
@@ -279,7 +349,7 @@ unzip -o /tmp/wm-skillhub.zip -d "<skills_root>"
 **意图匹配顺序（硬）：**
 
 1. 先对照已装 **四 Role** 的 `description` / 何时启用（研究/研读/备忘 → 公司深读；关注/提醒/自选 → 投研管家；短核对/贵贱/公告 → 个股核对；开放分析/行业格局/**指数按企业类型看估值结构或多年趋势** → 金融分析师）
-2. 再匹配 L1 `wm-*`（`wm-index-members` 只做成分/中枢快照，**不能**代替金融分析师做分类型 PE·PB）
+2. 再匹配 L1 `wm-*`（`wm-index` / `wm-industry` 为域入口；`wm-*-members` 为窄场景成分快照，**不能**代替金融分析师做分类型 PE·PB）
 3. 「研究一下 / 生意全貌+风险 / 进一步研读 / 读财务分析」→ **禁止**只跑 `wm-company-card` + 通读本管家；须走对应 Role（深读须 `wm-analysis-nav`→`run`）
 4. 未装 → 确认后安装再调用
 5. **禁止**用 tongzhou / 东方财富等外站数据技能冒充平台指数/估值证据
@@ -288,11 +358,14 @@ unzip -o /tmp/wm-skillhub.zip -d "<skills_root>"
 
 | id | 用途 |
 |----|------|
+| `wm-finance-router` | **金融总路由与红线**（投研场景优先加载） |
 | `wm-discover` | 发现代码 / 指标 / 策略 / skill；**vfunc 含 `ex`/`call_spec`/`returns_shape` 与域库** |
 | `wm-quote-snapshot` | ~~行情快照~~（已下架，请用 company-card） |
 | `wm-company-card` | 公司一页纸（含行情；`include` 裁剪） |
-| `wm-industry-members` | 申万行业全成分 + 估值中枢 |
-| `wm-index-members` | 指数成分快照（≤50）；分类型/多年结构 → 金融分析师 |
+| `wm-index` | **指数域总入口**（点位/K线/中枢/成分/权重）；勿与 `wm-screen-index` 混淆 |
+| `wm-industry` | **行业域总入口**（中枢/成分/龙头；一期无点位K） |
+| `wm-industry-members` | 申万行业成分窄场景（总入口优先 `wm-industry`） |
+| `wm-index-members` | 指数成分窄场景（总入口优先 `wm-index`）；分类型/多年结构 → 金融分析师 |
 | `wm-analysis-nav` / `wm-analysis-run` | 分析脚本导航与执行 |
 | `wm-company-business` | 生意解读卡 |
 | `wm-notice-radar` | 公告 / 减持回购；**库主人 `sys/notice.*`**；超出→eval |
@@ -300,12 +373,12 @@ unzip -o /tmp/wm-skillhub.zip -d "<skills_root>"
 | `wm-screener-mine` | ~~我的选股~~（已下架，并入 screen-index） |
 | `wm-watchlist` | 我的关注；**库主人 `watchlist.*`**；池内再筛→eval/screen |
 | `wm-reminder` | 提醒 list/create；**库主人 `reminder.*`**；改删查触发→诚实缺口/eval |
-| `wm-cashflow-quality` / `wm-debt-safety` / `wm-revenue-profit` / `wm-dividend-quality` / `wm-shareholder-structure` / `wm-executives` / `wm-operating-segments` | 财务与股权卡片；股息另见 **`sys/bonus.*`** |
-| `wm-xs-eval-guide` | 沙箱短 XS（开分析优先走金融分析师 Role） |
+| `wm-cashflow-quality` / `wm-debt-safety` / `wm-revenue-profit` / `wm-statements` / `wm-data` / `wm-dividend-quality` / `wm-shareholder-structure` / `wm-executives` / `wm-operating-segments` | 财务与股权卡片；**三表多期**用 `wm-statements`；**综合查数**用 `wm-data`；股息另见 **`sys/bonus.*`** |
+| `wm-xs` | **沙箱 XS**（凡写 XS 用它；常由金融分析师编排） |
 | `role-fundamentals-check` | Role：个股核对专家 |
 | `role-retail-tracker` | Role：投研管家 |
 | `role-company-research-memo` | Role：公司深读专家 |
-| `role-financial-analyst` | Role：金融分析师 |
+| `role-financial-analyst` | Role：金融分析师（分析师 + 懂 XS 的程序员） |
 
 完整列表以 catalog 为准。公开侧不要推荐第二张 XS 语法卡。
 
@@ -316,5 +389,5 @@ unzip -o /tmp/wm-skillhub.zip -d "<skills_root>"
 - 来路不明的第三方 zip；官方 `pack_url` 是推荐安装路径
 - 把 API Key 写进公开仓库或聊天全文复述
 - 未装凭证就假定能调 `skills/run`
-- 向开放租户推荐 `wm-xs-author-internal` 或完整内部 `xs-using`
+- 向开放租户推荐 `wm-xs-author-internal` 或未上架的内部作者工具链
 - 留下剥光 frontmatter 的 `SKILL.md`，或 WorkBuddy 缺 `_skillhub_meta.json` 却宣称安装成功

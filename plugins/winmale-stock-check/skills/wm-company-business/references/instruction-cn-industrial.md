@@ -19,6 +19,7 @@
 ## flag 消费表
 
 - `flags.net_interest_income=true`：只写净利息收入事实句，禁推断资本化。
+- `flags.is_cycle_top=true` / `flags.has_pb_roe_top_mismatch=true`：周期顶部持续性信号；可在「核心矛盾」段报 1 句持续性事实（供给刚性是否成立、PB 分位隐含的持续期方向），参照 `cyclical_nonprice_facts`（tr_yoy/payout/dividend_yield）。**本卡只报事实不下裁决**——顶部的反面不是「贵」是「持续时间短」，匹配与持续性三问见估值卡。
 
 ## 读者友好
 

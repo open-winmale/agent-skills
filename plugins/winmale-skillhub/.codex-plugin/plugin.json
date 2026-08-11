@@ -1,6 +1,6 @@
 {
   "name": "winmale-skillhub",
-  "version": "1.0.29",
+  "version": "1.1.14",
   "description": "赢麻了投研技能入口：配置 API 凭证、浏览并安装/更新官方技能与 Role。请先装本插件。",
   "author": "WinMale",
   "skills": "./skills/"

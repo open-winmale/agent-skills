@@ -5,7 +5,7 @@
 | 阶段 | 动作 | 出口 |
 |------|------|------|
 | W0 Intent | 确认「估值匹配」意图，非 `wm-company-business`（生意解读）/ `wm-company-card`（一页纸） | 意图匹配 |
-| W1 Facts | `POST /v1/skills/wm-valuation/run` | 有 `methodology`/`enrich_plan`/`quality`/`flags`/`snapshot` |
+| W1 Facts | `wm-skill-run.sh wm-valuation` | 有 `methodology`/`enrich_plan`/`quality`/`flags`/`snapshot` |
 | W2 Route | 读 `methodology.variant`；若 `blocked` → 输出 `blocked_message` 结束 | 非 blocked 才继续 |
 | W3 EnrichPlan | **禁止改** `enrich_plan`；记下 `required_reads` / `do_not_load` | 清单非空 |
 | W4 Enrich | 按序 Read `required_reads`；禁止 Read `do_not_load` | 开写前必读完 required |

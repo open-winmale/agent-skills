@@ -32,7 +32,7 @@
 ## 超出时
 
 - 「只删某几只」→ **`action=remove`**（须确认）；勿用残缺 organize
-- 「关注池里再按条件筛」→ 先 `view` 取 symbols，再 `wm-xs-eval-guide`（CONFT/INDEX）；**不要**假装 watchlist 自带选股引擎
+- 「关注池里再按条件筛」→ 先 `view` 取 symbols，再 `wm-xs`（CONFT/INDEX）；**不要**假装 watchlist 自带选股引擎
 - 「用我的关注做回测」→ **`wm-backtest` `from_watchlist`**（默认 A 股 `backtest_market=cn`；预览会说明跨市场已切开）
 
 eval 直调完整例子 → [recipes.md](recipes.md)。

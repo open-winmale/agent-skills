@@ -1,6 +1,6 @@
 interface:
   display_name: "负债安全"
-  short_description: "检视资产负债率、有息负债与偿债比率。用户问杠杆、偿债能力或会不会爆雷时使用。"
+  short_description: "检视负债与偿债压力，并对照行业，判断安不安全。"
   default_prompt: "Use $wm-debt-safety to help with: 检视资产负债率、有息负债与偿债比率。用户问杠杆、偿债能力或会不会爆雷时使用。"
 
 policy:

@@ -1,7 +1,7 @@
 {
   "name": "生意解读卡",
   "source": "skillhub",
-  "version": "1.1.4",
+  "version": "1.1.8",
   "slug": "wm-company-business",
-  "description_zh": "这门生意怎么样：赚钱模式、护城河与隐患，用人话讲清楚。别和「贵不贵」估值卡搞混。"
+  "description_zh": "这门生意怎么样：赚钱模式、商业模式、靠什么赚钱、护城河与核心矛盾，用买方视角人话讲清楚。别和「贵不贵」估值卡搞混。"
 }

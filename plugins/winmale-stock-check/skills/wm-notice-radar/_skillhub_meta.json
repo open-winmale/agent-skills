@@ -1,7 +1,7 @@
 {
   "name": "公告搜索",
   "source": "skillhub",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "slug": "wm-notice-radar",
-  "description_zh": "查询 A 股公司公告，或按类别/减持回购信号扫描。用户问公告、业绩预告、减持回购、全市场公告汇总时使用。"
+  "description_zh": "查询 A 股/港股公司公告，或按类别/减持回购信号扫描。用户问公告、业绩预告、减持回购、全市场公告汇总时使用。仅交易所公告，不含财经媒体/舆情新闻。美股暂不支持（返回 UNSUPPORTED_MARKET）。"
 }

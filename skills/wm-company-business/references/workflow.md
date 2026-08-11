@@ -5,7 +5,7 @@
 | 阶段 | 动作 | 出口 |
 |------|------|------|
 | W0 Intent | 确认「生意解读」意图，非 `wm-company-card` | 意图匹配 |
-| W1 Facts | `POST /v1/skills/wm-company-business/run` | 有 `methodology`/`enrich_plan`/`quality`/`snapshot` |
+| W1 Facts | `wm-skill-run.sh wm-company-business` | 有 `methodology`/`enrich_plan`/`quality`/`snapshot` |
 | W2 Route | 读 `methodology.variant`；若 `blocked` → **只**输出 `blocked_message` 结束 | 非 blocked 才继续 |
 | W3 EnrichPlan | **禁止改** `enrich_plan`；记下 `required_reads` / `do_not_load` | 清单非空 |
 | W4 Enrich | 按序 Read `required_reads`；禁止 Read `do_not_load` | 开写前必读完 required |

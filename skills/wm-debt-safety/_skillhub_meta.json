@@ -1,7 +1,7 @@
 {
   "name": "负债安全",
   "source": "skillhub",
-  "version": "1.0.2",
+  "version": "1.0.6",
   "slug": "wm-debt-safety",
-  "description_zh": "检视资产负债率、有息负债与偿债比率。用户问杠杆、偿债能力或会不会爆雷时使用。"
+  "description_zh": "检视资产负债率、有息负债与偿债比率。用户问杠杆、偿债能力、债务风险或会不会爆雷时使用。"
 }

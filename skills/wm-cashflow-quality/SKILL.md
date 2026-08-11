@@ -1,16 +1,22 @@
 ---
 name: wm-cashflow-quality
 display_name: "现金流质量"
-version: 1.0.4
-description: 评估经营现金流与利润是否匹配。用户问「赚的是现金还是纸面利润」时使用。
+version: 1.0.8
+description: 评估经营现金流与利润是否匹配、净现比、现金流类型诊断。用户问「现金流如何/赚的是现金还是纸面利润/利润含金量/营运资金占用」时使用。
 ---
 
 # 现金流质量
 
 ## 何时使用
 
-- 「现金流如何」「利润有没有兑现成现金」
+- 「现金流如何」「利润有没有兑现成现金」「赚的是现金还是纸面利润」「净现比」「营运资金占用」
 - 对比同业之前，先拿本公司经营现金流质量卡片
+
+## 何时不要用 (When NOT to use)
+
+- **评估整体债务安全性 / 会不会爆雷** → 使用 `wm-debt-safety`（资产负债与有息负债卡）
+- **评估分红与现金流覆盖** → 使用 `wm-dividend-quality`（股息与分红卡）
+- **一站式公司概况摸底** → 使用 `wm-company-card`（一站式摸底）
 
 ## 前置
 
@@ -18,13 +24,18 @@ description: 评估经营现金流与利润是否匹配。用户问「赚的是�
 
 ## 调用
 
-`POST {WINMALE_API_BASE}/v1/skills/wm-cashflow-quality/run`
+**优先**用统一门面 `wm.sh run`（**禁止**手搓 `curl` / 自行拼鉴权 HTTP）：
+
+```bash
+bash .cursor/skills/wm-skillhub/scripts/wm.sh run wm-cashflow-quality \
+  '{}' --symbol 600519 --result
+```
+
+业务参数进 JSON（即 HTTP `args`）；标的优先 `--symbol`。
+等价 HTTP 由脚本发出，Agent 勿直接拼鉴权。
 
 ```json
-{
-  "symbol": "600519",
-  "args": {}
-}
+{"symbol": "600519", "args": {}}
 ```
 
 ## 返回要点

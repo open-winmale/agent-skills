@@ -1,7 +1,7 @@
 {
   "name": "到时候提醒我",
   "source": "skillhub",
-  "version": "0.2.2",
+  "version": "0.2.6",
   "slug": "wm-reminder",
   "description_zh": "列出/创建/管理我的研究提醒；支持个股、选股、榜单与任意 XS（call return 控推送）。不是调度引擎文档。"
 }

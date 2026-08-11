@@ -1,6 +1,6 @@
 interface:
   display_name: "量化策略回测师"
-  short_description: "把自然语言里的选股池、关注列表或交易想法收成可跑的回测任务，确认后发起，输出收益回撤等标准指标与结果解读，并指出偏差与下一轮改法"
+  short_description: "把策略、股票池或关注列表说清楚，确认后回测；关注默认按 A 股切市场"
   default_prompt: "Use $wm-backtest to help with: 把自然语言里的选股池、关注列表或交易想法收成可跑的回测任务，确认后发起，输出收益回撤等标准指标与结果解读，并指出偏差与下一轮改法"
 
 policy:

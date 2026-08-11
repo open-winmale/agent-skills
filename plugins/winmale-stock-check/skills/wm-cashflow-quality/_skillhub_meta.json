@@ -1,7 +1,7 @@
 {
   "name": "现金流质量",
   "source": "skillhub",
-  "version": "1.0.4",
+  "version": "1.0.8",
   "slug": "wm-cashflow-quality",
-  "description_zh": "评估经营现金流与利润是否匹配。用户问「赚的是现金还是纸面利润」时使用。"
+  "description_zh": "评估经营现金流与利润是否匹配、净现比、现金流类型诊断。用户问「现金流如何/赚的是现金还是纸面利润/利润含金量/营运资金占用」时使用。"
 }

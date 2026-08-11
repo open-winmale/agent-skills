@@ -1,5 +1,6 @@
 # screener.* 坑（eval）
 
+0. **今天/当日涨跌 ≠ `$CHG_1D_LAST`**：口语「今天涨幅」「当日翻红」必须用 `$PERCENT_LAST`。`$CHG_1D_LAST`（旧 label「近1d涨跌幅」）是日K EOD 截面；EOD 未追上时与实时分叉，会静默错池（fb_18c6b1c5f0fc8677）。
 1. **`screener.run` 第一参是 `strategy_id` 字符串**，不是 `MAP{"strategy_id":…}`（后者会变成「策略不存在」）。
 2. **CAS 删除/更新**必须带 `expected_version` + `expected_revision_id`。优先一次写进 MAP 字面量；也可用 `SETXS(opts.expected_version, v)` 点路径。勿依赖未确认环境下的 `SETXS(opts["k"], v)`（旧运行时曾不写入）。
 3. **`indicator_categories` / `indexes` / `market_meta`** 签名是市场字符串（`"cn"`）或省略，不要 `MAP{"market":"cn"}`。

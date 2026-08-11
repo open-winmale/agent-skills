@@ -1,8 +1,8 @@
 ---
 name: wm-company-business
 display_name: "生意解读卡"
-version: 1.1.4
-description: 这门生意怎么样：赚钱模式、护城河与隐患，用人话讲清楚。别和「贵不贵」估值卡搞混。
+version: 1.1.8
+description: 这门生意怎么样：赚钱模式、商业模式、靠什么赚钱、护城河与核心矛盾，用买方视角人话讲清楚。别和「贵不贵」估值卡搞混。
 ---
 
 # 生意解读卡
@@ -18,10 +18,14 @@ description: 这门生意怎么样：赚钱模式、护城河与隐患，用人�
 
 ## 何时使用
 
-- 「帮我解读这门生意」「公司速览 / 三层穿透」
+- 「帮我解读这门生意 / 靠什么赚钱 / 商业模式 / 护城河 / 核心矛盾 / 业务结构」
 - 需要行业透镜下的基因 / 矛盾 / 定价**事实叙事**
 
-**不要用**：只要 App 一页纸 → `wm-company-card`。
+## 何时不要用 (When NOT to use)
+
+- **只问「贵不贵 / 估值匹配吗」** → 使用 `wm-valuation`（估值匹配见估值卡）
+- **只要 App 一页纸概况 / 查现价** → 使用 `wm-company-card`（一站式摸底）
+- **查主营业务/产品收入百分比数据** → 使用 `wm-operating-segments`
 
 Open App 无本地 LLM 时：本 Pack 的「解读终稿」不在成功标准内（可只消费 JSON，或另走 `/v1/insight/report`）。
 
@@ -37,7 +41,15 @@ Open App 无本地 LLM 时：本 Pack 的「解读终稿」不在成功标准内
 
 ## 调用（W1）
 
-`POST {WINMALE_API_BASE}/v1/skills/wm-company-business/run`
+**优先**用统一门面 `wm.sh run`（**禁止**手搓 `curl` / 自行拼鉴权 HTTP）：
+
+```bash
+bash .cursor/skills/wm-skillhub/scripts/wm.sh run wm-company-business \
+  '{"market":"cn"}' --symbol 600519 --result
+```
+
+业务参数进 JSON（即 HTTP `args`）；标的优先 `--symbol`。
+等价 HTTP 由脚本发出，Agent 勿直接拼鉴权。
 
 ```json
 { "symbol": "600519", "args": { "market": "cn" } }
@@ -64,13 +76,17 @@ Open App 无本地 LLM 时：本 Pack 的「解读终稿」不在成功标准内
 
 | 块 | 用途 |
 |----|------|
-| `metrics_bar` / `sections` / `snapshot` | 事实 |
-| `methodology` / `enrich_plan` / `quality` / `flags` | 路由与按需知识 |
+| **`snapshot` / `sections` / `metrics_bar`** | **事实源**：主业、护城河相关数字、成长/负债/现金流等；Agent **必须**从这里取数 |
+| `methodology` / `enrich_plan` / `quality` / `flags` | 路由与按需知识（读 `enrich_plan.required_reads`） |
 | `is_financial` / `finance_subkind` | Gate |
+| **`render`** | **仅骨架占位**（`markdown_skeleton` / `preferred`），**不是**终稿正文；禁止把 `render` 当「已写好的生意解读」 |
+
+**契约：** XS 出可对账事实（`snapshot`…）；叙事正文由 Agent 按 Pack `references/` + `enrich_plan` 写。Open App 无本地 LLM 时可只消费 JSON。
 
 ## 禁止
 
 - 把 JSON 表当「解读」交差
+- **把 `render` / `markdown_skeleton` 当终稿正文**（须读 `snapshot` 再按 enrich_plan 写）
 - 业务参数放顶层（应进 `args`）
 - 手写裸 eval 拼指标
 - 金融文写净现比/八型

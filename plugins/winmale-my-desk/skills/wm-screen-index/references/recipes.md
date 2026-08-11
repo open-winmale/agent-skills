@@ -1,9 +1,27 @@
 # screener.* 宿主菜谱（eval 直调）
 
 产品筛池 / 跑策略优先本技能 `skills/run`。下列用于 **自定义 XS**、排错或 action 盖不住时。  
-契约来源：`scripts/xs/tests/capability/screener.xs`。坑见 [pitfalls.md](pitfalls.md)；签名速查 [lib.md](lib.md)。
+契约来源：`scripts/xs/tests/capability/screener.xs`。坑见 [pitfalls.md](pitfalls.md)；签名速查 [lib.md](lib.md)。算子 JSON 见 [playbook.md §4b](playbook.md)。
 
 Scopes：读 `user:screener:strategy:read` + `user:screener:indicator:read`；筛/跑 `user:screener:run`；写 `user:screener:strategy:write`。
+
+## 0. 国资（skills/run `action=conditions`）
+
+无单独 `is_soe` 字段。用 `$ORG_TYPE_TAG` + `IN`：
+
+```json
+{
+  "action": "conditions",
+  "market": "cn",
+  "top_n": 50,
+  "conditions": [{
+    "type": "INDICATOR",
+    "field": "$ORG_TYPE_TAG",
+    "operator": "IN",
+    "value": { "set": { "values": ["央企", "地方国企"] } }
+  }]
+}
+```
 
 ## 1. 列策略 + 读详情
 

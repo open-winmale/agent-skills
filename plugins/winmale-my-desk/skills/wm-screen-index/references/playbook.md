@@ -2,7 +2,8 @@
 
 字段对齐：**先 `action=indicators`（+ 轻量 alias）**；需要描述/内容穿透时再 **`wm-discover` `domains=["screener"]`**（或本技能 `action=search`，同源）。
 
-详见 SKILL「字段对齐路由」。返回形态见 `docs/design/SKILL_RETURNS_CONTRACT.md`。
+自然语言 → `_MIN` / `_AVG` / `_TREND` 等范式见 [semantic-patterns.md](semantic-patterns.md)。  
+详见 SKILL「字段对齐决策树」。返回形态见 `docs/design/SKILL_RETURNS_CONTRACT.md`。
 
 ---
 
@@ -14,6 +15,12 @@
 | PE / PB / 倍数 | 真实倍数 | `"30"` |
 | 金额 | 元；选股 NCFO 总量多为「亿」口径看字段说明 | 可用 `100Y` 等字面量 |
 | 枚举 / MULTI | 字符串码 | discover/`indicator_distinct` 后再 `EQ`/`IN`/`HAS` |
+
+`action=indicators` / `search` 返回已是 **Agent 投影**：
+
+- 用 `value_scale` + `default_value` / `example_condition_value` 写阈值
+- `display_unit` / `display_default_val` 仅 UI 刻度（如 `%` + `15`），**禁止**原样进 `scalar.value`
+- 例：ROE → `value_scale=ratio`，`default_value="0.15"`（不是 `"15"`）
 
 禁止对比率反复 ÷100。见管家 `units-and-values.md`。
 
@@ -125,6 +132,76 @@ indicators →（内容穿透）discover domains=["screener"] q=…
 
 ---
 
+## 4b. 条件算子 cookbook（EQ / IN / HAS / BETWEEN）
+
+集合类读 **`value.set.values`**（也兼容误写的 `value.list`）。**不要**只写 `value: ["a","b"]`。
+
+| 算子 | 适用 | value 形状 |
+|------|------|------------|
+| `EQ` / `GTE` / `LTE`… | 标量 | `{"scalar":{"value":"…"}}` |
+| `IN` / `HAS` / `NOT_HAS` | 枚举/标签多选 | `{"set":{"values":["a","b"]}}` |
+| `BETWEEN` | 数值窗口 | `{"range":{"min":"10","max":"25"}}` |
+
+**EQ（比率用小数）**
+
+```json
+{
+  "type": "INDICATOR",
+  "field": "$ROE_TTM_LAST",
+  "operator": "GTE",
+  "value": { "scalar": { "value": "0.15" } }
+}
+```
+
+**IN（国资：央企或地方国企）**
+
+```json
+{
+  "type": "INDICATOR",
+  "field": "$ORG_TYPE_TAG",
+  "operator": "IN",
+  "value": { "set": { "values": ["央企", "地方国企"] } }
+}
+```
+
+**HAS（行业中文名 / 标签）**
+
+```json
+{
+  "type": "INDICATOR",
+  "field": "$INDUSTRY_TAGS",
+  "operator": "HAS",
+  "value": { "set": { "values": ["公用事业"] } }
+}
+```
+
+**BETWEEN**
+
+```json
+{
+  "type": "INDICATOR",
+  "field": "$PE_TTM_LAST",
+  "operator": "BETWEEN",
+  "value": { "range": { "min": "10", "max": "25" } }
+}
+```
+
+| 错写 | 正确 |
+|------|------|
+| `"value":{"list":["央企","地方国企"]}` | `"value":{"set":{"values":[…]}}`（list 现已兼容，仍推荐 set） |
+| `"value":["央企"]` | 必须包在 set/scalar/range |
+| `$INDUSTRY_CUR_1 EQ "公用事业"` | 该字段是**代码**；中文名用 `$INDUSTRY_TAGS`+`HAS` |
+
+### 行业：码 vs 名
+
+| 目的 | 字段 | 算子 | value 示例 |
+|------|------|------|------------|
+| 一级行业**代码**精确 | `$INDUSTRY_CUR` / `$INDUSTRY_CUR_1` | `EQ` | `"industry.S64"` |
+| 行业**中文名**/标签 | `$INDUSTRY_TAGS` | `HAS` / `IN` | `"公用事业"` |
+| 查码 | `wm-industry-members` / discover | — | — |
+
+---
+
 ## 5. conditions 返回形状
 
 ```text
@@ -145,12 +222,20 @@ Agent 应：优先已建列；必须用未建列时**披露慢路径**；大宇�
 
 ---
 
-## 6. 加列 / 分页
+## 6. 加列 / 分页（`top_n` 上限 200）
+
+单次最多 **200** 行（manifest `maximum: 200`）。要更多用 `offset`：
+
+```text
+第 1 页：top_n=200, offset=0
+第 2 页：top_n=200, offset=200
+… 直到返回条数 < top_n
+```
 
 | 需求 | 做法 |
 |------|------|
 | 多列 | `fields: ["$SYMBOL","$NAME",…]` |
-| 翻页 | 同 conditions + `offset` |
+| 翻页 | 同 conditions + `offset`（步长=top_n） |
 | 总数 | `preview_count` |
 | 已存策略翻页 | `run_strategy` → 读 `fetch` |
 
@@ -169,7 +254,7 @@ Agent 应：优先已建列；必须用未建列时**披露慢路径**；大宇�
 ```text
 1) 能映射的条件先 conditions / preview_count 缩小池（记下 row_ids / where）
 2) 缺口直说（缺哪条口径、已筛出多少、是否残差慢路径）
-3) 交 role-financial-analyst → wm-xs-eval-guide（INDEX_*；在已缩小集合上算）
+3) 交 role-financial-analyst → wm-xs（INDEX_*；在已缩小集合上算）
 ```
 
 **禁止**改走 westock / 同花顺 / 东财 / 其它第三方选股或指标 API 补缺口。  

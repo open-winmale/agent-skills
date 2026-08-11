@@ -1,8 +1,8 @@
 ---
 name: wm-valuation
 display_name: "估值解读卡"
-version: 1.0.7
-description: 看估值松不松、贵不贵：结合盈利能力与价格匹配给出口径清晰的判断。别和「这门生意怎么样」那张卡搞混。
+version: 1.0.10
+description: 看估值松不松、贵不贵、便宜吗、市赚率、估值历史位置：结合盈利能力与价格匹配给出口径清晰的判断。别和「这门生意怎么样」商业模式卡搞混。
 ---
 
 # 估值解读卡
@@ -30,10 +30,14 @@ description: 看估值松不松、贵不贵：结合盈利能力与价格匹配�
 
 ## 何时使用
 
-- 「估值匹配吗 / 贵不贵 / 便宜吗 / 值不值」
+- 「估值匹配吗 / 贵不贵 / 便宜吗 / 值不值 / 市赚率」
 - 需要盈利能力持续性 × 价格匹配的**定价备忘录**
 
-**不要用**：问「这门生意怎么样」→ `wm-company-business`；只要一页纸 → `wm-company-card`。
+## 何时不要用 (When NOT to use)
+
+- **问「这门生意怎么样 / 靠什么赚钱」** → 使用 `wm-company-business`（不要调用本估值卡）
+- **只要一页纸综合摸底 / 查现价** → 使用 `wm-company-card`（本卡数据已包含在全模块卡片内，无需重复调用）
+- **查三表财报数据** → 使用 `wm-statements`
 
 Open App 无本地 LLM 时：本 Pack 的「定价备忘录终稿」不在成功标准内（可只消费 JSON，或另走 `/v1/insight/report`）。
 
@@ -49,7 +53,15 @@ Open App 无本地 LLM 时：本 Pack 的「定价备忘录终稿」不在成功
 
 ## 调用（W1）
 
-`POST {WINMALE_API_BASE}/v1/skills/wm-valuation/run`
+**优先**用统一门面 `wm.sh run`（**禁止**手搓 `curl` / 自行拼鉴权 HTTP）：
+
+```bash
+bash .cursor/skills/wm-skillhub/scripts/wm.sh run wm-valuation \
+  '{"market":"cn"}' --symbol 600519 --result
+```
+
+业务参数进 JSON（即 HTTP `args`）；标的优先 `--symbol`。
+等价 HTTP 由脚本发出，Agent 勿直接拼鉴权。
 
 ```json
 { "symbol": "600519", "args": { "market": "cn" } }

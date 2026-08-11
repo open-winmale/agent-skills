@@ -1,7 +1,7 @@
 {
   "name": "营收与利润",
   "source": "skillhub",
-  "version": "1.0.2",
+  "version": "1.0.6",
   "slug": "wm-revenue-profit",
-  "description_zh": "追踪营收与净利润水平、同比及行业分位/份额。用户问成长性、收入利润走势时使用。"
+  "description_zh": "追踪营收与净利润水平、同比及行业分位/份额。用户问成长性、收入利润走势、营收行业分位与份额时使用。"
 }

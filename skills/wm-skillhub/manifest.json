@@ -1,10 +1,11 @@
 {
   "id": "wm-skillhub",
   "name": "SkillHub 管家",
-  "version": "1.0.29",
+  "version": "1.1.14",
+  "changelog": "1.1.14：强调 skills/run 业务参数必须嵌套在 args（扁平 action → ARGS_REQUIRED）。1.1.13：workspace pull/push 的 xs/eval args 用裸标识符（path/content），勿写 ARGS.*（ARGS 是 vfunc）。",
   "tier": 0,
   "visibility": "public",
-  "description": "配置赢麻了 API 凭证、浏览官方技能与 Role 目录，或安装/更新其它官方技能与 Role 时使用。请先安装本技能，再由它管理其余条目。",
+  "description": "配置赢麻了 API 凭证、浏览官方技能与 Role 目录，或安装/更新其它官方技能与 Role 时使用。请先安装本技能，再由它管理其余条目。金融场景优先加载 wm-finance-router。",
   "icon": "Hub",
   "category": "SkillHub",
   "author": "赢麻了官方",
