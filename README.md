@@ -7,7 +7,8 @@
 
 | | |
 |---|---|
-| GitHub（对外发现主源） | https://github.com/open-winmale/agent-skills |
+| GitHub 维护主源 | https://github.com/JerryZhou/agent-skills |
+| GitHub 发现镜像 | https://github.com/open-winmale/agent-skills（skills.sh / marketplace 安装仍可用此地址） |
 | GitLab 镜像（内网 / CI） | `git@code.yepless.cn:end/open/agent-skills.git` |
 | 开放平台 / 申请 Key | https://open.winmale.com |
 
@@ -118,16 +119,18 @@ scripts/sync-from-skillhub.py
 SKILLHUB_ROOT=/path/to/skillhub python3 scripts/sync-from-skillhub.py
 ```
 
-## 双源发布
+## 多源发布
 
-- **GitHub**：对外主源（技能市场提交、skills.sh）  
-- **GitLab（code.yepless.cn）**：内网镜像与 CI；与 GitHub 同内容双推  
+- **origin（JerryZhou）**：日常维护与推送主源  
+- **open-winmale**：对外发现镜像（skills.sh / marketplace；安装命令可继续用此地址）  
+- **GitLab（code.yepless.cn）**：内网镜像与 CI  
 
 ```bash
 git remote -v
-# origin    → GitHub
-# gitlab    → git@code.yepless.cn:end/open/agent-skills.git
-git push origin main && git push gitlab main
+# origin         → git@github.com:JerryZhou/agent-skills.git
+# open-winmale   → git@github.com:open-winmale/agent-skills.git
+# gitlab         → git@code.yepless.cn:end/open/agent-skills.git
+bash scripts/push-both.sh
 ```
 
 ## 许可与免责
