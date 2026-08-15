@@ -145,7 +145,7 @@ backtest.events(rid, {"after_seq": 0, "limit": 50, "type": "log", "step": "risk"
 | weight 写成现金？ | ledger 仓位远超设定 |
 | 风控裁剪？ | trace `RISK_CLIP` / `RISK_REJECT`；`risk.max_*` |
 | 池空 / bar_ok 全假？ | trace；未 init |
-| 参数未生效？ | tuning vs 未声明 script_params |
+| 参数未生效？ | 改了字面量却期望 override；或 `tuning` 后未 sync；或 script_params 键名不一致 |
 
 ---
 
