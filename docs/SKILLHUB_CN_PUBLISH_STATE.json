@@ -57,12 +57,11 @@
       "reviewStatus": "approved"
     },
     "wm-backtest": {
-      "version": "0.3.24",
+      "version": "0.3.25",
       "displayName": "量化策略回测师",
-      "url": "https://skillhub.cn/s/user_d83d7c97/wm-backtest",
-      "published_at": "2026-08-11T07:37:33Z",
-      "git_sha": "fd55a16",
-      "reviewStatus": "approved"
+      "url": "https://skillhub.cn/skills/wm-backtest",
+      "published_at": "2026-08-15T03:34:07Z",
+      "git_sha": "9ffbc5c"
     },
     "wm-screen-index": {
       "version": "2.0.5",
@@ -113,5 +112,5 @@
       "reviewStatus": "approved"
     }
   },
-  "updated_at": "2026-08-11T07:37:33Z"
+  "updated_at": "2026-08-15T03:34:07Z"
 }
