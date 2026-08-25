@@ -80,7 +80,9 @@ bar := simulation.bar(sym)             # 缺则 PIT 补写 bt.bar
 
 常用：`unit_id`、`start`/`end`、`selector_freq`、`execution_timing`、`risk.max_single_position_pct` …  
 访问：`simulation.config_str/num/bool("key", default)`（支持 `risk.xxx` 点路径）。  
-用户阈值：`simulation.tuning("max_pe", 15)` ← 须在 case `params` / `# @param` 声明，否则 `script_params` 拒收。
+用户阈值：`simulation.tuning("max_pe", 15)` ← sync 后即声明，可被 `script_params` / UI 覆盖。  
+`# @param` **可选**（补 group/ref/advanced）；内部常量用字面量，不要 `tuning`（否则会进 UI）。  
+向未声明的 key 塞 override → 拒收。
 
 ## 按模块：常用 API
 

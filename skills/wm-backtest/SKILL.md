@@ -1,7 +1,7 @@
 ---
 name: wm-backtest
 display_name: "量化策略回测师"
-version: 0.3.24
+version: 0.3.25
 description: 把自然语言里的选股池、关注列表或交易想法收成可跑的回测任务，确认后发起，输出收益回撤等标准指标与结果解读，并指出偏差与下一轮改法。不是模拟炒股。
 ---
 
@@ -24,13 +24,14 @@ description: 把自然语言里的选股池、关注列表或交易想法收成�
 |----|------|
 | 一批票 + 持仓规则，要在**历史**上验证并复盘 | 只筛票 → `wm-screen-index` |
 | 自定义选股/交易/风控逻辑单元 | 只整理关注 → `wm-watchlist` |
-| 查跑批状态、净值、成交、trace | Python / 第三方回测平台 |
+| 查跑批状态、净值、成交、trace | **盘中实时会话 / 纸面 / 企微意图** → **`wm-probe`** |
+| | Python / 第三方回测平台 |
 
 ---
 
 ## 给 Agent：系统是什么
 
-拨测 = **两套子系统**叠在一起（基础设施库 + 对外 CRUD 包装）。不要当成「一堆无关 action」。
+回测 = **两套子系统**叠在一起（基础设施库 + 对外 CRUD 包装）。不要当成「一堆无关 action」。实时盘中请用 **`wm-probe`**，不要把本技能当成 live loop。
 
 ```text
 ① 管理面（对外包装围绕 CRUD）
@@ -204,3 +205,4 @@ bash .cursor/skills/wm-skillhub/scripts/wm.sh run wm-backtest \
 | **0.3.22** | position_cost / state / bar_diag / ARGS_REQUIRED / harness / per-symbol caps |
 | **0.3.23** | 引擎强制补持仓 bar；`metrics.rule_counts`；lint harness hint + 阶段最小模板；`xs-stage-syntax`；weight/手数/param 可读报错；skills/run 扁平 body → `ARGS_REQUIRED` |
 | **0.3.24** | `simulation.bar`/`last_price`（PIT 补价）；`run_custom` 同 unit_id 默认覆盖（`mode`）；`args.benchmark`；`rule_counts.risk_reject*`；当前版本读 `data.*` 说明 |
+| **0.3.25** | 澄清 `# @param` 为可选 UI 元数据；声明以 `simulation.tuning` + sync 为准；纠偏 agent 全量注释诱导 |

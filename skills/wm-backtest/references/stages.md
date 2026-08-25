@@ -101,4 +101,4 @@ return out
 
 ## script_params
 
-`script_params` 不是任意键值覆盖。只有参数已在 case `params` 声明、阶段脚本含 `# @param` 元数据，或项目同步后由 `simulation.tuning(...)` / `backtest.tuning(...)` 提取为声明参数时才会接受；未声明的 role/key 会在校验时拒绝。
+`script_params` 不是任意键值覆盖。参数须已声明：case `params`、或项目 **sync 后从 `simulation.tuning(...)` / `backtest.tuning(...)` 提取**。`# @param` 只是可选 UI 元数据，不是声明本体；未声明的 role/key 会在校验时拒绝。Agent / 拨测：只对要对用户暴露的阈值写 `tuning`；其余用字面量，勿给每个常量加 `# @param`。

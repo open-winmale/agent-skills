@@ -8,8 +8,13 @@
 xs.require("xs/simulation/lib/init.xs")   # trading/risk 几乎总要
 # selector filter 可用 trace.xs；用到 pe_ttm/bar_ok/append_order 必须 init
 
-# @param take_profit_pct number default=0.10
-# ↑ 声明后才能进 script_params / tuning
+# 要对用户/UI 可调：用 tuning；sync 后进入 script_params
+max_pe := simulation.tuning("max_pe", 15)
+# 可选：# @param 只补 UI 元数据（group/ref/advanced），不是声明本体
+# @param max_pe ref=pe_cap group=选股规则 advanced=false
+
+# 内部常量不要 tuning，写字面量即可（不会进 UI）
+# entry_pb := 0.80
 
 return ...   # 各阶段返回形状见 stages.md
 ```
@@ -32,7 +37,8 @@ return ...   # 各阶段返回形状见 stages.md
 | `if cond { } else { }` | 分支 |
 | `STRING(x)` / `FLOAT(x)` / `DEFAULT(x, 0)` | 转换与空值 |
 | `HAS(map, key)` / `KEYS(map)` / `LEN(arr)` | 容器 |
-| `simulation.tuning("k", default)` | 读 `# @param` / override |
+| `simulation.tuning("k", default)` | 读 override / 默认值；**sync 后即声明**（可进 script_params / UI） |
+| `# @param k ...` | **可选** UI 元数据（group/ref/advanced/type）；无注释也能 tuning |
 | `simulation.bar(sym)` / `last_price(sym)` | 现价；缺 bar 时按 `bt.date` PIT 补 |
 | `simulation.append_order(out, sym, side, wt, reason)` | 提案；`wt≤0.001` 跳过并 `WEIGHT_SKIP` trace |
 | `simulation.rule("take_profit")` | 规则计数 → `metrics.rule_counts` |
@@ -51,7 +57,7 @@ CN 默认基准 **`index.hs300`**（沪深 300）。L1 可用 `args.benchmark` �
 | 现象 | 怎么处理 |
 |------|----------|
 | lint：`unexpected token` / 括号不配 | 先 `wm-xs` check；阶段里少写嵌套三元，拆成临时变量 |
-| `unknown script param "x"` | 在对应阶段补 `# @param x ...` 再 sync；override 键名须一致 |
+| `unknown script param "x"` | 在对应阶段写 `simulation.tuning("x", …)` 后 **sync/publish**；勿只写 `@param`；override 键名须一致 |
 | `pe_ttm`/`bar_ok` 恒空 | 缺 `init.xs`（lint 会拦） |
 | 有持仓但 `bar_ok=false` | 引擎补持仓 flat bar；策略用 `simulation.bar` / `last_price`（勿猜 `price`） |
 | 下单无成交 / `WEIGHT_SKIP` / `risk_reject` | weight 太小或不足一手；见上式；看 `rule_counts` |
