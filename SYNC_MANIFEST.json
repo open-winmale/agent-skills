@@ -4,7 +4,8 @@
   "plugins": {
     "winmale-skillhub": "1.1.14",
     "winmale-stock-check": "1.4.1",
-    "winmale-my-desk": "2.0.5"
+    "winmale-my-desk": "2.0.5",
+    "winmale-report-extract": "0.6.0"
   },
   "skills": [
     "wm-backtest",
@@ -16,6 +17,7 @@
     "wm-dividend-quality",
     "wm-notice-radar",
     "wm-reminder",
+    "wm-report-extract",
     "wm-revenue-profit",
     "wm-screen-index",
     "wm-skillhub",

@@ -42,6 +42,9 @@ npx skills add open-winmale/agent-skills --skill wm-skillhub -g -a workbuddy
 # 个股核对示例
 npx skills add open-winmale/agent-skills --skill wm-company-card -g
 
+# 财报提取示例（本地双轨流水线：--pdf-url 无需 API Key；转换依赖 pip install docling pymupdf）
+npx skills add open-winmale/agent-skills --skill wm-report-extract -g
+
 # 本仓第一批全部技能
 npx skills add open-winmale/agent-skills --all -g
 ```
@@ -62,6 +65,7 @@ unzip -o /tmp/wm-skillhub.zip -d ~/.workbuddy/skills
 /plugin install winmale-skillhub@open-winmale
 /plugin install winmale-stock-check@open-winmale
 /plugin install winmale-my-desk@open-winmale
+/plugin install winmale-report-extract@open-winmale
 
 # Claude Code
 /plugin marketplace add open-winmale/agent-skills
