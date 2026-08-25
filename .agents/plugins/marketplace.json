@@ -36,6 +36,17 @@
         "authentication": "REQUIRED"
       },
       "category": "productivity"
+    },
+    {
+      "name": "winmale-report-extract",
+      "source": {
+        "path": "./plugins/winmale-report-extract"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "REQUIRED"
+      },
+      "category": "productivity"
     }
   ]
 }

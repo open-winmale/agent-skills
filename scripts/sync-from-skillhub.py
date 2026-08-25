@@ -21,7 +21,62 @@ def die(msg: str, code: int = 1) -> None:
     raise SystemExit(code)
 
 
-def copy_skill(src: Path, dst: Path) -> None:
+def load_override(skillhub: Path, sid: str) -> dict | None:
+    """External-publish contract from skillhub marketplaces/overrides/<sid>.json.
+
+    When present, only files listed in `include` are shipped (allowlist) and
+    SKILL.md gets the external description/display_name + body_replacements —
+    keeps internal eval data / routing sentences out of public syncs.
+    """
+    p = skillhub / "marketplaces" / "overrides" / f"{sid}.json"
+    if not p.is_file():
+        return None
+    return json.loads(p.read_text(encoding="utf-8"))
+
+
+def transform_skill_md(src: str, ov: dict) -> str:
+    import re
+
+    m = re.match(r"^---\n(.*?)\n---\n", src, re.S)
+    if not m:
+        die(f"SKILL.md missing frontmatter in override skill")
+    block = m.group(1)
+    if ov.get("description"):
+        desc = str(ov["description"]).replace("\n", " ")
+        block = re.sub(r"(?m)^description: .*$", f"description: {desc}", block)
+    if ov.get("display_name"):
+        dn = str(ov["display_name"]).replace("\n", " ")
+        block = re.sub(r"(?m)^display_name: .*$", f'display_name: "{dn}"', block)
+    body = src[m.end():]
+    for rep in ov.get("body_replacements", []):
+        if rep["find"] not in body:
+            die(f"body_replacements drift in SKILL.md: {rep['find'][:60]!r} not found")
+        body = body.replace(rep["find"], rep["replace"])
+    return f"---\n{block}\n---\n{body}"
+
+
+def gate_skill(dst: Path, skillhub: Path, sid: str) -> None:
+    """Refuse publishing internal data (eval baselines, hosts, credential names)."""
+    pats = ["code.yepless.cn", "/opt/anaconda", "/Users/", "WINMALE_API_KEY"]
+    cfg = skillhub / "marketplaces" / "marketplaces.json"
+    if cfg.is_file():
+        try:
+            pats = json.loads(cfg.read_text(encoding="utf-8"))["gates"]["forbid_patterns"]
+        except (KeyError, ValueError):
+            pass
+    for f in sorted(dst.rglob("*")):
+        if not f.is_file():
+            continue
+        rel = f.relative_to(dst).as_posix()
+        if any(tok in rel for tok in ("__pycache__", ".pytest_cache")):
+            die(f"{sid}: cache artifact leaked: {rel}")
+        text = f.read_text(encoding="utf-8", errors="ignore")
+        for pat in pats:
+            if pat in text:
+                die(f"{sid}/{rel}: forbidden pattern {pat!r}")
+
+
+def copy_skill(src: Path, dst: Path, skillhub: Path) -> None:
     if dst.exists():
         shutil.rmtree(dst)
     dst.parent.mkdir(parents=True, exist_ok=True)
@@ -33,7 +88,34 @@ def copy_skill(src: Path, dst: Path) -> None:
         "*.pyc",
         ".DS_Store",
     )
-    shutil.copytree(src, dst, ignore=ignore)
+    ov = load_override(skillhub, src.name)
+    if ov and ov.get("include"):
+        # Allowlist copy: exact files + `<dir>/**` recursive.
+        for pat in ov["include"]:
+            if pat.endswith("/**"):
+                for f in sorted((src / pat[:-3]).rglob("*")):
+                    if not f.is_file():
+                        continue
+                    rel = f.relative_to(src).as_posix()
+                    if any(tok in rel for tok in ("__pycache__", ".pytest_cache")):
+                        continue
+                    target = dst / rel
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(f, target)
+            elif (src / pat).is_file():
+                target = dst / pat
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(src / pat, target)
+        skill_md = src / "SKILL.md"
+        if (dst / "SKILL.md").is_file() and skill_md.is_file():
+            (dst / "SKILL.md").write_text(
+                transform_skill_md(skill_md.read_text(encoding="utf-8"), ov),
+                encoding="utf-8",
+            )
+        gate_skill(dst, skillhub, src.name)
+        print(f"  override contract applied: {src.name} ({len(ov['include'])} include patterns)")
+    else:
+        shutil.copytree(src, dst, ignore=ignore)
 
 
 def write_cursor_plugin(plugin_dir: Path, plugin: dict, author: dict, homepage: str) -> None:
@@ -223,7 +305,7 @@ def main() -> None:
             if vis in ("internal", "deprecated"):
                 die(f"refusing to publish {sid} visibility={vis}")
             dst = ROOT / "plugins" / pid / "skills" / sid
-            copy_skill(src, dst)
+            copy_skill(src, dst, skillhub)
             ver = (skills_meta.get(sid) or {}).get("version")
             if not ver:
                 man = json.loads((src / "manifest.json").read_text())
