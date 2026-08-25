@@ -867,6 +867,7 @@ from domain.industry import (  # noqa: E402
 from domain.policy import apply_industry_arbitration  # noqa: E402
 from domain.synonyms import KEYWORD_VARIANTS, synonym_variants  # noqa: E402
 from domain.signatures import (  # noqa: E402
+    ANALYSIS_TITLE_RE,
     CHAPTER_RE,
     CN_NUM,
     HIGH_CONFIDENCE_SIGNATURES,
@@ -882,7 +883,7 @@ RESULT_LAYOUT_VERSION = "0.4.1"
 RESULT_LAYOUT_NAME = "split_tables"
 # 与 SKILL.md version 同步（发版时手动改）；convert 落 convert_meta.pipeline_version，
 # 消费端（qa/materialize/promote）版本不符时打 stale 提醒——回验/签名规则跨版本演进，旧结论可能过期
-PIPELINE_VERSION = "0.6.0"
+PIPELINE_VERSION = "0.6.1"
 
 
 def warn_stale_cache(sha12: str) -> None:
@@ -1125,10 +1126,26 @@ def _is_furniture_title(title: str) -> bool:
         return True
     if _is_unit_annotation(t):
         return True
-    return any(k in t for k in (
+    if any(k in t for k in (
         "会计机构负责人", "主管会计工作负责人", "法定代表人", "财务负责人",
         "盖章", "签字", "签名",
-    ))
+    )):
+        return True
+    # 纯日期+单位组合行（平安报表页 '2025 年 12 月 31 日 (除特别注明外,金额单位为人民币百万元'
+    # 被当标题误触 STRUCTURAL 否决实证）：剔除日期/单位成分后无实质内容即家具
+    residual = re.sub(
+        r"[0-9０-９\s,，.。/年月日季度上半下半除特别注明外金额单位为人民币百千万亿元()（）【\[\]]", "", t)
+    if not residual.strip():
+        return True
+    # 节编号标题（永辉 '二、财务报表' / 页码残留 '108 / 262' 实证）：非报表名本体，
+    # 视同无标题（STRUCTURAL 否决跳过，靠表体科目词定型）；
+    # 但编号+具体报表名（'3、合并利润表'）是真标题，不是家具
+    m_sec = re.fullmatch(r"[（(]?[一二三四五六七八九十百\d]{1,4}[）)、.]\s*(.{0,12})", t)
+    if m_sec and not any(tok in m_sec.group(1) for tok in (
+            "资产负债表", "利润表", "现金流量表", "損益表", "財務狀況表",
+            "权益变动表", "财务状况表", "损益表")):
+        return True
+    return False
 
 
 def _looks_like_entity_kpi_wide_table(headers: list | None, sample_labels: list | None) -> bool:
@@ -1181,6 +1198,8 @@ def _title_anchored_income_fragment(
     title_n = nfkc(title or "")
     if _is_furniture_title(title_n):
         return False
+    if ANALYSIS_TITLE_RE.search(title_n):
+        return False  # 「…主要项目变动分析」是 MD&A 分析表非报表（神华 p020 实证）
     if not any(tok in title_n for tok in (STMT_TITLE_TOKS.get("income_stmt") or ())):
         return False
     row_blob = " ".join(nfkc(s or "") for s in (sample_labels or [])[:12])
@@ -1198,6 +1217,8 @@ def _title_anchored_cashflow_fragment(
     title_n = nfkc(title or "")
     if _is_furniture_title(title_n):
         return False
+    if ANALYSIS_TITLE_RE.search(title_n):
+        return False  # 「利润表及现金流量表主要项目变动分析」11/14 行是损益科目非 CF
     if not any(tok in title_n for tok in (STMT_TITLE_TOKS.get("cashflow_stmt") or ())):
         return False
     row_blob = " ".join(nfkc(s or "") for s in (sample_labels or [])[:12])
@@ -1317,6 +1338,9 @@ def infer_table_type(
         if typ == "income_stmt" and _looks_like_non_income_stmt_rows(title_n, headers, sample_labels):
             continue
         title_toks = STMT_TITLE_TOKS.get(typ) or ()
+        if ANALYSIS_TITLE_RE.search(title_n):
+            # 变动分析/摘要类标题：同形分析表不是报表本体
+            continue
         if title_n and not _is_furniture_title(title_n) and title_toks \
                 and not any(tok in title_n for tok in title_toks):
             # 有标题但不含对应报表名（单位注记/签字行视同无标题）：结构词命中大概率是范围调整/分季度等同形表
@@ -1633,6 +1657,68 @@ NEW_STMT_PAT = re.compile(
 )
 # 附注小节编号（A 股附注体例级约定）：续表碎片之间不会出现编号标题，出现即阻断合并
 NOTE_HEADING_PAT = re.compile(r"[（(][一二三四五六七八九十百\d]+[)）]")
+# 续表标题标记：（续）/（續）/ -续 / –續 等——归一化比较用（长城 '合并资产负债表 -续' 实证）
+_CONT_TITLE_MARK_RE = re.compile(r"[（(]\s*[续續]\s*[）)]|[-–−]\s*[续續]\s*$")
+
+
+def _norm_cont_title(ln: str) -> str:
+    """行文本去 # 前缀、去 (续) 标记 + 去空白——用于识别「页脚重印的不带续同名标题」。"""
+    s = re.sub(r"^#{1,6}\s*", "", nfkc(ln or ""))
+    return re.sub(r"\s+", "", _CONT_TITLE_MARK_RE.sub("", s))
+
+
+def _empty_col_indexes(t: dict) -> list[int]:
+    """表内全空列（表头+所有数据行均空）的列下标——docling/fitz 对齐伪影。"""
+    lines = [l for l in (t.get("_text") or "").splitlines() if l.strip().startswith("|")]
+    rows = [split_md_row(l) for l in lines if not SEP_ROW_PAT.match(l.strip())]
+    if not rows:
+        return []
+    ncol = max(len(r) for r in rows)
+    return [ci for ci in range(ncol)
+            if not any(ci < len(r) and r[ci].strip() for r in rows)]
+
+
+def _drop_empty_column(t: dict, ci: int) -> None:
+    """从表块中物理剔除全空列（重写 _text 行 + headers/periods/cols）。"""
+    new_lines: list[str] = []
+    for l in (t.get("_text") or "").splitlines():
+        if not l.strip().startswith("|"):
+            new_lines.append(l)
+            continue
+        cells = split_md_row(l)
+        keep = cells[:ci] + cells[ci + 1:]
+        if SEP_ROW_PAT.match(l.strip()):
+            new_lines.append("|" + "|".join(c if c.strip() else "---" for c in keep) + "|")
+        else:
+            new_lines.append("| " + " | ".join(keep) + " |")
+    t["_text"] = "\n".join(new_lines)
+    t["cols"] = int(t.get("cols") or 0) - 1
+    if t.get("headers") is not None:
+        cells = list(t["headers"])
+        if ci < len(cells):
+            cells = cells[:ci] + cells[ci + 1:]
+        t["headers"] = cells
+    if t.get("periods"):
+        t["periods"] = {(k if k < ci else k - 1): v for k, v in t["periods"].items() if k != ci}
+
+
+def _norm_heading(ln: str) -> str:
+    """标题行归一化：去 #/空白。"""
+    return re.sub(r"\s+", "", re.sub(r"^#{1,6}\s*", "", nfkc(ln or "").strip()))
+
+
+def _own_table_heading(md_lines: list[str], line_no: int) -> str:
+    """表块上方最近的 # 标题（跳过空行/页标/家具行；紧邻实质文本则视为无标题）。"""
+    for i in range(max(0, line_no - 1), -1, -1):
+        ln = (md_lines[i] or "").strip()
+        if not ln or ln.startswith("<!--"):
+            continue
+        if ln.startswith("#"):
+            return ln
+        if _is_furniture_title(ln):
+            continue  # 日期/单位行（平安报表页实证）不遮挡真实标题
+        return ""
+    return ""
 
 
 def merge_continued_tables(tables: list[dict], md_lines: list[str]) -> None:
@@ -1641,19 +1727,60 @@ def merge_continued_tables(tables: list[dict], md_lines: list[str]) -> None:
     间距间出现新报表标题（合并/母公司XX表、## 标题）或附注小节编号则阻断——相邻的不同表不是续表。"""
     for j in range(1, len(tables)):
         a, b = tables[j - 1], tables[j]
-        if b.get("cols") != a.get("cols") or (b["page"] - a["page"]) not in (0, 1):
+        if b.get("cols") != a.get("cols"):
+            # 单侧恰多 1 个全空列（对齐伪影，神华母公司 BS 5列 vs 续片 4列实证）：
+            # 剔除后再续链，避免伪列阻断同表跨页合并
+            for wide, narrow in ((a, b), (b, a)):
+                if wide.get("cols") and narrow.get("cols") \
+                        and wide["cols"] - narrow["cols"] == 1:
+                    empt = _empty_col_indexes(wide)
+                    if len(empt) == 1:
+                        _drop_empty_column(wide, empt[0])
+            # 续片带稀疏节号前置列（平安 IS p191 col0 仅 三、四、五、六 实证）：
+            # 填充率 ≤25% 且均为节号 token → 剔除对齐后再链
+            if b.get("cols") - a.get("cols") == 1 and (b.get("rows") or 0) >= 4:
+                lines = [l for l in (b.get("_text") or "").splitlines()
+                         if l.strip().startswith("|")]
+                rows_b = [split_md_row(l) for l in lines if not SEP_ROW_PAT.match(l.strip())]
+                filled0 = [r[0] for r in rows_b if r and r[0].strip()]
+                if rows_b and len(filled0) <= 0.25 * len(rows_b) and all(
+                        re.fullmatch(r"[（(]?[一二三四五六七八九十\d]+[)）、.]*", c.strip())
+                        for c in filled0):
+                    _drop_empty_column(b, 0)
+            if b.get("cols") != a.get("cols"):
+                continue
+        if (b["page"] - a["page"]) not in (0, 1):
             continue
         gap = b["line"] - a["line_end"]
         if gap > 24:
             continue
         between = nfkc("\n".join(md_lines[a["line_end"] + 1:b["line"]]))
-        # 「合并资产负债表（续）」类续表标题含报表名，不能当"新报表"阻断——剔除含「续」的行再判
-        stmt_between = "\n".join(l for l in between.splitlines() if "续" not in l)
+        # 「合并资产负债表（续）」类续表标题含报表名，不能当"新报表"阻断——剔除含「续」的行再判；
+        # 报表页脚常重印一遍**不带「续」**的同名标题（神华 p147→p148 实证阻断粘链），
+        # 页首 (续) 标题可带 ##/公司名前缀而页脚没有——去(续)归一化后互为包含即视为同款标题，一并剔除；
+        # 平安类报表每页页首重印**同一 ## 标题**（无「续」标记，p187→p188 实证）——
+        # 与表 a 自身标题相同的标题行亦为页眉回声，一并剔除
+        btw_lines = between.splitlines()
+        cont_norms = {_norm_cont_title(l) for l in btw_lines if _CONT_TITLE_MARK_RE.search(l)}
+        a_own_head = _norm_heading(_own_table_heading(md_lines, a.get("line", 0)))
+
+        def _is_cont_title_echo(l: str) -> bool:
+            n = _norm_cont_title(l)
+            if len(n) >= 6 and any(n in cn or cn in n for cn in cont_norms if cn):
+                return True
+            return bool(a_own_head) and len(a_own_head) >= 6 \
+                and _norm_heading(l) == a_own_head
+
+        stmt_between = "\n".join(
+            l for l in btw_lines if "续" not in l and not _is_cont_title_echo(l)
+        )
         if NEW_STMT_PAT.search(stmt_between) or NOTE_HEADING_PAT.search(between):
             continue
-        # 独立续表标记：「（续）/(续)/续表/（续上表…」；单字「续」会被标题词「后续/续聘」误中
-        # （恒瑞附表4「已上市创新药后续主要临床研发管线」即把附表4 误并进附表3 链）
-        explicit_cont = bool(re.search(r"[（(]\s*续\s*[）)]|[（(]\s*续上|续表", between))
+        # 独立续表标记：「（续）/(续)/-续/续表/（续上表…」；单字「续」会被标题词「后续/续聘」误中
+        # （恒瑞附表4「已上市创新药后续主要临床研发管线」即把附表4 误并进附表3 链）；
+        # 「-续」为行尾标记须逐行判（长城 between 末行是单位行，整串 $ 锚失效实证）
+        explicit_cont = bool(re.search(r"[（(]\s*续\s*[）)]|[（(]\s*续上|续表", between)) or any(
+            re.search(r"[-–−]\s*[续續]\s*$", l) for l in btw_lines)
         ha = a.get("headers") or []
         hb = b.get("headers") or []
         same_header = bool(ha) and bool(hb) and ha[:2] == hb[:2]
@@ -1664,7 +1791,17 @@ def merge_continued_tables(tables: list[dict], md_lines: list[str]) -> None:
         if long_table and hb and len(hb) == b.get("cols") and all(c and len(c) <= 12 for c in hb):
             long_table = False
         income_seq = _income_stmt_subject_continuation(a, b)
-        if explicit_cont or same_header or headerless or long_table or income_seq:
+        # 页界紧贴续片：两表之间仅页标/空行（无任何夹文）——新表出现必伴随标题文字。
+        # 续片常无自身表头行，docling 以首数据行为 headers（陕煤 BS/CF 实证，same_header/
+        # long_table 均失效）；MD&A KPI 小表也页界相邻无夹文——以两侧行数 ≥4 区分
+        # （真续片是长表，KPI 残表仅 1 行数据）。同页零夹文则还须首表头相同
+        blank_only = not re.sub(r"<!-- page:\d+ -->|\s", "", between)
+        first_hdr_echo = bool(ha and hb and ha[0] and ha[0] == hb[0])
+        page_split = blank_only and (
+            ((b["page"] - a["page"]) == 1
+             and a.get("rows", 0) >= 4 and b.get("rows", 0) >= 4)
+            or ((b["page"] - a["page"]) == 0 and first_hdr_echo))
+        if explicit_cont or same_header or headerless or long_table or income_seq or page_split:
             b["continued"] = True
             a.setdefault("continued_by", []).append(b["index"])
 
@@ -1961,6 +2098,41 @@ def meta_summary_text(meta: dict) -> str:
     return "\n".join(out)
 
 
+def inherit_industry_from_cache(sha: str, meta: dict) -> dict:
+    """短文档行业回退：季报/中报/HK 公告关键词不足（industry=null）时，按 symbol 继承
+    同发行人年报的 industry（宇通Q1/电投Q1/盾安Q1 七家 null 实证）。置信上限 0.3 + 继承标记，
+    年报/招股书不继承（未适配行业应显式 null + review warning，而非静默补齐）。"""
+    ih = meta.get("industry_hint") or {}
+    if ih.get("industry") or ih.get("inherited_from"):
+        return meta
+    if (meta.get("filing_kind") or "") in ("annual", "prospectus"):
+        return meta
+    symbol = str((meta.get("source") or {}).get("symbol") or "").strip()
+    if not symbol:
+        return meta
+    idx = read_json(cache_root() / "index.json", {}) or {}
+    for sha2, ent in sorted((idx.get("entries") or {}).items()):
+        if sha2 == sha or str((ent or {}).get("symbol") or "").strip() != symbol:
+            continue
+        m2 = read_json(entry_dir(sha2) / "meta.json", None)
+        if not m2 or (m2.get("filing_kind") or "") != "annual":
+            continue
+        ind2 = ((m2.get("industry_hint") or {}).get("industry") or "").strip()
+        if not ind2:
+            continue
+        ih["industry"] = ind2
+        ih["confidence"] = 0.3
+        ih["inherited_from"] = {
+            "cache_id": sha2, "filing_kind": "annual",
+            "title": ((m2.get("source") or {}).get("title") or "")[:60],
+        }
+        meta["industry_hint"] = ih
+        (meta.get("document_profile") or {}).update(
+            {"industry": ind2, "industry_confidence": 0.3})
+        return meta
+    return meta
+
+
 def cmd_scan(argv: list[str]) -> None:
     ap = argparse.ArgumentParser(prog="wm_report.py scan", description="内容理解 → meta.json")
     ap.add_argument("sha12")
@@ -1984,6 +2156,7 @@ def cmd_scan(argv: list[str]) -> None:
     fetch_meta = read_json(d / "fetch_meta.json", {})
     source = fetch_meta.get("source") or index_load()["entries"].get(args.sha12, {}).get("source") or {}
     meta = build_meta(args.sha12, md_text, pages, convert_meta, source, fitz_manifest=fitz_manifest)
+    meta = inherit_industry_from_cache(args.sha12, meta)
     write_json(meta_path, meta)
     index_upsert(args.sha12, scanned=True)
     if args.summary:
@@ -3275,8 +3448,15 @@ def materialize_tables(sha12: str, *, out_name: str | None, force: bool) -> dict
             base = specs[0]["table_id"] if specs else rtype
         grouped.setdefault((base, head), []).append(rec)
 
+    def _summary_years(head: int) -> int:
+        """期数列中的不同年份数——多年摘要表判据（神华 p301 近5年摘要 2021-2025）；
+        不能用期数列计数：docling 表头回声会把 期末/期初 碎成多列（盾安 BS 实证）。"""
+        tm2 = table_meta_by_index.get(head) or {}
+        labels = " ".join(str(v) for v in (tm2.get("periods") or {}).values())
+        return len(set(re.findall(r"20\d{2}", labels)))
+
     def _chain_score(recs: list[dict], head: int) -> float:
-        """链结构分：行数 + 标题含报表名 + 合计行数（全部准则级信号，无公司词）。"""
+        """链结构分：行数 + 标题含报表名 + 合计行数 + 主表偏好（合并优先/摘要惩罚）。"""
         tm = table_meta_by_index.get(head) or {}
         score = float(len(recs))
         title = nfkc(tm.get("nearby_title") or "")
@@ -3287,6 +3467,17 @@ def materialize_tables(sha12: str, *, out_name: str | None, force: bool) -> dict
         if md_lines and tm.get("line") is not None:
             block = md_lines[tm.get("line", 0):tm.get("line_end", 0) + 1]
             score += min(3, sum(1 for ln in block if "合计" in ln))
+        # 主表偏好：合并报表优先于母公司（陕煤/盾安/宁沪裸 id 曾锚在母公司表实证）
+        if "母公司" in title:
+            score -= 30
+        elif "合并" in title or "合併" in title:
+            score += 8
+        # 多年摘要惩罚：期数列含 ≥3 个不同年份（近5年摘要表）或标题带摘要词——
+        # 同型摘要副本不得抢裸 id（神华 p301「合并利润表」5 年摘要抢走 income_stmt 实证）
+        if _summary_years(head) >= 3:
+            score -= 25
+        if re.search(r"摘要|近.{0,4}年主要|概览|补充资料", title):
+            score -= 25
         return score
 
     # canonical table_id 给结构分最高的链；其余独立链用 {base}_p{page}_i{idx}
@@ -3294,7 +3485,23 @@ def materialize_tables(sha12: str, *, out_name: str | None, force: bool) -> dict
     for (base, head), recs in grouped.items():
         by_base.setdefault(base, []).append((head, recs))
     id_for_key: dict[tuple[str, int], str] = {}
+    variant_for_key: dict[tuple[str, int], str] = {}
     used_ids: set[str] = set()
+
+    def _table_variant(head: int, rank0: bool) -> str:
+        """typed 表物理角色：primary/parent_company/summary/analysis/supplementary/duplicate。"""
+        tm = table_meta_by_index.get(head) or {}
+        title = nfkc(tm.get("nearby_title") or "")
+        if ANALYSIS_TITLE_RE.search(title):
+            return "analysis"
+        if _summary_years(head) >= 3 or re.search(r"摘要|近.{0,4}年主要|概览", title):
+            return "summary"
+        if "补充资料" in title:
+            return "supplementary"
+        if "母公司" in title:
+            return "parent_company"
+        return "primary" if rank0 else "duplicate"
+
     for base, chains in by_base.items():
         for rank, (head, recs) in enumerate(
                 sorted(chains, key=lambda hr: (-_chain_score(hr[1], hr[0]), hr[0]))):
@@ -3309,6 +3516,7 @@ def materialize_tables(sha12: str, *, out_name: str | None, force: bool) -> dict
                     n += 1
             used_ids.add(tid)
             id_for_key[(base, head)] = tid
+            variant_for_key[(base, head)] = _table_variant(head, rank == 0)
 
     catalog_tables = []
     pending_narr, gap_base = _build_narrative_catalog(meta)
@@ -3358,6 +3566,7 @@ def materialize_tables(sha12: str, *, out_name: str | None, force: bool) -> dict
             "description": spec.get("description"),
             "method": "record_map",
             "group": spec.get("group"),
+            "variant": variant_for_key.get(key, "primary"),
             "source_type": "pdf_table",
             "record_type": spec.get("record_type"),
             "unit_default": sample_meta.get("unit") or recs[0].get("unit") or "",
@@ -3380,6 +3589,7 @@ def materialize_tables(sha12: str, *, out_name: str | None, force: bool) -> dict
         catalog_tables.append({
             "id": table_id, "file": file_rel, "group": spec.get("group"),
             "method": "record_map", "row_count": len(rows),
+            "variant": variant_for_key.get(key, "primary"),
         })
 
     # P1-A：跨页续片 hint 传染 + 同 hint 相邻片合并。碎表中段表头被数据吞掉导致 hint 丢失
@@ -3818,7 +4028,10 @@ def _statement_row_qa_finding(tid: str, base: str, obj: dict, file_rel: str) -> 
         return None
     rows = obj.get("rows") or []
     items = [str(r.get("item") or "") for r in rows if isinstance(r, dict)]
-    blob = nfkc("\n".join(items))
+    # 科目词扫整行文本列：盾安类「节标签前置列」版式科目在 c1 而非 item
+    blob = nfkc("\n".join(
+        " ".join(v for v in (str(x) for x in r.values()) if v and v != "None")
+        for r in rows if isinstance(r, dict)) or "\n".join(items))
     hits = [lab for lab in rules["any_of"] if lab in blob]
     entity_rows = sum(1 for it in items if _item_looks_like_entity_name(it))
     if base == "income_stmt" and items and entity_rows >= max(1, len(items) // 2):
@@ -4144,7 +4357,16 @@ FOOT_TOTAL_RE = re.compile(r"合计|小计|总计")
 def _parse_num(s) -> float | None:
     raw = nfkc(str(s or "")).strip()
     neg = bool(re.fullmatch(r"[（(][\d.,\-]+[)）]", raw))
-    raw = re.sub(r"[（）(),\s]", "", raw).replace("％", "").replace("＋", "+").replace("－", "-")
+    # 粘连多值单元格（docling 把两行并成 "(164,904,908) (6,155,136)"，美的 CF 1.6e15 实证）：
+    # 直接拼接成天文数字会污染勾稽与下游——多于一个长数字 token 即放弃；
+    # 短 token（附注序号）容忍并取最长 token 解析
+    toks = re.findall(r"\d[\d,，.]*", raw)
+    if len(toks) > 1:
+        longest = max(toks, key=len)
+        if any(len(t) >= 3 and t != longest for t in toks):
+            return None
+        raw = longest
+    raw = re.sub(r"[（）(),，\s]", "", raw).replace("％", "").replace("＋", "+").replace("－", "-")
     if not re.search(r"\d", raw):
         return None
     try:
@@ -4179,55 +4401,94 @@ def crossfoot_findings(obj: dict, tid: str, file_rel: str) -> list[dict]:
         notes.setdefault(kind, []).append(sample)
 
     if rtype == "balance_sheet":
-        def _val_by_label(pat):
+        def _nums_by_pred(pred):
             for row in rows:
-                if re.search(pat, row.get("item") or ""):
+                sq = re.sub(r"\s+", "", nfkc(row.get("item") or ""))
+                if pred(sq):
                     nums = _row_cells_numeric(row)
                     if nums:
-                        k0 = sorted(nums, key=lambda x: -abs(nums[x]))[0]
-                        return nums[k0]
+                        return nums
             return None
 
-        assets = _val_by_label(r"资产总计|资产合计")
-        liab_eq = _val_by_label(r"负债和(?:所有者|股东)权益(?:总计|合计)|负债及(?:所有者|股东)权益(?:总计|合计)")
-        if assets is not None and liab_eq is not None and abs(assets - liab_eq) > max(1, 0.005 * abs(assets)):
-            note("identity_mismatch", f"资产总计 {assets:g} ≠ 负债和权益总计 {liab_eq:g}")
+        # 资产侧须整行精确匹配「资产总计」——子串匹配会先命中「非流动资产合计」
+        # （续片链缺流动资产半段时，神华 480,792≠668,022 误报实证）
+        assets = _nums_by_pred(
+            lambda s: s in ("资产总计", "资产合计", "资产总值", "資產總值"))
+        liab_eq = _nums_by_pred(lambda s: bool(re.search(
+            r"负债[和及](?:所有者|股东|股東)?权益(?:总计|总额|合计)", s)))
+        if assets is not None and liab_eq is not None:
+            # 期别列对齐：只比较两侧共有的数值列（多年摘要表各年份列各自恒等）；
+            # 禁止 max-abs 整行取值——会错拿异期列（摘要表 2022 列对 2024 列实证）
+            for col in sorted(set(assets) & set(liab_eq)):
+                a_v, l_v = assets[col], liab_eq[col]
+                if abs(a_v - l_v) > max(1, 0.005 * abs(a_v)):
+                    note("identity_mismatch", f"{col} 资产总计 {a_v:g} ≠ 负债和权益总计 {l_v:g}")
 
     if rtype in ("balance_sheet", "income_stmt", "cashflow_stmt"):
-        # materialize 会把多张物理表（合并/母公司报表）拼进同一 typed 表——必须按 source.table 分段勾稽
-        segments: dict[str, list[dict]] = {}
+        # 同一 typed 表文件 = 同一合并链 = 同一逻辑报表：跨物理分片累计勾稽，
+        # 仅在 合计/小计 行清零——按 source.table 分段会把节截断（陕煤「非流动资产合计」
+        # 分片起点在节中段，局部和≠合计 的误报实证）
+        col_max: dict[str, float] = {}
         for row in rows:
-            seg = str((row.get("source") or {}).get("table"))
-            segments.setdefault(seg, []).append(row)
+            for k, v in _row_cells_numeric(row).items():
+                col_max[k] = max(col_max.get(k, 0.0), abs(v))
+        amt_cols = {k for k, m in col_max.items() if m >= 100}  # 排除附注号/序号列
+        # CF 节结果行（各活动净额/净增加额）：是节结果而非分项，计入累计会污染下一节小计；
+        # 但「…定期存款」「…限制用途资金的净额」等是真实分项——只匹配节结果（神华 p163 实证）
+        cf_section_result = re.compile(
+            r"(?:经营|投资|筹资|經營|投資|籌資)活动产生的现金流量净额|现金及现金等价物净[减增]加额")
+
+        def _reconcilable(vals: list[float], v: float) -> bool:
+            """合计不平时：剔除单行或相邻两行后能精确勾稽（0.5%）→ 未标注其中子项
+            （长电 应收股利≈其他应收款）或折行残片（神华 p162「股利、利润」），豁免不报。"""
+            tol = max(1, 0.005 * abs(v))
+            total = sum(vals)
+            for i in range(len(vals)):
+                if abs(total - vals[i] - v) <= tol:
+                    return True
+            for i in range(len(vals) - 1):
+                if abs(total - vals[i] - vals[i + 1] - v) <= tol:
+                    return True
+            return False
+
         bad_total = 0
-        for seg_rows in segments.values():
-            col_max: dict[str, float] = {}
-            for row in seg_rows:
-                for k, v in _row_cells_numeric(row).items():
-                    col_max[k] = max(col_max.get(k, 0.0), abs(v))
-            amt_cols = {k for k, m in col_max.items() if m >= 100}  # 排除附注号/序号列
-            for col in sorted(amt_cols):
-                run, contributors, bad = 0.0, 0, 0
-                for row in seg_rows:
-                    label = (row.get("item") or "").strip()
-                    nums = _row_cells_numeric(row)
-                    v = nums.get(col)
-                    if v is None:
-                        continue
-                    if FOOT_TOTAL_RE.search(label):
-                        if contributors >= 2 and abs(run - v) > max(1, 0.005 * abs(v)):
-                            bad += 1
-                            note("subtotal_mismatch", f"{label} {v:g} ≠ Σ分项 {run:g}")
-                        run, contributors = 0.0, 0
-                    elif label.startswith("其中"):
-                        continue
-                    else:
-                        run += -v if label.startswith("减") else v
-                        contributors += 1
-                bad_total += bad
+        for col in sorted(amt_cols):
+            run, contributors, bad = 0.0, 0, 0
+            contrib_vals: list[float] = []
+            for row in rows:
+                label = (row.get("item") or "").strip()
+                # docling 常在科目名中断空白（「归属于母公司股东权益合 计」长电实证）——
+                # 标签判定一律用去空白形式
+                label_sq = re.sub(r"\s+", "", label)
+                nums = _row_cells_numeric(row)
+                v = nums.get(col)
+                if FOOT_TOTAL_RE.search(label_sq):
+                    # 合计行是节边界：本列无数值也要清零（跨片列错位时防止上游节渗入，
+                    # 长电 p081「股东权益合计」Σ≈资产总计 实证）
+                    if v is not None and contributors >= 2 \
+                            and abs(run - v) > max(1, 0.005 * abs(v)) \
+                            and not _reconcilable(contrib_vals, v):
+                        bad += 1
+                        note("subtotal_mismatch", f"{label_sq} {v:g} ≠ Σ分项 {run:g}")
+                    run, contributors, contrib_vals = 0.0, 0, []
+                elif v is None:
+                    continue
+                elif label_sq.startswith("其中"):
+                    continue
+                elif cf_section_result.search(label_sq):
+                    continue
+                else:
+                    # 「减:」前缀仅在数值为正时取负——括号负数已含符号，双重取反
+                    # 会把 减:库存股 (8,151,117) 加成 +8,151,117（美的 BS 实证）
+                    contrib = -v if (label_sq.startswith("减") and v > 0) else v
+                    run += contrib
+                    contributors += 1
+                    contrib_vals.append(contrib)
+            bad_total += bad
         if bad_total:
             findings.append({"id": tid, "verdict": "degraded", "reason": "subtotal_mismatch",
-                             "file": file_rel, "detail": f"{bad_total} 处合计与分项之和不符"})
+                             "file": file_rel, "detail": f"{bad_total} 处合计与分项之和不符",
+                             "samples": (notes.get("subtotal_mismatch") or [])[:6]})
 
     labels = {c.get("key"): nfkc(c.get("label") or "")
               for c in (obj.get("schema") or {}).get("columns") or []}
@@ -4551,6 +4812,12 @@ def _terminal_gap_status(status: str | None) -> bool:
 def build_evolution_proposal(meta: dict, adapt_plan: dict, review: dict, result_dir: Path) -> dict:
     profile = meta.get("document_profile") or {}
     industry = (meta.get("industry_hint") or {}).get("industry") or profile.get("industry")
+    # 行业置信度分级（E4）：weak 显性化；年报 null/weak 未继承时警示（未适配行业应显式暴露）
+    _conf = float(profile.get("industry_confidence")
+                  or (meta.get("industry_hint") or {}).get("confidence") or 0.0)
+    profile["industry_confidence_bucket"] = (
+        "strong" if _conf >= 0.5 else "medium" if _conf >= 0.3
+        else "weak" if _conf > 0.0 else "none")
     gaps = read_json(result_dir / "gaps.json", []) or []
     required_open = [
         {"id": g.get("id"), "status": g.get("status"), "reason": g.get("reason")}
@@ -4755,6 +5022,35 @@ def review_extract(sha12: str, *, result_name: str | None = None) -> dict:
                                                (meta.get("industry_hint") or {}).get("industry") or profile.get("industry"))]
     if latent_hints:
         warnings.append({"id": "unpromoted_type_hints", "reason": "存在反复出现但未 promote 的 type_hint", "items": latent_hints[:12]})
+    # 裸 id 三表 variant 异常：canonical 不应是摘要/分析/母公司副本（B2 选主回归监控）
+    variant_anomaly = []
+    for cat in (manifest.get("catalog") or {}).get("tables") or []:
+        if cat.get("id") in CORE_STATEMENT_TYPES and cat.get("variant") not in (None, "primary"):
+            variant_anomaly.append({"id": cat.get("id"), "variant": cat.get("variant")})
+    if variant_anomaly:
+        warnings.append({
+            "id": "primary_statement_variant_anomaly",
+            "reason": "裸 id 三表的 variant 非 primary（选主异常，下游慎用）",
+            "items": variant_anomaly,
+        })
+    if profile.get("industry_confidence_bucket") in ("weak", "none") \
+            and (filing_kind == "annual" or filing_kind == "semi") \
+            and not (meta.get("industry_hint") or {}).get("inherited_from"):
+        warnings.append({
+            "id": "annual_industry_weak",
+            "reason": f"年报/半年报行业置信度 {profile.get('industry_confidence_bucket')}"
+                      f"（conf={_conf:.2f}）——行业目录可能未适配，按 adaptation.md 提案",
+        })
+    degraded_findings = [{"id": f.get("id"), "reason": f.get("reason"),
+                          "adjudicated": f.get("adjudicated")}
+                         for f in (quality or {}).get("python_findings") or []
+                         if f.get("verdict") == "degraded" and not f.get("adjudicated")]
+    if degraded_findings:
+        warnings.append({
+            "id": "tables_with_degraded_findings",
+            "reason": "存在未仲裁的 degraded 勾稽/回验发现（qa_adjudication 任务可闭环）",
+            "items": degraded_findings[:12],
+        })
     # 刷新 adapt 中的 expected_but_missing（review 时点更准）
     adapt_plan["expected_but_missing"] = sorted(
         set(adapt_plan.get("expected_but_missing") or []) | set(missing_statements)
@@ -5111,6 +5407,447 @@ def cmd_cache(argv: list[str]) -> None:
 
 # --------------------------------------------------------------------------
 
+# --------------------------------------------------------------- auto-heal (close) ----
+
+def auto_promote(sha12: str, *, result_name: str | None = None,
+                 preferred: list[str] | None = None, min_cooccurrence: int = 2) -> dict:
+    """规则化 auto-promote：行业 allowlist ∪ 跨业态邻接白名单（hint 共现≥N）内，
+    每 hint 取首个候选晋升；不设总数上限（原 _live_pipeline 上限 6 会截断跨业态表——
+    神华 5 处 power_generation hint 未晋升实证）。"""
+    from domain.policy import CROSS_INDUSTRY_TABLE_ALLOWLIST
+
+    result_dir = _result_dir(sha12, result_name)
+    cand = read_json(result_dir / "promote_candidates.json", {}) or {}
+    meta = read_json(entry_dir(sha12) / "meta.json", {}) or {}
+    industry = (meta.get("industry_hint") or {}).get("industry")
+    allow = set(preferred or [])
+    if industry and industry in INDUSTRY_EXT_GROUPS:
+        allow |= set(INDUSTRY_EXT_GROUPS[industry].get("tables") or [])
+    if not allow:
+        allow = {"production_sales", "segments", "key_financials"}
+    freq: dict[str, int] = {}
+    for c in cand.get("candidates") or []:
+        h = str(c.get("type_hint") or "")
+        if h:
+            freq[h] = freq.get(h, 0) + 1
+    cross_applied: dict[str, int] = {}
+    for _adj, hints in (CROSS_INDUSTRY_TABLE_ALLOWLIST.get(industry or "") or {}).items():
+        for h in hints:
+            if freq.get(h, 0) >= min_cooccurrence:
+                allow.add(h)
+                cross_applied[h] = freq[h]
+
+    def sort_key(c: dict) -> tuple:
+        hint = str(c.get("type_hint") or "")
+        try:
+            pri = (preferred or []).index(hint)
+        except ValueError:
+            pri = 999
+        return (pri, hint)
+
+    promotions: list[dict] = []
+    seen: set[str] = set()
+    for c in sorted(cand.get("candidates") or [], key=sort_key):
+        hint = c.get("type_hint")
+        if not hint or hint in seen or hint not in allow:
+            continue
+        table_file = c.get("table_file") or c.get("file")
+        if not table_file:
+            continue
+        reason = f"auto-promote type_hint={hint}"
+        if hint in cross_applied:
+            reason += f"（跨业态邻接，共现 {cross_applied[hint]} 次）"
+        promotions.append({
+            "table_file": table_file,
+            "promote_to": hint,
+            "confidence": "high",
+            "reason": reason,
+        })
+        seen.add(hint)
+    if not promotions:
+        return {"applied": 0, "promotions": [], "cross_industry": cross_applied}
+    out = apply_promotions(sha12, promotions, result_name=result_dir.name)
+    out["promotions"] = promotions
+    out["cross_industry"] = cross_applied
+    return out
+
+
+def _section_ranges(meta: dict, md_lines: list[str], spec: dict) -> list[tuple[int, int, str]]:
+    """按 spec 定位章节行区间：先 meta.sections 的 anchor key，退而求其次标题正则。"""
+    secs = meta.get("sections") or []
+    out: list[tuple[int, int, str]] = []
+    for key in spec.get("section_keys") or []:
+        for i, s in enumerate(secs):
+            if s.get("key") == key:
+                start = int(s.get("line") or 0)
+                # sections 列表按发现序非行序（神华 mda_outlook 实证）——
+                # 取行号大于本节的最近节为边界
+                later = [int(s2.get("line")) for s2 in secs
+                         if s2.get("line") is not None and int(s2["line"]) > start]
+                end = min(later) if later else start + 400
+                out.append((start, min(end, start + 900), f"section:{key}"))
+                break
+    if not out:
+        pats = [re.compile(p) for p in spec.get("section_patterns") or []]
+        for i, ln in enumerate(md_lines):
+            t = ln.strip()
+            if not t or t.startswith("|") or len(t) > 80:
+                continue
+            if any(p.search(t) for p in pats):
+                out.append((i, min(i + 400, len(md_lines)), f"pattern:{t[:24]}"))
+                break
+    return out
+
+
+def narrative_scan(sha12: str, *, result_name: str | None = None) -> dict:
+    """叙述层证据扫描（auto-heal 第 3 步）：
+    - 叙述 needle 命中 → 自动 found（quote+page，review 硬门回验）；
+    - 未命中 → agent_tasks 证据包（章节区间/页码/excerpt/needles），**不自动 not_disclosed**；
+    - required_gaps 一律生成带候选证据的 agent_tasks（口径判断须 Agent 终审）。"""
+    from domain.narratives import (INDUSTRY_GAP_NEEDLES, INDUSTRY_NARRATIVE_SPECS,
+                                   NARRATIVE_SPECS)
+
+    result_dir = _result_dir(sha12, result_name)
+    meta = read_json(entry_dir(sha12) / "meta.json", {}) or {}
+    industry = (meta.get("industry_hint") or {}).get("industry")
+    md_lines = (entry_dir(sha12) / "report.md").read_text(encoding="utf-8").splitlines()
+    manifest = _load_manifest(result_dir)
+    gaps = read_json(result_dir / "gaps.json", []) or []
+    nar_catalog = (manifest.get("catalog") or {}).get("narratives") or []
+    tasks_dir = result_dir / "agent_tasks"
+    tasks_dir.mkdir(exist_ok=True)
+    (result_dir / "narratives").mkdir(exist_ok=True)
+
+    def _sq(s: str) -> str:
+        return re.sub(r"\s+", "", nfkc(s or ""))
+
+    def find_needle_lines(ranges: list[tuple[int, int, str]], needles: list[str]) -> list[tuple[int, str, str]]:
+        prose, headings, table_rows = [], [], []
+        for lo, hi, _src in ranges:
+            for i in range(lo, min(hi, len(md_lines))):
+                ln = md_lines[i].rstrip()
+                if not ln.strip():
+                    continue
+                n = _sq(ln)
+                for nd in needles:
+                    if nd and nd in n:
+                        s = ln.lstrip()
+                        if s.startswith("|"):
+                            table_rows.append((i, ln.strip(), nd))
+                        elif s.startswith("#"):
+                            headings.append((i, ln.strip(), nd))
+                        else:
+                            prose.append((i, ln.strip(), nd))
+                        break
+        # 内容行 > 章节标题行（标题命中只证明章节存在，不证明披露内容） > 表格行
+        return prose + headings + table_rows
+
+    specs: dict[str, dict] = {nid: dict(sp) for nid, sp in NARRATIVE_SPECS.items()}
+    for nid, sp in (INDUSTRY_NARRATIVE_SPECS.get(industry or "") or {}).items():
+        specs[nid] = dict(sp)
+
+    found: list[dict] = []
+    pending: list[str] = []
+    for entry in nar_catalog:
+        nid = entry.get("id")
+        if not nid or entry.get("status") in ("found", "not_applicable"):
+            continue
+        sp = specs.get(nid) or {"needles": [], "section_keys": [nid], "section_patterns": [nid]}
+        # 行业叙述优先扫 MD&A 章节（commodity_price 命中董事会报告开头弱证据实证）
+        if not sp.get("section_keys") and not sp.get("section_patterns"):
+            sp = {**sp, "section_keys": ["mda_overview", "mda_industry"]}
+        ranges = _section_ranges(meta, md_lines, sp) or [(0, len(md_lines), "whole_doc")]
+        hits = find_needle_lines(ranges, sp.get("needles") or [])
+        hit = next((h for h in hits if len(_sq(h[1])) >= 12), None)
+        if hit:
+            i, ln, nd = hit
+            page_n = page_of_line(md_lines, i)
+            write_json(result_dir / "narratives" / f"{nid}.json", {
+                "narrative_id": nid, "group": entry.get("group"),
+                "anchor": entry.get("anchor") or nid,
+                "quote": ln, "page": page_n,
+                "notes": f"narrative-scan 自动命中 needle「{nd}」",
+                "needles": sp.get("needles") or [], "status": "found", "bullets": [],
+            })
+            entry["status"] = "found"
+            for g in gaps:
+                if g.get("id") == nid:
+                    g.update({"status": "found", "quote": ln, "page": page_n,
+                              "evidence": f"narrative-scan needle「{nd}」quote+page"})
+            found.append({"id": nid, "page": page_n, "needle": nd})
+        else:
+            lo, hi, src = ranges[0]
+            write_json(tasks_dir / f"narrative-{nid}.json", {
+                "task": "narrative_close", "id": nid, "group": entry.get("group"),
+                "status": "pending",
+                "section": [{"source": src, "start_line": lo, "end_line": hi,
+                             "pages": [page_of_line(md_lines, lo), page_of_line(md_lines, hi - 1)]}],
+                "needles": sp.get("needles") or [],
+                "excerpt": [md_lines[i].strip() for i in range(lo, min(lo + 60, hi))
+                            if md_lines[i].strip()][:14],
+                "instructions": (
+                    "读 section 页区间原文判断披露状态：found→quote+page；not_disclosed→reason"
+                    "（引用披露范围证据）；not_found。结果写 agent_tasks_done/narrative-{id}.json，"
+                    "由 agent-apply 校验落地（found 的 quote 须逐字在 report.md 且页码一致）。"),
+            })
+            pending.append(nid)
+
+    gap_needles = INDUSTRY_GAP_NEEDLES.get(industry or "") or {}
+    nar_ids = {e.get("id") for e in nar_catalog}
+    for g in gaps:
+        gid = g.get("id")
+        if not gid or gid in ("variance_reason",) or gid in nar_ids \
+                or str(gid).startswith(("qa::", "narrative_kpi::")) \
+                or g.get("status") in ("found", "not_disclosed", "not_applicable", "not_found"):
+            continue
+        needles = gap_needles.get(gid) or []
+        hits = find_needle_lines([(0, len(md_lines), "whole_doc")], needles) if needles else []
+        ev_hits = [{"quote": ln, "page": page_of_line(md_lines, i), "needle": nd}
+                   for i, ln, nd in hits[:5]]
+        write_json(tasks_dir / f"gap-{gid}.json", {
+            "task": "narrative_close", "id": gid, "group": g.get("group"),
+            "status": "pending", "reason_required": g.get("reason"),
+            "needles": needles, "evidence_hits": ev_hits,
+            "instructions": (
+                "候选证据仅供参考：口径/数值判断须 Agent 定论（如 权益 vs 并表产量、"
+                "洗选率是否披露数值）。found→quote+page；not_disclosed→reason 引范围证据；"
+                "not_found。写 agent_tasks_done/gap-{id}.json。"),
+        })
+        pending.append(gid)
+
+    write_json(result_dir / "gaps.json", gaps)
+    write_json(result_dir / "manifest.json", manifest)
+    # 清理已终态 id 的陈旧任务包（上一轮 pending、本轮已闭环）
+    terminal_ids = {e.get("id") for e in nar_catalog
+                    if e.get("status") in ("found", "not_applicable")} | {
+        g.get("id") for g in gaps
+        if g.get("status") in ("found", "not_disclosed", "not_applicable", "not_found")}
+    for fp in tasks_dir.glob("*.json"):
+        tid = fp.stem.replace("narrative-", "", 1).replace("gap-", "", 1)
+        if tid in terminal_ids:
+            fp.unlink()
+    return {"found": found, "pending": pending,
+            "tasks_dir": str(tasks_dir)}
+
+
+def agent_apply(sha12: str, *, result_name: str | None = None,
+                tasks_dirname: str = "agent_tasks_done") -> dict:
+    """校验并落地 Agent 判断（auto-heal 第 4 步）。校验不过即拒——不放宽任何门：
+    - found：quote 逐字（NFKC 去空白）在 report.md 且页码一致；
+    - not_disclosed：reason ≥8 字符；
+    - qa_adjudication：adjudication ∈ rule_limitation|real，标注进 quality.json（不删 finding）。"""
+    result_dir = _result_dir(sha12, result_name)
+    done_dir = result_dir / tasks_dirname
+    md_lines = (entry_dir(sha12) / "report.md").read_text(encoding="utf-8").splitlines()
+    manifest = _load_manifest(result_dir)
+    gaps = read_json(result_dir / "gaps.json", []) or []
+    quality = read_json(result_dir / "quality.json", {}) or {}
+
+    def _sq(s: str) -> str:
+        return re.sub(r"\s+", "", nfkc(s or ""))
+
+    md_sq = [_sq(ln) for ln in md_lines]
+    applied, rejected = [], []
+
+    def _set_gap(gid: str, status: str, quote: str | None, page: int | None,
+                 reason: str, evidence: str) -> None:
+        for g in gaps:
+            if g.get("id") == gid:
+                g["status"] = status
+                if quote and page is not None:
+                    g["quote"], g["page"] = quote, page
+                else:
+                    g.pop("quote", None), g.pop("page", None)
+                g["reason"] = reason
+                g["evidence"] = evidence
+                return
+        gaps.append({"id": gid, "group": "Z_agent", "status": status, "reason": reason,
+                     "evidence": evidence})
+
+    for fp in sorted(done_dir.glob("*.json")):
+        t = read_json(fp, {}) or {}
+        task, tid = t.get("task"), t.get("id")
+        if not tid:
+            rejected.append({"file": fp.name, "reject": "no_id"})
+            continue
+        if task in ("narrative_close", "gap_close"):
+            status = t.get("status")
+            if status not in ("found", "not_disclosed", "not_found"):
+                rejected.append({"id": tid, "reject": "bad_status"})
+                continue
+            quote = (t.get("quote") or "").strip()
+            page = t.get("page")
+            if status == "found":
+                if not quote or page is None:
+                    rejected.append({"id": tid, "reject": "found_requires_quote_page"})
+                    continue
+                qn = _sq(quote)
+                hit_i = next((i for i, ln in enumerate(md_sq) if qn and qn in ln), None)
+                if hit_i is None:
+                    rejected.append({"id": tid, "reject": "quote_not_in_md"})
+                    continue
+                if page_of_line(md_lines, hit_i) != int(page):
+                    rejected.append({"id": tid, "reject": "page_mismatch"})
+                    continue
+            elif status == "not_disclosed" and len((t.get("reason") or "").strip()) < 8:
+                rejected.append({"id": tid, "reject": "not_disclosed_requires_reason"})
+                continue
+            nar_ids = {e.get("id") for e in (manifest.get("catalog") or {}).get("narratives") or []}
+            if tid in nar_ids and status == "found":
+                (result_dir / "narratives").mkdir(exist_ok=True)
+                write_json(result_dir / "narratives" / f"{tid}.json", {
+                    "narrative_id": tid, "quote": quote, "page": page,
+                    "notes": t.get("notes") or "", "bullets": t.get("bullets") or [],
+                    "status": "found", "method": "agent_close",
+                })
+                for e in (manifest.get("catalog") or {}).get("narratives") or []:
+                    if e.get("id") == tid:
+                        e["status"] = "found"
+            elif tid in nar_ids:
+                for e in (manifest.get("catalog") or {}).get("narratives") or []:
+                    if e.get("id") == tid:
+                        e["status"] = status
+            _set_gap(tid, status,
+                     quote if status == "found" else None,
+                     page if status == "found" else None,
+                     (t.get("reason") or "").strip() or f"agent_close {status}",
+                     f"agent_close {status}")
+            applied.append({"id": tid, "status": status})
+        elif task == "qa_adjudication":
+            adj = t.get("adjudication")
+            if adj not in ("rule_limitation", "real"):
+                rejected.append({"id": tid, "reject": "bad_adjudication"})
+                continue
+            n_marked = 0
+            for f in quality.get("python_findings") or []:
+                if (f.get("id") == (t.get("finding_id") or tid)
+                        and (not t.get("reason_kind") or f.get("reason") == t.get("reason_kind"))):
+                    f["adjudicated"] = adj
+                    f["adjudication_reason"] = (t.get("rationale") or "").strip()
+                    n_marked += 1
+            if not n_marked:
+                rejected.append({"id": tid, "reject": "finding_not_found"})
+                continue
+            applied.append({"id": tid, "adjudication": adj})
+        elif task == "industry_confirm":
+            ind = t.get("industry")
+            if ind not in INDUSTRY_HINTS:
+                rejected.append({"id": tid, "reject": "unknown_industry"})
+                continue
+            meta = read_json(entry_dir(sha12) / "meta.json", {}) or {}
+            ih = meta.setdefault("industry_hint", {})
+            ih["industry"] = ind
+            ih["confirmed_by"] = "agent"
+            ih["confidence"] = max(float(ih.get("confidence") or 0.0), 0.5)
+            write_json(entry_dir(sha12) / "meta.json", meta)
+            applied.append({"id": tid, "industry": ind})
+        else:
+            rejected.append({"id": tid, "reject": "unknown_task"})
+
+    write_json(result_dir / "gaps.json", gaps)
+    write_json(result_dir / "manifest.json", manifest)
+    if quality:
+        write_json(result_dir / "quality.json", quality)
+    # 已落地任务从待办目录移除（重跑 close 不再列出）
+    for a in applied:
+        aid = str(a.get("id") or "")
+        for prefix in ("narrative-", "gap-"):
+            p = result_dir / "agent_tasks" / f"{prefix}{aid}.json"
+            if p.is_file():
+                p.unlink()
+    return {"applied": applied, "rejected": rejected}
+
+
+def close_extract(sha12: str, *, result_name: str | None = None,
+                  apply_tasks: bool = True) -> dict:
+    """auto-heal 编排：auto-promote → narrative-scan → agent-apply（若有 done 任务）
+    → qa-tables → review-extract；输出最小待办清单。禁止：静默改数字、无 quote 的 found、
+    跳过 quality.json。"""
+    promo = auto_promote(sha12, result_name=result_name)
+    nar = narrative_scan(sha12, result_name=result_name)
+    appl: dict = {"applied": [], "rejected": []}
+    result_dir = _result_dir(sha12, result_name)
+    if apply_tasks and (result_dir / "agent_tasks_done").is_dir() \
+            and list((result_dir / "agent_tasks_done").glob("*.json")):
+        appl = agent_apply(sha12, result_name=result_dir.name)
+    qa = apply_qa(sha12, [], result_name=result_dir.name)
+    rev = review_extract(sha12, result_name=result_dir.name)
+    todo = [str(p.name) for p in sorted((result_dir / "agent_tasks").glob("*.json"))]
+    return {
+        "cache_id": sha12, "result_dir": result_dir.name,
+        "promoted": [p.get("promote_to") for p in promo.get("promotions") or []],
+        "cross_industry": promo.get("cross_industry") or {},
+        "narratives_found": [f.get("id") for f in nar.get("found") or []],
+        "agent_applied": [a.get("id") for a in appl.get("applied") or []],
+        "agent_rejected": appl.get("rejected") or [],
+        "quality_status": qa.get("status"),
+        "review_status": rev.get("status"),
+        "review_hard_failures": rev.get("hard_failures"),
+        "todo_tasks": todo,
+    }
+
+
+def cmd_auto_promote(argv: list[str]) -> None:
+    ap = argparse.ArgumentParser(
+        prog="wm_report.py auto-promote",
+        description="规则化晋升：行业 allowlist + 跨业态邻接（hint 共现≥2）内每 hint 取首候选",
+    )
+    ap.add_argument("sha12")
+    ap.add_argument("--result", default="")
+    ap.add_argument("--core-table", action="append", default=[],
+                    help="优先晋升的 type_hint（可多次）")
+    args = ap.parse_args(argv)
+    warn_stale_cache(args.sha12)
+    out = auto_promote(args.sha12, result_name=args.result or None,
+                       preferred=args.core_table or None)
+    print(json.dumps(out, ensure_ascii=False, indent=1))
+
+
+def cmd_narrative_scan(argv: list[str]) -> None:
+    ap = argparse.ArgumentParser(
+        prog="wm_report.py narrative-scan",
+        description="叙述层证据扫描：needle 命中自动 found；未命中生成 agent_tasks 证据包",
+    )
+    ap.add_argument("sha12")
+    ap.add_argument("--result", default="")
+    args = ap.parse_args(argv)
+    warn_stale_cache(args.sha12)
+    out = narrative_scan(args.sha12, result_name=args.result or None)
+    print(json.dumps(out, ensure_ascii=False, indent=1))
+
+
+def cmd_agent_apply(argv: list[str]) -> None:
+    ap = argparse.ArgumentParser(
+        prog="wm_report.py agent-apply",
+        description="校验并落地 Agent 判断（agent_tasks_done/*.json）；校验不过即拒",
+    )
+    ap.add_argument("sha12")
+    ap.add_argument("--result", default="")
+    ap.add_argument("--tasks-dir", default="agent_tasks_done")
+    args = ap.parse_args(argv)
+    warn_stale_cache(args.sha12)
+    out = agent_apply(args.sha12, result_name=args.result or None,
+                      tasks_dirname=args.tasks_dir)
+    print(json.dumps(out, ensure_ascii=False, indent=1))
+    if out.get("rejected"):
+        raise SystemExit(1)
+
+
+def cmd_close(argv: list[str]) -> None:
+    ap = argparse.ArgumentParser(
+        prog="wm_report.py close",
+        description="auto-heal 编排：auto-promote → narrative-scan → agent-apply → qa → review",
+    )
+    ap.add_argument("sha12")
+    ap.add_argument("--result", default="")
+    ap.add_argument("--no-apply", action="store_true", help="跳过 agent_tasks_done 应用")
+    args = ap.parse_args(argv)
+    warn_stale_cache(args.sha12)
+    out = close_extract(args.sha12, result_name=args.result or None,
+                        apply_tasks=not args.no_apply)
+    print(json.dumps(out, ensure_ascii=False, indent=1))
+
+
 def main(argv: list[str] | None = None) -> None:
     argv = list(sys.argv[1:] if argv is None else argv)
     if not argv:
@@ -5141,6 +5878,14 @@ def main(argv: list[str] | None = None) -> None:
         cmd_adapt_plan(rest)
     elif sub == "apply-promotions":
         cmd_apply_promotions(rest)
+    elif sub == "auto-promote":
+        cmd_auto_promote(rest)
+    elif sub == "narrative-scan":
+        cmd_narrative_scan(rest)
+    elif sub == "agent-apply":
+        cmd_agent_apply(rest)
+    elif sub == "close":
+        cmd_close(rest)
     elif sub == "qa-tables":
         cmd_qa_tables(rest)
     elif sub == "review-extract":

@@ -14,6 +14,14 @@ def apply_industry_arbitration(
     title_n: str,
 ) -> None:
     """Mutate scores in place using cross-industry conflict rules."""
+    # 2025A 新增行业（E3）：行业专属词 ≥2 共现时压制 manufacturing 通用词
+    # （与 nonferrous 同款规则；steel/chemicals/agriculture/semiconductor 年报必中 产量/产能类泛词）
+    for ind in ("steel", "chemicals", "agriculture", "semiconductor", "telecom"):
+        if scores.get(ind) and scores.get("manufacturing"):
+            body = _body_hits(matched, ind)
+            if len(body) >= 2:
+                scores["manufacturing"] = scores["manufacturing"] * 0.4
+                scores[ind] = scores.get(ind, 0.0) + 2.0
     if scores.get("bank") and scores.get("automobile"):
         bank_body = _body_hits(matched, "bank")
         if len(bank_body) < 2 and not any(h in title_n for h in TITLE_INDUSTRY_HINTS.get("bank", [])):
@@ -221,3 +229,14 @@ def apply_industry_arbitration(
             scores["nonferrous"] = scores.get("nonferrous", 0.0) + 3.0
         if any(h in title_n for h in TITLE_INDUSTRY_HINTS.get("fossil_energy", [])):
             scores["fossil_energy"] = scores.get("fossil_energy", 0.0) + 3.0
+
+
+# 跨业态邻接晋升白名单：主行业判定下，第二业态的表 hints 共现 ≥2 时放行晋升
+# （神华 fossil+电力 5 处 power_generation hint、神火/电投 有色+煤 实证——煤电铝/煤电一体为常态业态）
+CROSS_INDUSTRY_TABLE_ALLOWLIST: dict[str, dict[str, list[str]]] = {
+    "fossil_energy": {"energy": ["power_generation", "installed_capacity", "utilization_hours"]},
+    "energy": {"fossil_energy": ["coal_production", "coal_reserves", "coal_cost_price"]},
+    "nonferrous": {"fossil_energy": ["coal_production", "coal_reserves", "coal_cost_price"]},
+    "automobile": {"auto_electronics": ["ad_shipments", "customer_concentration"]},
+    "auto_electronics": {"automobile": ["nev_sales", "production_sales"]},
+}

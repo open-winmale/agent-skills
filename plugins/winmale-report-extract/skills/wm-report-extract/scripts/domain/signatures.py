@@ -93,6 +93,9 @@ TYPE_HINT_SIGNATURES: list[tuple[str, list[str]]] = [
     ("hedging", ["衍生品", "报告期实际损益"]),
     ("hedging", ["套期保值", "合约"]),
     ("hedging", ["衍生品投资", "期末投资金额"]),
+    # 变动分析表（项目/本期/上期/变化%）：形态匹配 variance_reasons 目录，作晋升候选
+    ("variance_reasons", ["变动分析", "营业收入"]),
+    ("variance_reasons", ["变动分析", "现金流量"]),
     # insurance
     ("premium_income", ["原保险保费收入", "保险业务收入"]),
     ("premium_income", ["已赚保费", "保费收入"]),
@@ -238,6 +241,20 @@ TYPE_HINT_SIGNATURES: list[tuple[str, list[str]]] = [
     ("customer_concentration", ["五大客戶", "佔"]),
     # 港式研发占收入比表（研发开支/研发费用占比）
     ("rd_investment", ["研發開支", "佔收入"]),
+    # ---- 2025A 新增行业表 hints（E3）----
+    ("steel_production", ["钢材", "产量"]),
+    ("steel_production", ["粗钢", "销量"]),
+    ("steel_cost_price", ["吨钢", "成本"]),
+    ("chemical_output", ["化工", "产能"]),
+    ("chemical_price_cost", ["价差", "成本"]),
+    ("subscriber_base", ["移动用户", "ARPU"]),
+    ("subscriber_base", ["用户数", "ARPU"]),
+    ("user_metrics", ["MAU", "用户"]),
+    ("device_shipments", ["出货量", "智能手机"]),
+    ("device_shipments", ["IoT", "出货量"]),
+    ("livestock_output", ["出栏", "存栏"]),
+    ("wafer_capacity", ["晶圆", "产能"]),
+    ("wafer_capacity", ["晶圆", "良率"]),
 ]
 
 TABLE_SIGNATURES = HIGH_CONFIDENCE_SIGNATURES + TYPE_HINT_SIGNATURES
@@ -251,6 +268,11 @@ STMT_TITLE_TOKS = {
     "cashflow_stmt": ("现金流量表", "現金流量表"),
 }
 
+# 分析类标题否决：MD&A「主要项目变动分析」类表含报表名与科目词但不是报表本体
+# （神华 p020「利润表及现金流量表主要项目变动分析」误定型 cashflow_stmt 实证）
+ANALYSIS_TITLE_RE = re.compile(
+    r"变动分析|變動分析|变动原因|變動原因|主要项目变动|增减变动|增減變動|同比变动|同比變動|摘要")
+
 # 港式 IFRS 科目（實測地平線年報）：資產總值/負債總額/權益總額、年內虧損/期內虧損、
 # 經營活動產生的現金流量（亦有 所得現金淨額 寫法）、融資活動（非 籌資活動）
 STRUCTURAL_RULES: list[tuple[str, list[tuple[str, ...]]]] = [
@@ -259,7 +281,8 @@ STRUCTURAL_RULES: list[tuple[str, list[tuple[str, ...]]]] = [
                         "負債總額", "權益總額")]),
     ("income_stmt", [("净利润", "年內虧損", "年內溢利", "期內虧損", "期內溢利", "年度溢利",
                       "╱利潤", "／利潤", "/利润", "利潤╱", "溢利╱", "利潤／"),  # 港式双写法两种序：「年內 (虧損) ╱利潤」「年內利潤╱ (虧損)」
-                     ("营业收入", "营业总收入", "來自客戶合同的收入")]),
+                     ("营业收入", "营业总收入", "來自客戶合同的收入", "保险业务收入",
+                      "保险业务收益")]),  # 保险公司利润表首行科目为「保险业务收入」（平安实证）
     ("cashflow_stmt", [("经营活动产生的现金流量净额", "经营活动产生的现金流量",
                         "经营活动产生/(使用)的现金流量", "一、经营活动产生的现金流量",
                         "一、经营活动产生/(使用)的现金流量",

@@ -203,6 +203,43 @@ INDUSTRY_EXT_GROUPS: dict[str, dict] = {
              "reason": "证实/探明/控制分级须分行，不可混加"},
         ],
     },
+    # ---- 2025A 新增行业（E3）：最小可用组——表/叙述/缺口按公开披露惯例起步 ----
+    "steel": {
+        "group": "X_steel", "label": "钢铁业特色（产量/品种结构/吨钢成本）",
+        "keywords": ["粗钢", "钢材", "高炉", "吨钢", "螺纹钢"],
+        "tables": ["steel_production", "steel_cost_price"],
+        "narratives": ["steel_price", "raw_material_cost"],
+    },
+    "chemicals": {
+        "group": "X_chemicals", "label": "化工业特色（品种产能产量/价差）",
+        "keywords": ["乙烯", "尿素", "纯碱", "甲醇", "钛白粉"],
+        "tables": ["chemical_output", "chemical_price_cost"],
+        "narratives": ["product_spread", "feedstock_cost"],
+    },
+    "telecom": {
+        "group": "X_telecom", "label": "通信运营特色（用户/ARPU/网络）",
+        "keywords": ["移动用户", "ARPU", "宽带用户", "基站"],
+        "tables": ["subscriber_base"],
+        "narratives": ["arpu_drivers"],
+    },
+    "internet_consumer_electronics": {
+        "group": "X_internet", "label": "互联网与消费电子特色（MAU/付费/硬件出货）",
+        "keywords": ["MAU", "付费用户", "出货量", "IoT"],
+        "tables": ["user_metrics", "device_shipments"],
+        "narratives": ["user_growth", "hardware_asp"],
+    },
+    "agriculture": {
+        "group": "X_agriculture", "label": "农业特色（出栏存栏/饲料/种植）",
+        "keywords": ["生猪", "出栏", "存栏", "饲料", "能繁母猪"],
+        "tables": ["livestock_output"],
+        "narratives": ["hog_cycle", "feed_cost"],
+    },
+    "semiconductor": {
+        "group": "X_semiconductor", "label": "半导体特色（晶圆产能/制程/良率）",
+        "keywords": ["晶圆", "制程", "封测", "良率"],
+        "tables": ["wafer_capacity"],
+        "narratives": ["fab_capacity_outlook"],
+    },
 }
 
 NARRATIVE_REQUIRED_IDS = ["mda_business", "mda_industry", "mda_outlook", "risk_factors"]
@@ -352,6 +389,25 @@ TABLE_CATALOG: list[dict[str, Any]] = [
      "title": "油气储量", "description": "证实/探明储量与剩余经济可采储量"},
     {"table_id": "lifting_cost", "record_type": "lifting_cost", "group": "X_fossil_energy",
      "title": "桶油成本", "description": "桶油/方气单位操作或完全成本"},
+    # ---- 2025A 新增行业表目录（E3）----
+    {"table_id": "steel_production", "record_type": "steel_production", "group": "X_steel",
+     "title": "钢材产销量", "description": "粗钢/钢材分品种产量、销量与库存"},
+    {"table_id": "steel_cost_price", "record_type": "steel_cost_price", "group": "X_steel",
+     "title": "吨钢成本与钢价", "description": "吨钢成本、吨钢毛利与分品种售价"},
+    {"table_id": "chemical_output", "record_type": "chemical_output", "group": "X_chemicals",
+     "title": "化工品产能产量", "description": "主要化工品种产能、产量与开工率"},
+    {"table_id": "chemical_price_cost", "record_type": "chemical_price_cost", "group": "X_chemicals",
+     "title": "化工品价差与成本", "description": "品种价格、原料成本与价差"},
+    {"table_id": "subscriber_base", "record_type": "subscriber_base", "group": "X_telecom",
+     "title": "用户数与ARPU", "description": "移动/宽带用户数、净增与 ARPU"},
+    {"table_id": "user_metrics", "record_type": "user_metrics", "group": "X_internet",
+     "title": "用户与活跃指标", "description": "MAU、付费用户、ARPPU 等用户指标"},
+    {"table_id": "device_shipments", "record_type": "device_shipments", "group": "X_internet",
+     "title": "硬件出货量", "description": "智能手机/IoT 等硬件出货量与均价"},
+    {"table_id": "livestock_output", "record_type": "livestock_output", "group": "X_agriculture",
+     "title": "畜禽出栏与存栏", "description": "生猪/禽类出栏量、存栏量与能繁母猪"},
+    {"table_id": "wafer_capacity", "record_type": "wafer_capacity", "group": "X_semiconductor",
+     "title": "晶圆产能与良率", "description": "折算晶圆产能、制程结构与良率"},
 ]
 
 TABLE_SPEC_BY_ID = {t["table_id"]: t for t in TABLE_CATALOG}
