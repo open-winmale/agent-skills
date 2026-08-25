@@ -134,6 +134,7 @@ def build_html_payload(result_dir: Path, *, cache_id: str = "") -> dict[str, Any
             "group": group,
             "group_label": _group_label(group),
             "base": _table_base_id(tid),
+            "variant": obj.get("variant") or ent.get("variant") or "",
             "unit_default": obj.get("unit_default") or "",
             "columns": columns,
             "rows": rows,
@@ -631,10 +632,13 @@ table.data .page-tag {
       return `<tr class="${degraded ? "degraded" : ""}" data-row="${encodeURIComponent(JSON.stringify(r))}">${cells}<td>${page}</td></tr>`;
     }).join("");
     const trunc = t.truncated ? `<p class="hint">已截断至前 ${t.rows.length} / ${t.row_count} 行</p>` : "";
+    const varTag = t.variant && t.variant !== "primary"
+      ? `<span class="badge miss" style="font-size:11px;margin-left:8px">${esc(t.variant)}</span>` : "";
+    const titleHtml = `<h3 class="panel-title" style="margin:0 0 6px">${esc(t.title || tid)}${varTag}</h3>`;
     const findHtml = (t.findings || []).map(f =>
-      `<div class="finding">⚠ ${esc(f.reason || "")} — ${esc(f.detail || "")}</div>`
+      `<div class="finding">⚠ ${esc(f.reason || "")} — ${esc(f.detail || "")}${f.adjudicated ? `（已仲裁：${esc(f.adjudicated)}）` : ""}</div>`
     ).join("");
-    mount.innerHTML = `${trunc}<div class="table-wrap"><table class="data"><thead>${head}</thead><tbody>${body}</tbody></table></div>${findHtml}`;
+    mount.innerHTML = `${titleHtml}${trunc}<div class="table-wrap"><table class="data"><thead>${head}</thead><tbody>${body}</tbody></table></div>${findHtml}`;
     mount.querySelectorAll("tbody tr").forEach(tr => {
       tr.addEventListener("click", () => {
         try { openDrawer(JSON.parse(decodeURIComponent(tr.getAttribute("data-row")))); } catch (e) {}

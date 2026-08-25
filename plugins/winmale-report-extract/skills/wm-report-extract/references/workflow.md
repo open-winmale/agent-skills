@@ -160,19 +160,27 @@ wm_report.py render-html <cache_id> [--result result-...] [--out report.html]
 
 - 默认写出 `result-*/report.html`：Hero（quality/review 徽章）+ 侧栏导航 + 三表/经营表 + 审核 gaps
 - 仅 `verdict=pass` 表进入主栏；demote 表不展示
-- 只读；修复仍走 `qa-tables` / gaps 闭环（未来 `auto-heal`），再重跑本命令
+- 只读；修复走 `close`（auto-heal：auto-promote → narrative-scan → agent-apply → qa → review）后再重跑本命令
 
-### 后续：auto-heal（设计，未实现）
+### auto-heal（0.6.1 已实现：`close` 命令）
 
 目标：减少按公司手写 `eval/close_*.py`，**不取消质量门、不放宽 review 硬门**。
 
 ```text
-auto-heal <cache_id> --result …
-  1) 规则化 auto-promote：高置信 type_hint + 标题/科目 → apply-promotions 等价
-  2) qa-tables（确定性 demote / degraded）
-  3) 行业 gaps 针库 text_scan（found / not_disclosed / not_applicable）
-  4) review-extract；仍 fail → evolution_proposal / Agent 最小待办
+close <cache_id> --result …
+  1) auto-promote：行业 allowlist + 跨业态邻接（hint 共现≥2）每 hint 取首候选
+  2) narrative-scan：叙述 needles 命中→found；未命中→agent_tasks 证据包
+  3) agent-apply：应用 agent_tasks_done/*.json（quote 逐字校验，不过即拒）
+  4) qa-tables（确定性 demote / degraded）
+  5) review-extract；仍 fail → todo_tasks 最小待办清单
 ```
+
+agent_tasks 协议（Agent 判断的输入/输出/机器校验）：
+
+- `narrative_close`：found 须 quote+page（quote 逐字在 report.md 且页码一致）；
+  not_disclosed 须 reason ≥8 字（引用披露范围证据）
+- `qa_adjudication`：degraded 勾稽发现逐条裁定 rule_limitation（标注保留不删）或 real
+- `industry_confirm`：目录内行业确认（目录外走 adaptation.md 提案流程）
 
 禁止：静默改数字；无 quote 的 found；跳过 `quality.json`。
 

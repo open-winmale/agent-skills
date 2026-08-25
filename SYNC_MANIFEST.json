@@ -5,7 +5,7 @@
     "winmale-skillhub": "1.1.14",
     "winmale-stock-check": "1.4.1",
     "winmale-my-desk": "2.0.5",
-    "winmale-report-extract": "0.6.0"
+    "winmale-report-extract": "0.6.1"
   },
   "skills": [
     "wm-backtest",

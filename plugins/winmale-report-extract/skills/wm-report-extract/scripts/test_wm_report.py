@@ -4018,5 +4018,354 @@ class TestRenderHtml(unittest.TestCase):
                 os.environ.pop(w.CACHE_ENV, None)
 
 
+class TestCrossIndustryFixes(unittest.TestCase):
+    """0.6.1 跨行业修复回归：粘链/勾稽/定型 veto/行业继承/auto-heal 协议。"""
+
+    def test_footer_title_echo_chains(self):
+        # 神华 p147→p148：页脚重印不带「续」的同名标题不得阻断粘链
+        md = "\n".join([
+            "<!-- page:147 -->",
+            "| 项目 | 附注 | 2025 | 2024 |",
+            "|---|---|---|---|",
+            "| 货币资金 | 1 | 96,772 | 143,845 |",
+            "| 应收票据 | 2 | 5,618 | 3,036 |",
+            "| 流动资产合计 | | 102,390 | 146,881 |",
+            "| 长期股权投资 | 3 | 62,044 | 59,842 |",
+            "| 其他权益工具投资 | 4 | 3,175 | 2,787 |",
+            "| 非流动资产合计 | | 65,219 | 62,629 |",
+            "| 资产总计 | | 167,609 | 209,510 |",
+            "| 负债合计 | | 90,000 | 100,000 |",
+            "| 负债和股东权益总计 | | 167,609 | 209,510 |",
+            "",
+            "中国神华能源股份有限公司 合并资产负债表 2025 年 12 月 31 日 ( 金额单位:人民币百万元 )",
+            "",
+            "<!-- page:148 -->",
+            "## 中国神华能源股份有限公司 合并资产负债表 ( 续 ) 2025 年 12 月 31 日",
+            "| 项目 | 附注 | 2025 | 2024 |",
+            "|---|---|---|---|",
+            "| 短期借款 | 5 | 1,000 | 2,000 |",
+            "| 应付账款 | 6 | 3,000 | 4,000 |",
+            "| 流动负债合计 | | 4,000 | 6,000 |",
+        ]).split("\n")
+        tables = w.find_tables(md)
+        self.assertEqual(tables[0].get("continued_by"), [1])
+        self.assertEqual(tables[0].get("type"), "balance_sheet")
+
+    def test_same_heading_echo_chains(self):
+        # 平安：每页页首重印同一 ## 标题（无「续」），同款标题不阻断
+        md = "\n".join([
+            "<!-- page:187 -->",
+            "## 合并资产负债表",
+            "2025 年 12 月 31 日 (除特别注明外,金额单位为人民币百万元)",
+            "| 项目 | 2025 | 2024 |",
+            "|---|---|---|",
+            "| 货币资金 | 100 | 200 |",
+            "| 应收账款 | 300 | 400 |",
+            "| 流动资产合计 | 400 | 600 |",
+            "| 长期借款 | 50 | 60 |",
+            "| 负债合计 | 350 | 380 |",
+            "| 负债和股东权益总计 | 900 | 1,200 |",
+            "| 资产总计 | 900 | 1,200 |",
+            "| 股东权益合计 | 550 | 820 |",
+            "",
+            "<!-- page:188 -->",
+            "## 合并资产负债表",
+            "| 项目 | 2025 | 2024 |",
+            "|---|---|---|",
+            "| 股本 | 300 | 300 |",
+            "| 资本公积 | 100 | 100 |",
+            "| 未分配利润 | 150 | 420 |",
+        ]).split("\n")
+        tables = w.find_tables(md)
+        self.assertEqual(tables[0].get("continued_by"), [1])
+
+    def test_sparse_section_col_alignment_chains(self):
+        # 平安 IS 续片带稀疏节号前置列（col0 仅 三、四、）：剔除后对齐续链
+        md = "\n".join([
+            "<!-- page:1 -->",
+            "| 项目 | 附注 | 2025 | 2024 |",
+            "|---|---|---|---|",
+            "| 一、营业总收入 | | 1,000 | 900 |",
+            "| 营业收入 | 1 | 1,000 | 900 |",
+            "| 二、营业总成本 | | 800 | 750 |",
+            "| 营业成本 | 2 | 700 | 660 |",
+            "| 三、营业利润 | | 200 | 150 |",
+            "| 净利润 | 3 | 180 | 140 |",
+            "",
+            "<!-- page:2 -->",
+            "| | 项目 | 附注 | 2025 | 2024 |",
+            "|---|---|---|---|---|",
+            "| 五、 | 其他综合收益 | 4 | 20 | 15 |",
+            "| | 综合收益总额 | | 200 | 155 |",
+            "| | 每股收益 | | 0.5 | 0.4 |",
+            "| | 基本每股收益 | 5 | 0.5 | 0.4 |",
+            "| | 稀释每股收益 | 6 | 0.5 | 0.4 |",
+            "| | 其他财务指标 | | 1 | 1 |",
+        ]).split("\n")
+        tables = w.find_tables(md)
+        self.assertEqual(tables[0].get("cols"), 4)
+        self.assertEqual(tables[0].get("continued_by"), [1])
+
+    def test_identity_column_aligned(self):
+        obj = {"record_type": "balance_sheet", "rows": [
+            {"item": "流动资产合计", "c2": "146,969", "c3": "207,139"},
+            {"item": "非流动资产合计", "c2": "480,792", "c3": "460,883"},
+            {"item": "资产总计", "c2": "627,761", "c3": "668,022"},
+            {"item": "负债和股东权益总计", "c2": "627,761", "c3": "668,022"},
+        ]}
+        self.assertEqual(w.crossfoot_findings(obj, "bs", "tables/bs.json"), [])
+
+    def test_identity_detects_real_mismatch_per_column(self):
+        obj = {"record_type": "balance_sheet", "rows": [
+            {"item": "资产总计", "c2": "627,761", "c3": "668,022"},
+            {"item": "负债和股东权益总计", "c2": "617,761", "c3": "668,022"},
+        ]}
+        findings = w.crossfoot_findings(obj, "bs", "tables/bs.json")
+        self.assertTrue(any(f.get("reason") == "identity_mismatch" for f in findings))
+
+    def test_subtotal_minus_paren_negative(self):
+        # 减:库存股 (8,151,117)：值已为负，不得再取负（美的 BS 实证）
+        obj = {"record_type": "balance_sheet", "rows": [
+            {"item": "股本", "c2": "7,597,145"},
+            {"item": "资本公积", "c2": "45,350,720"},
+            {"item": "减:库存股", "c2": "(8,151,117)"},
+            {"item": "未分配利润", "c2": "167,228,020"},
+            {"item": "归属于母公司股东权益合计", "c2": "212,024,768"},
+        ]}
+        self.assertEqual(w.crossfoot_findings(obj, "bs", "tables/bs.json"), [])
+
+    def test_subtotal_cf_section_result_not_polluting(self):
+        # CF 净额行是节结果，不得污染下一节小计
+        obj = {"record_type": "cashflow_stmt", "rows": [
+            {"item": "销售商品、提供劳务收到的现金", "c2": "100"},
+            {"item": "收到的税费返还", "c2": "20"},
+            {"item": "经营活动现金流入小计", "c2": "120"},
+            {"item": "购买商品支付的现金", "c2": "(50)"},
+            {"item": "经营活动现金流出小计", "c2": "(50)"},
+            {"item": "经营活动产生的现金流量净额", "c2": "70"},
+            {"item": "收回投资收到的现金", "c2": "30"},
+            {"item": "取得投资收益收到的现金", "c2": "10"},
+            {"item": "投资活动现金流入小计", "c2": "40"},
+        ]}
+        self.assertEqual(w.crossfoot_findings(obj, "cf", "tables/cf.json"), [])
+
+    def test_subtotal_unmarked_sibling_reconciled(self):
+        # 未标注其中兄弟子项（长电 应收股利）：单行剔除后勾稽即豁免
+        obj = {"record_type": "balance_sheet", "rows": [
+            {"item": "货币资金", "c2": "833"},
+            {"item": "其他应收款", "c2": "3,994"},
+            {"item": "应收股利", "c2": "3,991"},
+            {"item": "流动资产合计", "c2": "836"},
+        ]}
+        self.assertEqual(w.crossfoot_findings(obj, "bs", "tables/bs.json"), [])
+
+    def test_parse_num_multi_token_glue(self):
+        # 粘连多值单元格不得拼接成天文数字（美的 CF 1.6e15 实证）
+        self.assertIsNone(w._parse_num("(164,904,908) (6,155,136)"))
+        self.assertIsNone(w._parse_num("(158,573,072) (64,957,779)"))
+        self.assertEqual(w._parse_num("96,772 7"), 96772.0)  # 短附注号容忍
+        self.assertEqual(w._parse_num("(8,151,117)"), -8151117.0)
+
+    def test_analysis_title_veto(self):
+        # 「利润表及现金流量表主要项目变动分析」不得定型为报表（神华 p020 实证）
+        md = "\n".join([
+            "- 利润表及现金流量表主要项目变动分析",
+            "| 项目 | 2025 年 | 2024 年(已重述) | 变化(%) |",
+            "|---|---|---|---|",
+            "| 营业收入 | 294,916 | 339,788 | (13.2) |",
+            "| 营业成本 | 233,429 | 270,100 | (13.6) |",
+            "| 经营活动产生的现金流量净额 | 75,059 | 91,086 | (17.6) |",
+            "| 投资活动产生的现金流量净额 | (22,913) | (13,138) | 74.4 |",
+        ]).split("\n")
+        tables = w.find_tables(md)
+        self.assertNotIn("cashflow_stmt", {t.get("type") for t in tables})
+        self.assertIn("variance_reasons", {t.get("type_hint") for t in tables})
+
+    def test_insurance_income_stmt_typed(self):
+        md = "\n".join([
+            "## 合并利润表",
+            "| 项目 | 附注 | 2025 | 2024 |",
+            "|---|---|---|---|",
+            "| 保险业务收入 | 1 | 90,000 | 85,000 |",
+            "| 保险服务费用 | 2 | (70,000) | (66,000) |",
+            "| 净利润 | 3 | 12,000 | 11,000 |",
+        ]).split("\n")
+        tables = w.find_tables(md)
+        self.assertIn("income_stmt", {t.get("type") for t in tables})
+
+    def test_inherit_industry_from_cache(self):
+        import os
+        import tempfile
+        with tempfile.TemporaryDirectory() as td:
+            os.environ[w.CACHE_ENV] = td
+            try:
+                ann = w.entry_dir("aaaa00000001")
+                ann.mkdir(parents=True)
+                w.write_json(ann / "meta.json", {
+                    "filing_kind": "annual",
+                    "source": {"symbol": "600066", "title": "宇通客车2025年报"},
+                    "industry_hint": {"industry": "automobile", "confidence": 0.9},
+                })
+                w.index_upsert("aaaa00000001", symbol="600066",
+                               title="宇通客车2025年报")
+                meta = {
+                    "filing_kind": "q1",
+                    "source": {"symbol": "600066", "title": "宇通客车2026Q1"},
+                    "industry_hint": {"industry": None, "confidence": 0.0},
+                    "document_profile": {},
+                }
+                out = w.inherit_industry_from_cache("aaaa00000002", meta)
+                ih = out["industry_hint"]
+                self.assertEqual(ih.get("industry"), "automobile")
+                self.assertEqual(ih.get("confidence"), 0.3)
+                self.assertEqual(ih.get("inherited_from", {}).get("cache_id"), "aaaa00000001")
+                # 年报不继承（未适配行业应显式 null + review 警示）
+                meta2 = {
+                    "filing_kind": "annual",
+                    "source": {"symbol": "600066"},
+                    "industry_hint": {"industry": None, "confidence": 0.0},
+                }
+                out2 = w.inherit_industry_from_cache("aaaa00000002", meta2)
+                self.assertIsNone(out2["industry_hint"].get("industry"))
+            finally:
+                os.environ.pop(w.CACHE_ENV, None)
+
+    def test_agent_apply_validates_and_lands(self):
+        import os
+        import tempfile
+        with tempfile.TemporaryDirectory() as td:
+            os.environ[w.CACHE_ENV] = td
+            try:
+                d = w.entry_dir("bbbb00000001")
+                (d / "result-x" / "agent_tasks_done").mkdir(parents=True)
+                (d / "result-x" / "agent_tasks").mkdir(parents=True)
+                md = "\n".join([
+                    "<!-- page:3 -->",
+                    "黄骅港完成装船量 217.0 百万吨( 2024 年: 214.4 百万吨)。",
+                ])
+                (d / "report.md").write_text(md, encoding="utf-8")
+                w.write_json(d / "result-x" / "manifest.json", {
+                    "catalog": {"narratives": [
+                        {"id": "mda_business", "group": "D_mda", "status": "pending"}],
+                        "tables": []}})
+                w.write_json(d / "result-x" / "gaps.json", [
+                    {"id": "mda_business", "group": "D_mda", "status": "pending"},
+                    {"id": "railway_port_shipment", "group": "X_fossil_energy",
+                     "status": "required"}])
+                w.write_json(d / "result-x" / "quality.json", {
+                    "python_findings": [
+                        {"id": "balance_sheet", "verdict": "degraded",
+                         "reason": "subtotal_mismatch", "detail": "x"}]})
+                done = d / "result-x" / "agent_tasks_done"
+                # found：页码错误 → 拒；not_disclosed：无 reason → 拒
+                w.write_json(done / "gap-bad.json", {
+                    "task": "narrative_close", "id": "railway_port_shipment",
+                    "status": "found", "quote": "黄骅港完成装船量 217.0 百万吨",
+                    "page": 9})
+                w.write_json(done / "gap-bad2.json", {
+                    "task": "narrative_close", "id": "mda_business",
+                    "status": "not_disclosed", "reason": ""})
+                out = w.agent_apply("bbbb00000001", result_name="result-x")
+                self.assertEqual(len(out["rejected"]), 2)
+                gaps = w.read_json(d / "result-x" / "gaps.json", [])
+                by_id = {g["id"]: g for g in gaps}
+                self.assertEqual(by_id["mda_business"]["status"], "pending")
+                self.assertEqual(by_id["railway_port_shipment"]["status"], "required")
+                # 正确 found + 仲裁 → 落地（坏任务已由 Agent 修正删除）
+                (done / "gap-bad.json").unlink()
+                (done / "gap-bad2.json").unlink()
+                w.write_json(done / "gap-ok.json", {
+                    "task": "narrative_close", "id": "railway_port_shipment",
+                    "status": "found", "quote": "黄骅港完成装船量 217.0 百万吨",
+                    "page": 3})
+                w.write_json(done / "adj.json", {
+                    "task": "qa_adjudication", "id": "balance_sheet",
+                    "reason_kind": "subtotal_mismatch",
+                    "adjudication": "rule_limitation", "rationale": "准则口径差异"})
+                out2 = w.agent_apply("bbbb00000001", result_name="result-x")
+                self.assertEqual(len(out2["rejected"]), 0)
+                gaps2 = w.read_json(d / "result-x" / "gaps.json", [])
+                gp = {g["id"]: g for g in gaps2}["railway_port_shipment"]
+                self.assertEqual(gp["status"], "found")
+                self.assertEqual(gp["page"], 3)
+                q = w.read_json(d / "result-x" / "quality.json", {})
+                self.assertEqual(
+                    q["python_findings"][0].get("adjudicated"), "rule_limitation")
+            finally:
+                os.environ.pop(w.CACHE_ENV, None)
+
+
+class TestCloseFixes061(unittest.TestCase):
+    def test_statement_row_qa_scans_full_row(self):
+        import os
+        import tempfile
+        with tempfile.TemporaryDirectory() as td:
+            os.environ[w.CACHE_ENV] = td
+            try:
+                sha = "qaseclabel01"
+                d = w.entry_dir(sha)
+                result = d / "result-QA2"
+                (result / "tables").mkdir(parents=True, exist_ok=True)
+                # 盾安 2025 年报版式：item 列为节标签（流动资产:），科目在 c1
+                payload = {
+                    "table_id": "balance_sheet",
+                    "record_type": "balance_sheet",
+                    "title": "资产负债表",
+                    "rows": [
+                        {"item": "流动资产:", "c1": "货币资金", "c3": "3,468,523,464.53"},
+                        {"item": "流动资产:", "c1": "应收账款", "c3": "2,423,636,132.44"},
+                        {"item": "流动资产:", "c1": "存货", "c3": "1,334,572,497.50"},
+                        {"item": "流动资产:", "c1": "合同资产", "c3": "264,056,643.50"},
+                        {"item": "流动资产:", "c1": "流动资产合计", "c3": "9,000,000,000.00"},
+                    ],
+                    "row_count": 4,
+                    "schema": {"columns": [{"label": "项目"}]},
+                    "provenance": {"pages": [77], "tables": [99]},
+                }
+                (result / "tables" / "balance_sheet.json").write_text(
+                    json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+                (result / "manifest.json").write_text(json.dumps({
+                    "catalog": {"tables": [
+                        {"id": "balance_sheet", "file": "tables/balance_sheet.json",
+                         "group": "B", "record_type": "balance_sheet"},
+                    ], "narratives": [], "fields": [], "derived": []},
+                }, ensure_ascii=False), encoding="utf-8")
+                findings = w.python_qa_findings(result, pdf_path=None)
+                dem = [f for f in findings if f.get("verdict") == "demote"
+                       and f.get("reason") == "statement_row_labels_invalid"]
+                self.assertEqual(dem, [])
+            finally:
+                os.environ.pop(w.CACHE_ENV, None)
+
+    def test_narrative_scan_skips_qa_snapshot_gaps(self):
+        import os
+        import tempfile
+        with tempfile.TemporaryDirectory() as td:
+            os.environ[w.CACHE_ENV] = td
+            try:
+                sha = "qaskip0000001"
+                d = w.entry_dir(sha)
+                result = d / "result-NS"
+                result.mkdir(parents=True, exist_ok=True)
+                (d / "report.md").write_text(
+                    "<!-- page:1 -->\n正文。\n<!-- page:2 -->\n结尾。\n", encoding="utf-8")
+                w.write_json(d / "meta.json", {
+                    "cache_id": sha,
+                    "source": {"title": "Sample 2025 Annual Report", "report_date": "2025-12-31"},
+                })
+                w.write_json(result / "manifest.json", {
+                    "catalog": {"narratives": [], "tables": []}})
+                w.write_json(result / "gaps.json", [
+                    {"id": "qa::top_holders", "group": "Z_qa", "status": "suspect"},
+                    {"id": "some_plain_gap", "group": "X_machinery", "status": "pending"},
+                ])
+                w.narrative_scan(sha, result_name="result-NS")
+                tasks = {p.name for p in (result / "agent_tasks").glob("*.json")}
+                self.assertNotIn("gap-qa::top_holders.json", tasks)
+                self.assertIn("gap-some_plain_gap.json", tasks)
+            finally:
+                os.environ.pop(w.CACHE_ENV, None)
+
+
 if __name__ == "__main__":
     unittest.main()

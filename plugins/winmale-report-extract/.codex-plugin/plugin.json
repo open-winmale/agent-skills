@@ -1,6 +1,6 @@
 {
   "name": "winmale-report-extract",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "财报 PDF（年报/半年报/季报，A 股 + 港股 IFRS）内容理解与按需可溯源提取：本地双轨流水线，--pdf-url 无需 API Key 即可全链路运行，每个数值带页码与原文 quote 溯源；接入平台可 symbol 自动取数。",
   "author": "WinMale",
   "skills": "./skills/"

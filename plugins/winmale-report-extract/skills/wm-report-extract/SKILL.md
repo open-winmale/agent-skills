@@ -1,7 +1,7 @@
 ---
 name: wm-report-extract
 display_name: "财报提取 Financial Report Extractor"
-version: 0.6.0
+version: 0.6.1
 description: 财报 PDF（年报/半年报/季报，A 股 + 港股 IFRS）内容理解与按需可溯源提取。双轨转换（Docling FAST + PyMuPDF 有框线表格接管 + ACCURATE 报表页精修）→ 可提取性 meta → adapt-plan 提取剧本 → 全表 records 预提取 → materialize 分表 → 定型晋升 + 质量门（勾稽校验/数值存在性/quote 回验）→ review-extract 独立审核。每个数值带页码与原文 quote 溯源，无 quality.json / review.json 不得给下游。Standalone——`fetch --pdf-url` 无需任何 API key 即可全链路运行；可选接入 WinMale 平台启用 symbol 模式。Use when the user asks to extract or locate data in a financial report PDF (annual/semi-annual/quarterly), e.g. 货币资金、前十大股东、分红方案、全量核心数据、第 N 页内容。
 ---
 
@@ -122,6 +122,37 @@ python3 …/wm_report.py apply-promotions <cache_id> --file promotions.json [--r
 - 季报不要硬升年报才有的组
 - 同类型多张物理表：第一张用稳定 `table_id`，其余为 `{type}_p{page}_i{index}`，禁止静默合并
 
+**规则化预晋升（0.6.1 起必跑，Agent 晋升的前置）**：行业 allowlist ∪ 跨业态邻接白名单
+（hint 共现 ≥2，如煤电一体的 power_generation）内每 hint 取首个候选自动晋升，无总数上限：
+
+```bash
+python3 …/wm_report.py auto-promote <cache_id> [--result result-…]
+```
+
+### ⑤½ 叙述证据扫描（narrative-scan，0.6.1 起）
+
+```bash
+python3 …/wm_report.py narrative-scan <cache_id> [--result result-…]
+```
+
+- 通用 MD&A 4 项 + 各行业叙述/required_gaps 的 needles（`domain/narratives.py` 声明式）
+- needle 命中 → 自动 `found`（quote+page，过 review 硬门回验）；未命中 → `agent_tasks/`
+  证据包（章节区间/页码/excerpt/needles）——**程序不判 not_disclosed，留 Agent 终审**
+
+### ⑤¾ Agent 闭环（agent_tasks 协议，0.6.1 起）
+
+对 `agent_tasks/*.json` 的待办，Agent 读证据包后写 `agent_tasks_done/*.json`：
+
+| 任务 | 输出 | 机器校验 |
+|------|------|----------|
+| `narrative_close`（叙述/gap 终态） | `found`（quote+page）/ `not_disclosed`（reason≥8字）/ `not_found` | quote 逐字在 report.md 且页码一致 |
+| `qa_adjudication`（勾稽仲裁） | `rule_limitation`（附 rationale，标注保留不删）/ `real` | finding 必须存在于 quality.json |
+| `industry_confirm`（行业确认） | 目录内 industry | industry 必须在 INDUSTRY_HINTS |
+
+```bash
+python3 …/wm_report.py agent-apply <cache_id> [--result result-…]   # 校验不过即拒（exit 1）
+```
+
 ### ⑥ 质量门（qa-tables，给下游前必跑）
 
 ```bash
@@ -152,14 +183,24 @@ python3 …/wm_report.py review-extract <cache_id> [--result <result-...>]
 ### ⑥¾ HTML 阅览（render-html，可选）
 
 ```bash
-python3 …/wm_report.py render-html <cache_id> [--result <result-...>] [--out report.html]
+python3 …/wm_report.py render-html <cache_id> [--result result-...] [--out report.html]
 ```
 
 - 产物默认：`result-*/report.html`（单文件自包含，系统字体，可离线打开）
-- **只嵌入 `quality.json` 中 `verdict=pass` 的表** + gaps / review / QA findings；只读，不在页面改数
+- **只嵌入 `quality.json` 中 `verdict=pass` 的表** + gaps / review / QA findings；只读，不在页面改数；typed 表展示 `variant` 徽标（primary/parent_company/summary/analysis/supplementary）
 - 侧栏按覆盖组导航；三表切换；行点击展开 quote+页码抽屉
 
-> 质量门不可取消。后续计划 `auto-heal`（规则化 auto-promote + 行业 gaps 针库 text_scan + 再 qa/review）减少人工 `close_*.py`，**不放宽硬门**。
+### ⑥⅞ 一键收口（close，auto-heal，0.6.1 起）
+
+```bash
+python3 …/wm_report.py close <cache_id> [--result result-...]
+```
+
+依序执行 auto-promote → narrative-scan → agent-apply（若 `agent_tasks_done/` 有产物）
+→ qa-tables → review-extract，输出**最小待办清单**（`todo_tasks`）。禁止：静默改数字、
+无 quote 的 found、跳过 quality.json。完整闭环见 `references/workflow.md` 的 auto-heal 节。
+
+> 质量门不可取消。0.6.1 起 `close`（auto-heal）已落地：规则化 auto-promote + narrative-scan 叙述证据 + agent_tasks 协议闭环 + 再 qa/review，替代按公司手写 `close_*.py`，**不放宽硬门**。
 
 ### ⑦ 按用户需求制定方案 + 执行提取
 
@@ -199,4 +240,5 @@ L2 传统备选（legacy）：`extract-query` 仍可用，但它把 `value` 留�
 | 溯源契约、缺口复盘、derived 规则 | [references/provenance.md](references/provenance.md) |
 | 全量提取覆盖清单 | [references/coverage-checklist.md](references/coverage-checklist.md) |
 | 锚点/表格签名模式库（扩展指南） | [references/anchors.md](references/anchors.md) |
+| 规则演进/新行业适配提案流程 | [references/adaptation.md](references/adaptation.md) |
 | 请求/响应示例 | [examples/](examples/) |
