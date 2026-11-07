@@ -1,0 +1,11 @@
+{
+  "_comment": "管理·控跑批：额度/控制暂停后恢复。需 analysis:backtest:control。替换 run_id。",
+  "mode": "call",
+  "script_ref": "xs/skillhub/wm_backtest.xs",
+  "symbol": "600519",
+  "market": "cn",
+  "args": {
+    "action": "resume",
+    "run_id": "REPLACE_WITH_RUN_ID"
+  }
+}

@@ -1,0 +1,1317 @@
+{
+  "hub_version": "1.1.18",
+  "files": [
+    {
+      "path": ".agents/plugins/marketplace.json",
+      "sha256": "58824db45dfcca670783c40eeef965262ff9a972a5b6127f5caf50fa5444cb94"
+    },
+    {
+      "path": ".claude-plugin/marketplace.json",
+      "sha256": "7517a97339ceb8fa00fec323c592706a7a28f66a2186844c5f8229a1821fd0df"
+    },
+    {
+      "path": ".codebuddy-plugin/marketplace.json",
+      "sha256": "25923b5a3e75d8457547208d4465830c13e72097e25e4974affca5eccee01e91"
+    },
+    {
+      "path": ".cursor-plugin/marketplace.json",
+      "sha256": "091231aad27b03d26e3b1ea25f66123ec9b3a09d15db89b1abaa61039ee74d7c"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "ebd2329385d18b7df2e4285519553fadc26e5d821808fffe8008095478ced734"
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "f20feb844a4d2abd733525df3d45d22d4ab78410d89b8df2a7df4fb7f9f08a48"
+    },
+    {
+      "path": "README.md",
+      "sha256": "096c31b444cbc45a7c32b397d2eb5f8d95437460a314b849c16bdef9bcd31186"
+    },
+    {
+      "path": "SECURITY.md",
+      "sha256": "e018fa0236f2a5a91ba5dc717397f611917207db78cc406b735d8c138344bc8f"
+    },
+    {
+      "path": "assets/logo.svg",
+      "sha256": "3458ff056cf5c7147955fd8bc8103c0fea42ceab200da3e57d5de980a29390c6"
+    },
+    {
+      "path": "plugins.json",
+      "sha256": "3f921d907ef5b3324539d6b37723ac5fdc63b66366b17fe9c33047de3b8f4889"
+    },
+    {
+      "path": "plugins/winmale-my-desk/.claude-plugin/plugin.json",
+      "sha256": "17d0f5e4664031ac53b7c5a90ed19ca974e2c025c0a176471e40f3cbca247765"
+    },
+    {
+      "path": "plugins/winmale-my-desk/.codebuddy-plugin/plugin.json",
+      "sha256": "c269b850aede707bc3c1b6747dab71b296ffb0b2e55c17187c978d2bed5d5b04"
+    },
+    {
+      "path": "plugins/winmale-my-desk/.codex-plugin/plugin.json",
+      "sha256": "5c4e709dccc4243c2c5a91e29196133a57baa9f4981dbc8202f4e02a5b62597d"
+    },
+    {
+      "path": "plugins/winmale-my-desk/.cursor-plugin/plugin.json",
+      "sha256": "c6a24da7c67eebd262b7e423b211bc0890c05184cb2857c086099de44abc31f3"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/SKILL.md",
+      "sha256": "9982f266bd8025ca1c2cac7ac1cc8e83956906f6f49d01053af02cc6bab6e1b8"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/_skillhub_meta.json",
+      "sha256": "e71835fb0fba521cd57857a71e170b1500d3457149bd359655685f872597cddd"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/agents/openai.yaml",
+      "sha256": "e53cd368a8c2e66f154fa0c3cbe2972b4af5e41c84a348a889a2a10aae4c7dcd"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/deep_results_eval.json",
+      "sha256": "c82f09671d6222991984cd81a630991fc5b0a70a1069fab1adb6b68305686dcb"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/from_watchlist_preview.json",
+      "sha256": "62aba44bf26f0b531b7618aced9c1cf3e9a2e490e90360986dd2023d961b0f2a"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/lint_selector.json",
+      "sha256": "cc99d328b31d5b2ce1c9cfb5cc90db47e1d715c61fa5c22cf88b454605d34851"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/pe_filter_trading.json",
+      "sha256": "ad8b47c8c1de9832f0a3a42aeb3b2d35fbbf76b444dec251d8feed72cdf51ae1"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/request.json",
+      "sha256": "772ad01b0d3dc80384ef208b9ad39b3ed18101d77549d32d3c5702f8155a7309"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/resume.json",
+      "sha256": "68aa516b1c4aee06cc5c4dbd72bf533fe0c5e73d001e2962781e9f4f6ba23054"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/run_custom_full.json",
+      "sha256": "57aa4d43487c58765ac455bb5bb004a34b2e66b4b5ca283066a28b0d869e8652"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/run_custom_official_seed.json",
+      "sha256": "91045249a32bbb4bc179afbbf3f29559c4d3f6f9205fa3f9095b83579debb834"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/target_weight.json",
+      "sha256": "eff6ee4682484f7fb95441facb595a4471624e4b1f7d91c36ed445426f75d5fe"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/xs/pe_filter/risk.xs",
+      "sha256": "bc0f8983caed4d297f09b287d8007532d21e2b2531ba6913efff07fe370c8fc5"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/xs/pe_filter/selector.xs",
+      "sha256": "428fbfa44ed6c38ed4f5724676c6bcf82a04a90fe3e2c455f63c5a6f416b75c6"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/xs/pe_filter/selector_rank.xs",
+      "sha256": "d8936bd084ca93613b3566b6e80b03d18ed4fec0fb53b6aa8e3b5a420397f1d2"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/xs/pe_filter/trading.xs",
+      "sha256": "55185f19cbefc1e978d0632015d2110aa5f393bef0d78779b7c9d866047e844e"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/xs/run_custom_full/risk.xs",
+      "sha256": "07d37000e6e445d0d8ff54e3c90beba38f3af677a2b418ac05488c575b34aa4b"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/xs/run_custom_full/selector.xs",
+      "sha256": "eb442bc7208cf5ffa4acafa90fbe7567cea80c8249740090f3eee3acf9e7f031"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/xs/run_custom_full/selector_rank.xs",
+      "sha256": "73fc58df830e83ad859dcd56cf07a850c1782cf9f66f8657cddb1c9925b58bc9"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/xs/run_custom_full/trading.xs",
+      "sha256": "b07e545b34ed10691c8db165aa8493aaec3a7b6d00c00ef89748430ad5baa1a6"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/xs/stage_harness/risk_drop_nobar_check.xs",
+      "sha256": "47c1a535ff4d7f0c65e64afe068957f8a75c203f4e7796a112984a603b674ab0"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/xs/stage_harness/selector_rank_check.xs",
+      "sha256": "dbb0aedccb945a820226c97149e6b1c2c524af517a329a62477e45afecaba6f9"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/xs/stage_harness/smoke.xs",
+      "sha256": "3fac08ab5e20a4b78e3ee5a998cf7b2b6267a0c619ce8c452babbf6e6c8b25de"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/xs/stage_harness/trading_take_profit_check.xs",
+      "sha256": "8291e214284fa3b7fde951b0dbe813808aa1aa6c178225dd0da670f06de1ae8f"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/examples/xs/target_weight/trading.xs",
+      "sha256": "4a6cb3226b2618fade5b5095b763ccb184a94f0759e8ac71499aa14fe611e03d"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/references/experience.md",
+      "sha256": "95af960195444feef0bcfbbc559765963c3ab53da94d1a494e4771f3c0a1b613"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/references/lifecycle.md",
+      "sha256": "148cf045beb664adcb6f69cd7c4186b81e4a67d9acee8680377ec0cdc7d4e8f1"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/references/metric-availability.md",
+      "sha256": "4a8ad231e8ef7de742412a5ba2511740b4f0135d864eb1fe343874580b218abf"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/references/recipes.md",
+      "sha256": "c24258722429a148b39020bc64c662f42acda9268d8459890578f1f2c7f96460"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/references/review.md",
+      "sha256": "d6301e714329bba14ee7bf07bd0c2ff57a665dd339e61748ff300f85d237bc81"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/references/simulation-api.md",
+      "sha256": "0c2f0c1b2e682dbac62564692d3e3a1a53ad5c6f853133c0e5c1ef0feeaec2b4"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/references/stage-test.md",
+      "sha256": "75940fc643558826a9d6d2793890c7aea2ef8e998958a0339904ea39b9e998f3"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/references/stages.md",
+      "sha256": "3e58ef4ac65db230c1c40791a81c0525516a32736c61101680eb0933a33bb7fc"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/references/system.md",
+      "sha256": "c63bb3056601f468011fff302e0e6a3799e753564e6f0066298489614b00f59c"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-backtest/references/xs-stage-syntax.md",
+      "sha256": "4dc77107484ade2775f918cec97102125ef41a279d0f75a1f32a64c7ded6664b"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-reminder/SKILL.md",
+      "sha256": "a0d309e4e26ab6676c3e96329c6dba6dc16c0be3ec8a8b68845e4a09abbac4c6"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-reminder/_skillhub_meta.json",
+      "sha256": "4dfb82fc8091f0ce7aa66d070cce83cb723de7d1a71d226e2b196258b0fcd1aa"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-reminder/agents/openai.yaml",
+      "sha256": "4922ba5cecf48472abd8750a43018220815cba418ae1777bcd38b5dae3db1535"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-reminder/examples/request.json",
+      "sha256": "effa55e165e7e7f22eefbc381b08a796692bdba132ad44dcbb421eb803576f35"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-reminder/references/lib.md",
+      "sha256": "af206e4c90e0686da4082ea7e62a78efa27725bce0dcaf0c4ea2f30c13b32838"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-reminder/references/notify-protocol.md",
+      "sha256": "443f3bc586ff4daa05cb7b14585005ec4fc7c56eee3026b233c3be23e7f35921"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-reminder/references/recipes.md",
+      "sha256": "ef1144a24978f8bca0771e20538b8ca0de78e701ea3cc4f35fef995d8d631a97"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/SKILL.md",
+      "sha256": "8dbb4418c70565defc4a3cdd52e5ecf926fc06bf7627b274bd626a0e3da60d7b"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/_skillhub_meta.json",
+      "sha256": "9fac64b8dc6050ab998ba38af88d19221a14aaa7835d1fb1aee99d596a261ee3"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/agents/openai.yaml",
+      "sha256": "ad5191df4b1e0f6827390ba8dc859d44bb98420305d27d6350d3170f4ae2cc88"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/examples/conditions_in_org_type.json",
+      "sha256": "9df068638b83d03da7284f037bbea0675e5d6eb4975c3390a9ee40f8373d481c"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/examples/request.json",
+      "sha256": "a2ae069d5b16cd18785a250fc9dce640dd079ae935e4be333e435a26da389d0e"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/references/fields/_index.md",
+      "sha256": "41cbc8d244a354c30fc2cf4fa6b8fc96ef298ffd7b10d5cad086cd186a10a2cf"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/references/fields/balance.md",
+      "sha256": "fb288e7dceaff4e3a70721ad0fb200b9b9f9d44185520bfb4f7c3aa340c7abf3"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/references/fields/cashflow.md",
+      "sha256": "4da7d2b52f9ab4475863526946f011823b608613f41d85d61f61c67ce7ffae7c"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/references/fields/dividend.md",
+      "sha256": "eb58ac40b89dd5fdba6ff68784dbb0353f2d10953992cb3b041cc3ca286a61f8"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/references/fields/growth_income-0.md",
+      "sha256": "77a9c60a5cbdb909e278f3a75dc1646e7c97deeeb8b13a942bccbf22d9ccb66e"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/references/fields/growth_income-1.md",
+      "sha256": "8072adc97b0021c2900e9f0fb93cf8d56b136af84350514b22aafd631c1cc859"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/references/fields/other-0.md",
+      "sha256": "4410f7ea9376c79694b4d5b229bc40c7f83572c31e7751257e551137272a9417"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/references/fields/other-1.md",
+      "sha256": "ee6e04ced1c0581bfb9324fc58b51cc1f74c256b8b8594f6a5ad5fe5c7f0f915"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/references/fields/profitability.md",
+      "sha256": "1bf53a99afe81363a4f0516d8286a32ffee8d450d581640460b4b343145dbda6"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/references/fields/snapshot_last-0.md",
+      "sha256": "3bf69a41853f93df7451ca8d2320b65568bb0d6316e0e598785612fb284bee3d"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/references/fields/snapshot_last-1.md",
+      "sha256": "35d9c790ce3e02c127dc6495549639d040561a8fb1d348de862c334d15241a75"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/references/lib.md",
+      "sha256": "bdbba4c63e456fcc67f9ec080eb41fdce805e7a74bf7daa41cecce83aa7d0a02"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/references/pitfalls.md",
+      "sha256": "1de388c95f0f301b8881b11f3b06f2d9cd3d378c702f622900ff1174a607a898"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/references/playbook.md",
+      "sha256": "a653c03690f5b3ea11ead7b184c430e6158e04921be21a73ab33e73cfd7e7405"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/references/recipes.md",
+      "sha256": "9ae6674051a3e5f4d6c7e4ccce4332a2e5c61cda995023a23d2625d8d2d83977"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-screen-index/references/semantic-patterns.md",
+      "sha256": "5728ca46bf557f8ccd5c5b4a07dc2eaaada0e773670063ef468c22885f206c8d"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-watchlist/SKILL.md",
+      "sha256": "ecf399265ebea9bba12b89145107a3e7e321690d5538638a2addc9e22dcbc386"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-watchlist/_skillhub_meta.json",
+      "sha256": "b23fb5086e7a3072268172150c1bfd5787638cf5c539c69d3ba38a8fe6ca5713"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-watchlist/agents/openai.yaml",
+      "sha256": "6d97c90c06067ee26ca1cbe450d82ae9c24447e59b323abc97880ad4049e1279"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-watchlist/examples/alert_enable.json",
+      "sha256": "2955bf9e42a3917515b1517503d18a488da8af654031f58acaa7393e0bf8b431"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-watchlist/examples/annotate.json",
+      "sha256": "bf7e76506f9ef319f0b1cdbe68e4298af9f7dac7ad7dc7cdc460399c2bb091f4"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-watchlist/examples/request.json",
+      "sha256": "9ce2a00de4792849eb8ce0d5c6e24dafbbcfb5a5ce9bb65a92ec633a9e6226f3"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-watchlist/references/lib.md",
+      "sha256": "d7f42fc6691db4af824d6e057d72e63c919728d23b8b0747d9f4fe5070992beb"
+    },
+    {
+      "path": "plugins/winmale-my-desk/skills/wm-watchlist/references/recipes.md",
+      "sha256": "6965045b6d76ead01b1094b2a882a7e26e147f5e5b6fd37b7e0efebee97c90c1"
+    },
+    {
+      "path": "plugins/winmale-report-extract/.claude-plugin/plugin.json",
+      "sha256": "5932f9c48a8256760c784cc13415c411bc3fba6765a97b7e83e2ffd607a54be3"
+    },
+    {
+      "path": "plugins/winmale-report-extract/.codebuddy-plugin/plugin.json",
+      "sha256": "cb54e82dbf350c073e3fb7eafd9b711b013b3dd799afc1a59303849f56b85f4f"
+    },
+    {
+      "path": "plugins/winmale-report-extract/.codex-plugin/plugin.json",
+      "sha256": "c8298c76094ad809f5ef8fdb8c8c5c03819b8ebd1911e7b1379ef0de8b814846"
+    },
+    {
+      "path": "plugins/winmale-report-extract/.cursor-plugin/plugin.json",
+      "sha256": "60be39de286956ac73d3b147af5254011c9656ab2527f8428cd9460794ea6189"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/SKILL.md",
+      "sha256": "37e262982c26f821127c858b4debef50926742b68442545beaa32bd29272cbc9"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/examples/agent-render.md",
+      "sha256": "b7b5806b89cfaf5a272e6d9283c2188f69eb6305a6defac14a0f0ab7c1515ff4"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/examples/promotions.json",
+      "sha256": "02db81066d06710a2605aebabdc5874a959fdc8d99c69c55692c76048e447e16"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/examples/qa-verdicts.json",
+      "sha256": "bc6229f38f47173950a2eab58d3171f6545fff19b710dbcfd71ea01fbbded0df"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/examples/request-full.json",
+      "sha256": "e06a559a99642282047e11b0bacc8b95d79507ac78548e4f11c4d6e4e95fa9d5"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/examples/request-specific.json",
+      "sha256": "ce4f53cb3969d0853bc95d1c2966b21c3f52d1ed0fae3d5201fe7b6f0d5d7734"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/examples/response-resolve.json",
+      "sha256": "b3c507ccc5450dd68a9835b56a4dafbe3453f8be79ecf6fce39a6164e854d76a"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/examples/response-specific.json",
+      "sha256": "851350765199139e2194cefeaf296c983ffe95b564345d1ad65ffae0344b9d66"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/references/adaptation.md",
+      "sha256": "c24e2aae1e40491cf908aceb326f5e2145412fc7c380a855984147f67810f3fd"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/references/analysis-needs.md",
+      "sha256": "80c3d4418b2fb64167570eec57dcc15fd07942af902fdb2b626e9a861a722b11"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/references/anchors.md",
+      "sha256": "d7a77e850688558b0103601f64c1b0d5f270209888b5d98120fe3160003ad285"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/references/capabilities.json",
+      "sha256": "7a0a9007c06f9065e5d28da13166e1b4106f99a654551c2f1cefd9897346976c"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/references/coverage-checklist.md",
+      "sha256": "6236b5f5a67760c5141bedfddc8bc532478ad0f5a4033a3e2da1ddef63d03f2c"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/references/provenance.md",
+      "sha256": "3bd7f10be25305b1f22d854a899aa32e3eb3bae1570170fea9d2aafd6fc22890"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/references/workflow.md",
+      "sha256": "68334a914cd2424594fab0239515e373e8f64af7092dfd4fae4db3611f5bc38c"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/scripts/domain/__init__.py",
+      "sha256": "eba9626c1abfc631c930b4e4312f3e857019bf25fc2ebb5973afef11b3451207"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/scripts/domain/catalogs.py",
+      "sha256": "93ee1002957e21513af68a2c4e5f933f60f5ee138704c72b3219d9c15f122740"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/scripts/domain/industry.py",
+      "sha256": "b7ddc3b42ad666c9d02b51b3911dd01bbbc55fbc3c7afad659b25d2b52035e3b"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/scripts/domain/narratives.py",
+      "sha256": "14ae41fe97a83d74c9ae35fe71729ca28d7144a91695f007eb25a8bd59c34750"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/scripts/domain/policy.py",
+      "sha256": "9d25ff427b5dfee76a6d92b513821d1d4739b0d65e585a32d455586d8d1cf41f"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/scripts/domain/signatures.py",
+      "sha256": "b3d01d56d0f99325d318e4a95e8438a9d8ca491ce05e19191e57d187015ad739"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/scripts/domain/sw_industry_map.py",
+      "sha256": "5b5c4f22617d940eabc6390bc5b6455aa2dd699a1875aec2681a118d214e913d"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/scripts/domain/synonyms.py",
+      "sha256": "92a3a261ed6ef8723f8a355cb99811c07f699062f63fb50ba5ef7054cef842a4"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/scripts/render_html.py",
+      "sha256": "1a44a251103c411cedd22ba0efb2907b2bd148e1ce0919129ca408d267f284d7"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/scripts/test_wm_report.py",
+      "sha256": "af78d44ad677cbf526bcb21cc259893d57334b7661cfaa49faee3f87fe7dd49e"
+    },
+    {
+      "path": "plugins/winmale-report-extract/skills/wm-report-extract/scripts/wm_report.py",
+      "sha256": "00dd4ce1922215d664268b0317b7cbb798350a977083c2b59706c7a36769e617"
+    },
+    {
+      "path": "plugins/winmale-skillhub/.claude-plugin/plugin.json",
+      "sha256": "906d8e12df4ce4747dbe2aa143f190613962b843afdaf7f930038f4e94d482f5"
+    },
+    {
+      "path": "plugins/winmale-skillhub/.codebuddy-plugin/plugin.json",
+      "sha256": "cddf4cca7614cd9a8de52ec6f3e2684742662ed4f69bcf10a0c1aa227e373f33"
+    },
+    {
+      "path": "plugins/winmale-skillhub/.codex-plugin/plugin.json",
+      "sha256": "eb758190b308d1e1a650f17fc231704586dadd57f1bedac01172ac6400935c79"
+    },
+    {
+      "path": "plugins/winmale-skillhub/.cursor-plugin/plugin.json",
+      "sha256": "6d7cd354d37caf6ecbf4aa042e756ef428c5c8b1afff97eda4a040b42ad9a140"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/SKILL.md",
+      "sha256": "c68abe1976420acd71e61c9fe786baf6379530d851b6be4d1b5726ed5ae81a88"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/_skillhub_meta.json",
+      "sha256": "326d80a50ddfe1b76fe521435e8101e76ada8e8f56f7291b7b4b05a1e739d3b7"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/agents/openai.yaml",
+      "sha256": "50961712c70413dc18a682ba2712339367829457c8691e20809841f2d011cf66"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/references/auth.md",
+      "sha256": "120472a4367213c03e7e574f1b26616c35d3925732e524e51ddfbe246823ad8e"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/references/errors-recovery.md",
+      "sha256": "9c99da0ec7ce8bff1ea37abc4225c3602ed18bf7ffeac8e30ffd8f0ff8232115"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/references/output-hygiene.md",
+      "sha256": "9da5568940462294474f9be507525ce40b0be505d7b8f4e36d6d46beecd464ba"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/references/units-and-values.md",
+      "sha256": "412671ff5e14f3fb889e4de075149ba620127d4e758d4295c07b08f47094b02a"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/scripts/_wm_runtime.py",
+      "sha256": "c1f64b445637002aae319447a9b4b44fd1b02941862f346f4318cddd0c266fff"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/scripts/test_expand_xs_refs.py",
+      "sha256": "5b9f76896cf19809ac7e49bb8073205cd1e40f8eb65cc28bd7c2b203fd77bc07"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/scripts/update-from-catalog.sh",
+      "sha256": "43eb3a4932bb4c1cbad0d2ffcd22d953f974b3fc220244e5dd2d503cfba2011b"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/scripts/wm-auth.sh",
+      "sha256": "a878abb9979738714c819d7927131decb70d043f38a150ede1e3dd8fe8c6ca21"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/scripts/wm-discover.sh",
+      "sha256": "f61343007a675e3f4cafb183935d3066cc3df992d0f481307798def40dcc7b68"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/scripts/wm-hub.sh",
+      "sha256": "fbcbe9968f585dcbae589661e0d33d542409629cf232426d4caf3cf2220e7e4f"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/scripts/wm-skill-run.sh",
+      "sha256": "af4a0261268a2884d73f3173977132a8c77a8e4b5b4f45ce92657e17c091798f"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/scripts/wm-workspace.sh",
+      "sha256": "f2c98386929cf4daaeceb11987e0f9deb00c5dec9ec643be61984d3988a9c348"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/scripts/wm-xs-check.sh",
+      "sha256": "efd4f5d9df950a56eff2974e90c192e613d82d341fc81c4b2cef824d6ea98735"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/scripts/wm-xs-eval.sh",
+      "sha256": "3ed8dd269004985d27c8649f428eb602f5e9724ccddd1df6bc12de9373d22671"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/scripts/wm-xs-fmt.sh",
+      "sha256": "41b31fab592204ee9405e34265a84bd573d5f191a809115a7bafd0e0a0230303"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/scripts/wm-xs-workspace.sh",
+      "sha256": "1308bd19206bc274fb60d09f70d8887bca168641e1d5205edd05957e76751b27"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/scripts/wm-xs.sh",
+      "sha256": "b59dd60654a3431451e4756e5ef1f1766079b5392574320f8f246c83edcbf543"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/scripts/wm.sh",
+      "sha256": "d4214b16399ffa809ac8a414db4a9b294588688df94733e98ea141db4bdd0cd5"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/scripts/wm_auth.py",
+      "sha256": "e95455113a0870b0f14553f5acca353aeac412f48f210cbb1aece2b53bd2b4c1"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/scripts/wm_discover.py",
+      "sha256": "73567a8c686eb96ab211bc7145cee909f5b0fc0f60cb4d87cd46e0a0238aea01"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/scripts/wm_hub.py",
+      "sha256": "a48f29b8e2aeb101fb468e2c770caea2aea99f6e41639dd652e4a2fe9b8f4130"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/scripts/wm_skill_run.py",
+      "sha256": "cc09b79fe5196a3de21479d67c7a4a12f353dd6e362e9ec2d5142f60469daa66"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/scripts/wm_workspace.py",
+      "sha256": "fddcd83febaf2ab39fdd8dd0de45cc34efffbf1308d5b18da2729378fbd60deb"
+    },
+    {
+      "path": "plugins/winmale-skillhub/skills/wm-skillhub/scripts/wm_xs_workspace.py",
+      "sha256": "893c8cfaef79e25e8412e65c681c29d08fb0b9469eafd2953b24f432e634412e"
+    },
+    {
+      "path": "plugins/winmale-stock-check/.claude-plugin/plugin.json",
+      "sha256": "f22045b95106d3405197250c464b57d83914c233d2d9bc94fd4ef714a3726ab9"
+    },
+    {
+      "path": "plugins/winmale-stock-check/.codebuddy-plugin/plugin.json",
+      "sha256": "c882f9d82efc3d543f6a38259242949614df15595252129dc2f86262e15c60c9"
+    },
+    {
+      "path": "plugins/winmale-stock-check/.codex-plugin/plugin.json",
+      "sha256": "2c19377bc5bd59ea165c66d46c530b5f5b247709cb61dbeee457cbd000b962f9"
+    },
+    {
+      "path": "plugins/winmale-stock-check/.cursor-plugin/plugin.json",
+      "sha256": "f70f401ea00ba7e54d8370a44c4cfe9baaa4cbe9d0bfa006c1c31994ca67f355"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-cashflow-quality/SKILL.md",
+      "sha256": "f688bb20f0c4ba33eccee5b261dd6f304e0eef715f5acf5f6bcb65fed9a6b1d5"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-cashflow-quality/_skillhub_meta.json",
+      "sha256": "6f7c127e2514ba324a7a58042c19ef1209fe544d5e0500a97f9dbfebac4f44d2"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-cashflow-quality/agents/openai.yaml",
+      "sha256": "4e8cf8f58d6fc085b7c295dac4ad8a81d9b96b04ad7fc0b9a2500bb35e54ccdf"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-company-card/SKILL.md",
+      "sha256": "e6153b99e6192704327b998e4b9208c8eede2d624410e5b40cda4a0be39d0961"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-company-card/_skillhub_meta.json",
+      "sha256": "d826cccc7cd77d7e79fa21d79ae92648ca3740411677bad260890b545ad2b387"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-company-card/agents/openai.yaml",
+      "sha256": "45e3bcdf86119ba647c4742b3060a4c46dadaa7088bf1ad020723f0b91c5a694"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-company-card/examples/request-batch.json",
+      "sha256": "eb51b193ccbe345e51bdeae0e77dc855725e1dfa8b682afa8e99a9b0e22b6455"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-company-card/examples/request.json",
+      "sha256": "66801be5fd2e0924857e9b2d0760cb0af253a8a7268b02e0b81161d60f34ce2b"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-debt-safety/SKILL.md",
+      "sha256": "3134c76db5bc3608f89ef017c0ee4479d897328fe3146d9dd6cad7d0bc8cabb2"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-debt-safety/_skillhub_meta.json",
+      "sha256": "da5fb13c06f7f4baa9623dd0012cc84a41c1244a83f81b5f9f24bb016e8d3c35"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-debt-safety/agents/openai.yaml",
+      "sha256": "93f176588d96dd72b2c4e19eda542ec3f05764bdbb247ca5deb3ce5709239b3d"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-discover/SKILL.md",
+      "sha256": "1679004a5532591384d1c66e141d9925186fc5cda847add3e2682fcd5c24408e"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-discover/_skillhub_meta.json",
+      "sha256": "21f3f9a5a6181f7a2b625341660d6b6e8a7a820bafbd12dab2c8522a894804d7"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-discover/agents/openai.yaml",
+      "sha256": "68081f3d7fbf5b16902e5e06896e9c3a83461ed24f797206d4e8b300819dd000"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-dividend-quality/SKILL.md",
+      "sha256": "3ee90d3b494c463f814ec4b12979b1748a95e1cc2c90241acd7eb38a726d677a"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-dividend-quality/_skillhub_meta.json",
+      "sha256": "f8da000e89fc2029dfa6a31fb3765ae5a60be6547fe6fd9803f8c122a1ea9e59"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-dividend-quality/agents/openai.yaml",
+      "sha256": "cc0521148e73894e72bbafde91c23b572b1d358cbed130dcf57ec9d3173d4963"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-dividend-quality/examples/request.json",
+      "sha256": "86c96a1600219b03ec9226bfb855e770118934b9362ebba369d4688afc67632e"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-dividend-quality/references/lib.md",
+      "sha256": "7591982b4c7d19c915333cd7753d96f54eeb2c84b57b97f5e520528f2421fc22"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-notice-radar/SKILL.md",
+      "sha256": "b64a1a8cf2412dd518f4c5c0459c2e1625eb3e5a791e685de678c96081fe2b15"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-notice-radar/_skillhub_meta.json",
+      "sha256": "5c453688e7d8a4a3457fcfdfd1973886ac86a0da7308f5ee522dd960aaa75de8"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-notice-radar/agents/openai.yaml",
+      "sha256": "c2233e7cef3188e4e541c521b12d62559a09364533dc82072addf3e435c920f2"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-notice-radar/examples/request.json",
+      "sha256": "4048617ea3736928774e0c86c7ccf933b33f16fdfeaec49cad219debdb4fb33e"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-notice-radar/references/lib.md",
+      "sha256": "b517a10e49ec4df52f98ae1566954cb7795c77c2b3ead3e03e2362e088b8ba96"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-revenue-profit/SKILL.md",
+      "sha256": "e7ac2edda3377d6147e60dcf129cd5b4c956a2e3658e1b1525d26f4a1add0e1d"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-revenue-profit/_skillhub_meta.json",
+      "sha256": "443e1c4e60bc8152e49c939c4646d2e2f354bae1a0cc7b75febbb38c6e6f2abd"
+    },
+    {
+      "path": "plugins/winmale-stock-check/skills/wm-revenue-profit/agents/openai.yaml",
+      "sha256": "ba871eb3f9acad1c62f8d1c0b226c3d286afe66913059ccb0ba9b0b188078ccf"
+    },
+    {
+      "path": "skills/wm-backtest/SKILL.md",
+      "sha256": "9982f266bd8025ca1c2cac7ac1cc8e83956906f6f49d01053af02cc6bab6e1b8"
+    },
+    {
+      "path": "skills/wm-backtest/_skillhub_meta.json",
+      "sha256": "e71835fb0fba521cd57857a71e170b1500d3457149bd359655685f872597cddd"
+    },
+    {
+      "path": "skills/wm-backtest/agents/openai.yaml",
+      "sha256": "e53cd368a8c2e66f154fa0c3cbe2972b4af5e41c84a348a889a2a10aae4c7dcd"
+    },
+    {
+      "path": "skills/wm-backtest/examples/deep_results_eval.json",
+      "sha256": "c82f09671d6222991984cd81a630991fc5b0a70a1069fab1adb6b68305686dcb"
+    },
+    {
+      "path": "skills/wm-backtest/examples/from_watchlist_preview.json",
+      "sha256": "62aba44bf26f0b531b7618aced9c1cf3e9a2e490e90360986dd2023d961b0f2a"
+    },
+    {
+      "path": "skills/wm-backtest/examples/lint_selector.json",
+      "sha256": "cc99d328b31d5b2ce1c9cfb5cc90db47e1d715c61fa5c22cf88b454605d34851"
+    },
+    {
+      "path": "skills/wm-backtest/examples/pe_filter_trading.json",
+      "sha256": "ad8b47c8c1de9832f0a3a42aeb3b2d35fbbf76b444dec251d8feed72cdf51ae1"
+    },
+    {
+      "path": "skills/wm-backtest/examples/request.json",
+      "sha256": "772ad01b0d3dc80384ef208b9ad39b3ed18101d77549d32d3c5702f8155a7309"
+    },
+    {
+      "path": "skills/wm-backtest/examples/resume.json",
+      "sha256": "68aa516b1c4aee06cc5c4dbd72bf533fe0c5e73d001e2962781e9f4f6ba23054"
+    },
+    {
+      "path": "skills/wm-backtest/examples/run_custom_full.json",
+      "sha256": "57aa4d43487c58765ac455bb5bb004a34b2e66b4b5ca283066a28b0d869e8652"
+    },
+    {
+      "path": "skills/wm-backtest/examples/run_custom_official_seed.json",
+      "sha256": "91045249a32bbb4bc179afbbf3f29559c4d3f6f9205fa3f9095b83579debb834"
+    },
+    {
+      "path": "skills/wm-backtest/examples/target_weight.json",
+      "sha256": "eff6ee4682484f7fb95441facb595a4471624e4b1f7d91c36ed445426f75d5fe"
+    },
+    {
+      "path": "skills/wm-backtest/examples/xs/pe_filter/risk.xs",
+      "sha256": "bc0f8983caed4d297f09b287d8007532d21e2b2531ba6913efff07fe370c8fc5"
+    },
+    {
+      "path": "skills/wm-backtest/examples/xs/pe_filter/selector.xs",
+      "sha256": "428fbfa44ed6c38ed4f5724676c6bcf82a04a90fe3e2c455f63c5a6f416b75c6"
+    },
+    {
+      "path": "skills/wm-backtest/examples/xs/pe_filter/selector_rank.xs",
+      "sha256": "d8936bd084ca93613b3566b6e80b03d18ed4fec0fb53b6aa8e3b5a420397f1d2"
+    },
+    {
+      "path": "skills/wm-backtest/examples/xs/pe_filter/trading.xs",
+      "sha256": "55185f19cbefc1e978d0632015d2110aa5f393bef0d78779b7c9d866047e844e"
+    },
+    {
+      "path": "skills/wm-backtest/examples/xs/run_custom_full/risk.xs",
+      "sha256": "07d37000e6e445d0d8ff54e3c90beba38f3af677a2b418ac05488c575b34aa4b"
+    },
+    {
+      "path": "skills/wm-backtest/examples/xs/run_custom_full/selector.xs",
+      "sha256": "eb442bc7208cf5ffa4acafa90fbe7567cea80c8249740090f3eee3acf9e7f031"
+    },
+    {
+      "path": "skills/wm-backtest/examples/xs/run_custom_full/selector_rank.xs",
+      "sha256": "73fc58df830e83ad859dcd56cf07a850c1782cf9f66f8657cddb1c9925b58bc9"
+    },
+    {
+      "path": "skills/wm-backtest/examples/xs/run_custom_full/trading.xs",
+      "sha256": "b07e545b34ed10691c8db165aa8493aaec3a7b6d00c00ef89748430ad5baa1a6"
+    },
+    {
+      "path": "skills/wm-backtest/examples/xs/stage_harness/risk_drop_nobar_check.xs",
+      "sha256": "47c1a535ff4d7f0c65e64afe068957f8a75c203f4e7796a112984a603b674ab0"
+    },
+    {
+      "path": "skills/wm-backtest/examples/xs/stage_harness/selector_rank_check.xs",
+      "sha256": "dbb0aedccb945a820226c97149e6b1c2c524af517a329a62477e45afecaba6f9"
+    },
+    {
+      "path": "skills/wm-backtest/examples/xs/stage_harness/smoke.xs",
+      "sha256": "3fac08ab5e20a4b78e3ee5a998cf7b2b6267a0c619ce8c452babbf6e6c8b25de"
+    },
+    {
+      "path": "skills/wm-backtest/examples/xs/stage_harness/trading_take_profit_check.xs",
+      "sha256": "8291e214284fa3b7fde951b0dbe813808aa1aa6c178225dd0da670f06de1ae8f"
+    },
+    {
+      "path": "skills/wm-backtest/examples/xs/target_weight/trading.xs",
+      "sha256": "4a6cb3226b2618fade5b5095b763ccb184a94f0759e8ac71499aa14fe611e03d"
+    },
+    {
+      "path": "skills/wm-backtest/references/experience.md",
+      "sha256": "95af960195444feef0bcfbbc559765963c3ab53da94d1a494e4771f3c0a1b613"
+    },
+    {
+      "path": "skills/wm-backtest/references/lifecycle.md",
+      "sha256": "148cf045beb664adcb6f69cd7c4186b81e4a67d9acee8680377ec0cdc7d4e8f1"
+    },
+    {
+      "path": "skills/wm-backtest/references/metric-availability.md",
+      "sha256": "4a8ad231e8ef7de742412a5ba2511740b4f0135d864eb1fe343874580b218abf"
+    },
+    {
+      "path": "skills/wm-backtest/references/recipes.md",
+      "sha256": "c24258722429a148b39020bc64c662f42acda9268d8459890578f1f2c7f96460"
+    },
+    {
+      "path": "skills/wm-backtest/references/review.md",
+      "sha256": "d6301e714329bba14ee7bf07bd0c2ff57a665dd339e61748ff300f85d237bc81"
+    },
+    {
+      "path": "skills/wm-backtest/references/simulation-api.md",
+      "sha256": "0c2f0c1b2e682dbac62564692d3e3a1a53ad5c6f853133c0e5c1ef0feeaec2b4"
+    },
+    {
+      "path": "skills/wm-backtest/references/stage-test.md",
+      "sha256": "75940fc643558826a9d6d2793890c7aea2ef8e998958a0339904ea39b9e998f3"
+    },
+    {
+      "path": "skills/wm-backtest/references/stages.md",
+      "sha256": "3e58ef4ac65db230c1c40791a81c0525516a32736c61101680eb0933a33bb7fc"
+    },
+    {
+      "path": "skills/wm-backtest/references/system.md",
+      "sha256": "c63bb3056601f468011fff302e0e6a3799e753564e6f0066298489614b00f59c"
+    },
+    {
+      "path": "skills/wm-backtest/references/xs-stage-syntax.md",
+      "sha256": "4dc77107484ade2775f918cec97102125ef41a279d0f75a1f32a64c7ded6664b"
+    },
+    {
+      "path": "skills/wm-cashflow-quality/SKILL.md",
+      "sha256": "f688bb20f0c4ba33eccee5b261dd6f304e0eef715f5acf5f6bcb65fed9a6b1d5"
+    },
+    {
+      "path": "skills/wm-cashflow-quality/_skillhub_meta.json",
+      "sha256": "6f7c127e2514ba324a7a58042c19ef1209fe544d5e0500a97f9dbfebac4f44d2"
+    },
+    {
+      "path": "skills/wm-cashflow-quality/agents/openai.yaml",
+      "sha256": "4e8cf8f58d6fc085b7c295dac4ad8a81d9b96b04ad7fc0b9a2500bb35e54ccdf"
+    },
+    {
+      "path": "skills/wm-company-card/SKILL.md",
+      "sha256": "e6153b99e6192704327b998e4b9208c8eede2d624410e5b40cda4a0be39d0961"
+    },
+    {
+      "path": "skills/wm-company-card/_skillhub_meta.json",
+      "sha256": "d826cccc7cd77d7e79fa21d79ae92648ca3740411677bad260890b545ad2b387"
+    },
+    {
+      "path": "skills/wm-company-card/agents/openai.yaml",
+      "sha256": "45e3bcdf86119ba647c4742b3060a4c46dadaa7088bf1ad020723f0b91c5a694"
+    },
+    {
+      "path": "skills/wm-company-card/examples/request-batch.json",
+      "sha256": "eb51b193ccbe345e51bdeae0e77dc855725e1dfa8b682afa8e99a9b0e22b6455"
+    },
+    {
+      "path": "skills/wm-company-card/examples/request.json",
+      "sha256": "66801be5fd2e0924857e9b2d0760cb0af253a8a7268b02e0b81161d60f34ce2b"
+    },
+    {
+      "path": "skills/wm-debt-safety/SKILL.md",
+      "sha256": "3134c76db5bc3608f89ef017c0ee4479d897328fe3146d9dd6cad7d0bc8cabb2"
+    },
+    {
+      "path": "skills/wm-debt-safety/_skillhub_meta.json",
+      "sha256": "da5fb13c06f7f4baa9623dd0012cc84a41c1244a83f81b5f9f24bb016e8d3c35"
+    },
+    {
+      "path": "skills/wm-debt-safety/agents/openai.yaml",
+      "sha256": "93f176588d96dd72b2c4e19eda542ec3f05764bdbb247ca5deb3ce5709239b3d"
+    },
+    {
+      "path": "skills/wm-discover/SKILL.md",
+      "sha256": "1679004a5532591384d1c66e141d9925186fc5cda847add3e2682fcd5c24408e"
+    },
+    {
+      "path": "skills/wm-discover/_skillhub_meta.json",
+      "sha256": "21f3f9a5a6181f7a2b625341660d6b6e8a7a820bafbd12dab2c8522a894804d7"
+    },
+    {
+      "path": "skills/wm-discover/agents/openai.yaml",
+      "sha256": "68081f3d7fbf5b16902e5e06896e9c3a83461ed24f797206d4e8b300819dd000"
+    },
+    {
+      "path": "skills/wm-dividend-quality/SKILL.md",
+      "sha256": "3ee90d3b494c463f814ec4b12979b1748a95e1cc2c90241acd7eb38a726d677a"
+    },
+    {
+      "path": "skills/wm-dividend-quality/_skillhub_meta.json",
+      "sha256": "f8da000e89fc2029dfa6a31fb3765ae5a60be6547fe6fd9803f8c122a1ea9e59"
+    },
+    {
+      "path": "skills/wm-dividend-quality/agents/openai.yaml",
+      "sha256": "cc0521148e73894e72bbafde91c23b572b1d358cbed130dcf57ec9d3173d4963"
+    },
+    {
+      "path": "skills/wm-dividend-quality/examples/request.json",
+      "sha256": "86c96a1600219b03ec9226bfb855e770118934b9362ebba369d4688afc67632e"
+    },
+    {
+      "path": "skills/wm-dividend-quality/references/lib.md",
+      "sha256": "7591982b4c7d19c915333cd7753d96f54eeb2c84b57b97f5e520528f2421fc22"
+    },
+    {
+      "path": "skills/wm-notice-radar/SKILL.md",
+      "sha256": "b64a1a8cf2412dd518f4c5c0459c2e1625eb3e5a791e685de678c96081fe2b15"
+    },
+    {
+      "path": "skills/wm-notice-radar/_skillhub_meta.json",
+      "sha256": "5c453688e7d8a4a3457fcfdfd1973886ac86a0da7308f5ee522dd960aaa75de8"
+    },
+    {
+      "path": "skills/wm-notice-radar/agents/openai.yaml",
+      "sha256": "c2233e7cef3188e4e541c521b12d62559a09364533dc82072addf3e435c920f2"
+    },
+    {
+      "path": "skills/wm-notice-radar/examples/request.json",
+      "sha256": "4048617ea3736928774e0c86c7ccf933b33f16fdfeaec49cad219debdb4fb33e"
+    },
+    {
+      "path": "skills/wm-notice-radar/references/lib.md",
+      "sha256": "b517a10e49ec4df52f98ae1566954cb7795c77c2b3ead3e03e2362e088b8ba96"
+    },
+    {
+      "path": "skills/wm-reminder/SKILL.md",
+      "sha256": "a0d309e4e26ab6676c3e96329c6dba6dc16c0be3ec8a8b68845e4a09abbac4c6"
+    },
+    {
+      "path": "skills/wm-reminder/_skillhub_meta.json",
+      "sha256": "4dfb82fc8091f0ce7aa66d070cce83cb723de7d1a71d226e2b196258b0fcd1aa"
+    },
+    {
+      "path": "skills/wm-reminder/agents/openai.yaml",
+      "sha256": "4922ba5cecf48472abd8750a43018220815cba418ae1777bcd38b5dae3db1535"
+    },
+    {
+      "path": "skills/wm-reminder/examples/request.json",
+      "sha256": "effa55e165e7e7f22eefbc381b08a796692bdba132ad44dcbb421eb803576f35"
+    },
+    {
+      "path": "skills/wm-reminder/references/lib.md",
+      "sha256": "af206e4c90e0686da4082ea7e62a78efa27725bce0dcaf0c4ea2f30c13b32838"
+    },
+    {
+      "path": "skills/wm-reminder/references/notify-protocol.md",
+      "sha256": "443f3bc586ff4daa05cb7b14585005ec4fc7c56eee3026b233c3be23e7f35921"
+    },
+    {
+      "path": "skills/wm-reminder/references/recipes.md",
+      "sha256": "ef1144a24978f8bca0771e20538b8ca0de78e701ea3cc4f35fef995d8d631a97"
+    },
+    {
+      "path": "skills/wm-report-extract/SKILL.md",
+      "sha256": "37e262982c26f821127c858b4debef50926742b68442545beaa32bd29272cbc9"
+    },
+    {
+      "path": "skills/wm-report-extract/examples/agent-render.md",
+      "sha256": "b7b5806b89cfaf5a272e6d9283c2188f69eb6305a6defac14a0f0ab7c1515ff4"
+    },
+    {
+      "path": "skills/wm-report-extract/examples/promotions.json",
+      "sha256": "02db81066d06710a2605aebabdc5874a959fdc8d99c69c55692c76048e447e16"
+    },
+    {
+      "path": "skills/wm-report-extract/examples/qa-verdicts.json",
+      "sha256": "bc6229f38f47173950a2eab58d3171f6545fff19b710dbcfd71ea01fbbded0df"
+    },
+    {
+      "path": "skills/wm-report-extract/examples/request-full.json",
+      "sha256": "e06a559a99642282047e11b0bacc8b95d79507ac78548e4f11c4d6e4e95fa9d5"
+    },
+    {
+      "path": "skills/wm-report-extract/examples/request-specific.json",
+      "sha256": "ce4f53cb3969d0853bc95d1c2966b21c3f52d1ed0fae3d5201fe7b6f0d5d7734"
+    },
+    {
+      "path": "skills/wm-report-extract/examples/response-resolve.json",
+      "sha256": "b3c507ccc5450dd68a9835b56a4dafbe3453f8be79ecf6fce39a6164e854d76a"
+    },
+    {
+      "path": "skills/wm-report-extract/examples/response-specific.json",
+      "sha256": "851350765199139e2194cefeaf296c983ffe95b564345d1ad65ffae0344b9d66"
+    },
+    {
+      "path": "skills/wm-report-extract/references/adaptation.md",
+      "sha256": "c24e2aae1e40491cf908aceb326f5e2145412fc7c380a855984147f67810f3fd"
+    },
+    {
+      "path": "skills/wm-report-extract/references/analysis-needs.md",
+      "sha256": "80c3d4418b2fb64167570eec57dcc15fd07942af902fdb2b626e9a861a722b11"
+    },
+    {
+      "path": "skills/wm-report-extract/references/anchors.md",
+      "sha256": "d7a77e850688558b0103601f64c1b0d5f270209888b5d98120fe3160003ad285"
+    },
+    {
+      "path": "skills/wm-report-extract/references/capabilities.json",
+      "sha256": "7a0a9007c06f9065e5d28da13166e1b4106f99a654551c2f1cefd9897346976c"
+    },
+    {
+      "path": "skills/wm-report-extract/references/coverage-checklist.md",
+      "sha256": "6236b5f5a67760c5141bedfddc8bc532478ad0f5a4033a3e2da1ddef63d03f2c"
+    },
+    {
+      "path": "skills/wm-report-extract/references/provenance.md",
+      "sha256": "3bd7f10be25305b1f22d854a899aa32e3eb3bae1570170fea9d2aafd6fc22890"
+    },
+    {
+      "path": "skills/wm-report-extract/references/workflow.md",
+      "sha256": "68334a914cd2424594fab0239515e373e8f64af7092dfd4fae4db3611f5bc38c"
+    },
+    {
+      "path": "skills/wm-report-extract/scripts/domain/__init__.py",
+      "sha256": "eba9626c1abfc631c930b4e4312f3e857019bf25fc2ebb5973afef11b3451207"
+    },
+    {
+      "path": "skills/wm-report-extract/scripts/domain/catalogs.py",
+      "sha256": "93ee1002957e21513af68a2c4e5f933f60f5ee138704c72b3219d9c15f122740"
+    },
+    {
+      "path": "skills/wm-report-extract/scripts/domain/industry.py",
+      "sha256": "b7ddc3b42ad666c9d02b51b3911dd01bbbc55fbc3c7afad659b25d2b52035e3b"
+    },
+    {
+      "path": "skills/wm-report-extract/scripts/domain/narratives.py",
+      "sha256": "14ae41fe97a83d74c9ae35fe71729ca28d7144a91695f007eb25a8bd59c34750"
+    },
+    {
+      "path": "skills/wm-report-extract/scripts/domain/policy.py",
+      "sha256": "9d25ff427b5dfee76a6d92b513821d1d4739b0d65e585a32d455586d8d1cf41f"
+    },
+    {
+      "path": "skills/wm-report-extract/scripts/domain/signatures.py",
+      "sha256": "b3d01d56d0f99325d318e4a95e8438a9d8ca491ce05e19191e57d187015ad739"
+    },
+    {
+      "path": "skills/wm-report-extract/scripts/domain/sw_industry_map.py",
+      "sha256": "5b5c4f22617d940eabc6390bc5b6455aa2dd699a1875aec2681a118d214e913d"
+    },
+    {
+      "path": "skills/wm-report-extract/scripts/domain/synonyms.py",
+      "sha256": "92a3a261ed6ef8723f8a355cb99811c07f699062f63fb50ba5ef7054cef842a4"
+    },
+    {
+      "path": "skills/wm-report-extract/scripts/render_html.py",
+      "sha256": "1a44a251103c411cedd22ba0efb2907b2bd148e1ce0919129ca408d267f284d7"
+    },
+    {
+      "path": "skills/wm-report-extract/scripts/test_wm_report.py",
+      "sha256": "af78d44ad677cbf526bcb21cc259893d57334b7661cfaa49faee3f87fe7dd49e"
+    },
+    {
+      "path": "skills/wm-report-extract/scripts/wm_report.py",
+      "sha256": "00dd4ce1922215d664268b0317b7cbb798350a977083c2b59706c7a36769e617"
+    },
+    {
+      "path": "skills/wm-revenue-profit/SKILL.md",
+      "sha256": "e7ac2edda3377d6147e60dcf129cd5b4c956a2e3658e1b1525d26f4a1add0e1d"
+    },
+    {
+      "path": "skills/wm-revenue-profit/_skillhub_meta.json",
+      "sha256": "443e1c4e60bc8152e49c939c4646d2e2f354bae1a0cc7b75febbb38c6e6f2abd"
+    },
+    {
+      "path": "skills/wm-revenue-profit/agents/openai.yaml",
+      "sha256": "ba871eb3f9acad1c62f8d1c0b226c3d286afe66913059ccb0ba9b0b188078ccf"
+    },
+    {
+      "path": "skills/wm-screen-index/SKILL.md",
+      "sha256": "8dbb4418c70565defc4a3cdd52e5ecf926fc06bf7627b274bd626a0e3da60d7b"
+    },
+    {
+      "path": "skills/wm-screen-index/_skillhub_meta.json",
+      "sha256": "9fac64b8dc6050ab998ba38af88d19221a14aaa7835d1fb1aee99d596a261ee3"
+    },
+    {
+      "path": "skills/wm-screen-index/agents/openai.yaml",
+      "sha256": "ad5191df4b1e0f6827390ba8dc859d44bb98420305d27d6350d3170f4ae2cc88"
+    },
+    {
+      "path": "skills/wm-screen-index/examples/conditions_in_org_type.json",
+      "sha256": "9df068638b83d03da7284f037bbea0675e5d6eb4975c3390a9ee40f8373d481c"
+    },
+    {
+      "path": "skills/wm-screen-index/examples/request.json",
+      "sha256": "a2ae069d5b16cd18785a250fc9dce640dd079ae935e4be333e435a26da389d0e"
+    },
+    {
+      "path": "skills/wm-screen-index/references/fields/_index.md",
+      "sha256": "41cbc8d244a354c30fc2cf4fa6b8fc96ef298ffd7b10d5cad086cd186a10a2cf"
+    },
+    {
+      "path": "skills/wm-screen-index/references/fields/balance.md",
+      "sha256": "fb288e7dceaff4e3a70721ad0fb200b9b9f9d44185520bfb4f7c3aa340c7abf3"
+    },
+    {
+      "path": "skills/wm-screen-index/references/fields/cashflow.md",
+      "sha256": "4da7d2b52f9ab4475863526946f011823b608613f41d85d61f61c67ce7ffae7c"
+    },
+    {
+      "path": "skills/wm-screen-index/references/fields/dividend.md",
+      "sha256": "eb58ac40b89dd5fdba6ff68784dbb0353f2d10953992cb3b041cc3ca286a61f8"
+    },
+    {
+      "path": "skills/wm-screen-index/references/fields/growth_income-0.md",
+      "sha256": "77a9c60a5cbdb909e278f3a75dc1646e7c97deeeb8b13a942bccbf22d9ccb66e"
+    },
+    {
+      "path": "skills/wm-screen-index/references/fields/growth_income-1.md",
+      "sha256": "8072adc97b0021c2900e9f0fb93cf8d56b136af84350514b22aafd631c1cc859"
+    },
+    {
+      "path": "skills/wm-screen-index/references/fields/other-0.md",
+      "sha256": "4410f7ea9376c79694b4d5b229bc40c7f83572c31e7751257e551137272a9417"
+    },
+    {
+      "path": "skills/wm-screen-index/references/fields/other-1.md",
+      "sha256": "ee6e04ced1c0581bfb9324fc58b51cc1f74c256b8b8594f6a5ad5fe5c7f0f915"
+    },
+    {
+      "path": "skills/wm-screen-index/references/fields/profitability.md",
+      "sha256": "1bf53a99afe81363a4f0516d8286a32ffee8d450d581640460b4b343145dbda6"
+    },
+    {
+      "path": "skills/wm-screen-index/references/fields/snapshot_last-0.md",
+      "sha256": "3bf69a41853f93df7451ca8d2320b65568bb0d6316e0e598785612fb284bee3d"
+    },
+    {
+      "path": "skills/wm-screen-index/references/fields/snapshot_last-1.md",
+      "sha256": "35d9c790ce3e02c127dc6495549639d040561a8fb1d348de862c334d15241a75"
+    },
+    {
+      "path": "skills/wm-screen-index/references/lib.md",
+      "sha256": "bdbba4c63e456fcc67f9ec080eb41fdce805e7a74bf7daa41cecce83aa7d0a02"
+    },
+    {
+      "path": "skills/wm-screen-index/references/pitfalls.md",
+      "sha256": "1de388c95f0f301b8881b11f3b06f2d9cd3d378c702f622900ff1174a607a898"
+    },
+    {
+      "path": "skills/wm-screen-index/references/playbook.md",
+      "sha256": "a653c03690f5b3ea11ead7b184c430e6158e04921be21a73ab33e73cfd7e7405"
+    },
+    {
+      "path": "skills/wm-screen-index/references/recipes.md",
+      "sha256": "9ae6674051a3e5f4d6c7e4ccce4332a2e5c61cda995023a23d2625d8d2d83977"
+    },
+    {
+      "path": "skills/wm-screen-index/references/semantic-patterns.md",
+      "sha256": "5728ca46bf557f8ccd5c5b4a07dc2eaaada0e773670063ef468c22885f206c8d"
+    },
+    {
+      "path": "skills/wm-skillhub/SKILL.md",
+      "sha256": "c68abe1976420acd71e61c9fe786baf6379530d851b6be4d1b5726ed5ae81a88"
+    },
+    {
+      "path": "skills/wm-skillhub/_skillhub_meta.json",
+      "sha256": "326d80a50ddfe1b76fe521435e8101e76ada8e8f56f7291b7b4b05a1e739d3b7"
+    },
+    {
+      "path": "skills/wm-skillhub/agents/openai.yaml",
+      "sha256": "50961712c70413dc18a682ba2712339367829457c8691e20809841f2d011cf66"
+    },
+    {
+      "path": "skills/wm-skillhub/references/auth.md",
+      "sha256": "120472a4367213c03e7e574f1b26616c35d3925732e524e51ddfbe246823ad8e"
+    },
+    {
+      "path": "skills/wm-skillhub/references/errors-recovery.md",
+      "sha256": "9c99da0ec7ce8bff1ea37abc4225c3602ed18bf7ffeac8e30ffd8f0ff8232115"
+    },
+    {
+      "path": "skills/wm-skillhub/references/output-hygiene.md",
+      "sha256": "9da5568940462294474f9be507525ce40b0be505d7b8f4e36d6d46beecd464ba"
+    },
+    {
+      "path": "skills/wm-skillhub/references/units-and-values.md",
+      "sha256": "412671ff5e14f3fb889e4de075149ba620127d4e758d4295c07b08f47094b02a"
+    },
+    {
+      "path": "skills/wm-skillhub/scripts/_wm_runtime.py",
+      "sha256": "c1f64b445637002aae319447a9b4b44fd1b02941862f346f4318cddd0c266fff"
+    },
+    {
+      "path": "skills/wm-skillhub/scripts/test_expand_xs_refs.py",
+      "sha256": "5b9f76896cf19809ac7e49bb8073205cd1e40f8eb65cc28bd7c2b203fd77bc07"
+    },
+    {
+      "path": "skills/wm-skillhub/scripts/update-from-catalog.sh",
+      "sha256": "43eb3a4932bb4c1cbad0d2ffcd22d953f974b3fc220244e5dd2d503cfba2011b"
+    },
+    {
+      "path": "skills/wm-skillhub/scripts/wm-auth.sh",
+      "sha256": "a878abb9979738714c819d7927131decb70d043f38a150ede1e3dd8fe8c6ca21"
+    },
+    {
+      "path": "skills/wm-skillhub/scripts/wm-discover.sh",
+      "sha256": "f61343007a675e3f4cafb183935d3066cc3df992d0f481307798def40dcc7b68"
+    },
+    {
+      "path": "skills/wm-skillhub/scripts/wm-hub.sh",
+      "sha256": "fbcbe9968f585dcbae589661e0d33d542409629cf232426d4caf3cf2220e7e4f"
+    },
+    {
+      "path": "skills/wm-skillhub/scripts/wm-skill-run.sh",
+      "sha256": "af4a0261268a2884d73f3173977132a8c77a8e4b5b4f45ce92657e17c091798f"
+    },
+    {
+      "path": "skills/wm-skillhub/scripts/wm-workspace.sh",
+      "sha256": "f2c98386929cf4daaeceb11987e0f9deb00c5dec9ec643be61984d3988a9c348"
+    },
+    {
+      "path": "skills/wm-skillhub/scripts/wm-xs-check.sh",
+      "sha256": "efd4f5d9df950a56eff2974e90c192e613d82d341fc81c4b2cef824d6ea98735"
+    },
+    {
+      "path": "skills/wm-skillhub/scripts/wm-xs-eval.sh",
+      "sha256": "3ed8dd269004985d27c8649f428eb602f5e9724ccddd1df6bc12de9373d22671"
+    },
+    {
+      "path": "skills/wm-skillhub/scripts/wm-xs-fmt.sh",
+      "sha256": "41b31fab592204ee9405e34265a84bd573d5f191a809115a7bafd0e0a0230303"
+    },
+    {
+      "path": "skills/wm-skillhub/scripts/wm-xs-workspace.sh",
+      "sha256": "1308bd19206bc274fb60d09f70d8887bca168641e1d5205edd05957e76751b27"
+    },
+    {
+      "path": "skills/wm-skillhub/scripts/wm-xs.sh",
+      "sha256": "b59dd60654a3431451e4756e5ef1f1766079b5392574320f8f246c83edcbf543"
+    },
+    {
+      "path": "skills/wm-skillhub/scripts/wm.sh",
+      "sha256": "d4214b16399ffa809ac8a414db4a9b294588688df94733e98ea141db4bdd0cd5"
+    },
+    {
+      "path": "skills/wm-skillhub/scripts/wm_auth.py",
+      "sha256": "e95455113a0870b0f14553f5acca353aeac412f48f210cbb1aece2b53bd2b4c1"
+    },
+    {
+      "path": "skills/wm-skillhub/scripts/wm_discover.py",
+      "sha256": "73567a8c686eb96ab211bc7145cee909f5b0fc0f60cb4d87cd46e0a0238aea01"
+    },
+    {
+      "path": "skills/wm-skillhub/scripts/wm_hub.py",
+      "sha256": "a48f29b8e2aeb101fb468e2c770caea2aea99f6e41639dd652e4a2fe9b8f4130"
+    },
+    {
+      "path": "skills/wm-skillhub/scripts/wm_skill_run.py",
+      "sha256": "cc09b79fe5196a3de21479d67c7a4a12f353dd6e362e9ec2d5142f60469daa66"
+    },
+    {
+      "path": "skills/wm-skillhub/scripts/wm_workspace.py",
+      "sha256": "fddcd83febaf2ab39fdd8dd0de45cc34efffbf1308d5b18da2729378fbd60deb"
+    },
+    {
+      "path": "skills/wm-skillhub/scripts/wm_xs_workspace.py",
+      "sha256": "893c8cfaef79e25e8412e65c681c29d08fb0b9469eafd2953b24f432e634412e"
+    },
+    {
+      "path": "skills/wm-watchlist/SKILL.md",
+      "sha256": "ecf399265ebea9bba12b89145107a3e7e321690d5538638a2addc9e22dcbc386"
+    },
+    {
+      "path": "skills/wm-watchlist/_skillhub_meta.json",
+      "sha256": "b23fb5086e7a3072268172150c1bfd5787638cf5c539c69d3ba38a8fe6ca5713"
+    },
+    {
+      "path": "skills/wm-watchlist/agents/openai.yaml",
+      "sha256": "6d97c90c06067ee26ca1cbe450d82ae9c24447e59b323abc97880ad4049e1279"
+    },
+    {
+      "path": "skills/wm-watchlist/examples/alert_enable.json",
+      "sha256": "2955bf9e42a3917515b1517503d18a488da8af654031f58acaa7393e0bf8b431"
+    },
+    {
+      "path": "skills/wm-watchlist/examples/annotate.json",
+      "sha256": "bf7e76506f9ef319f0b1cdbe68e4298af9f7dac7ad7dc7cdc460399c2bb091f4"
+    },
+    {
+      "path": "skills/wm-watchlist/examples/request.json",
+      "sha256": "9ce2a00de4792849eb8ce0d5c6e24dafbbcfb5a5ce9bb65a92ec633a9e6226f3"
+    },
+    {
+      "path": "skills/wm-watchlist/references/lib.md",
+      "sha256": "d7f42fc6691db4af824d6e057d72e63c919728d23b8b0747d9f4fe5070992beb"
+    },
+    {
+      "path": "skills/wm-watchlist/references/recipes.md",
+      "sha256": "6965045b6d76ead01b1094b2a882a7e26e147f5e5b6fd37b7e0efebee97c90c1"
+    }
+  ]
+}

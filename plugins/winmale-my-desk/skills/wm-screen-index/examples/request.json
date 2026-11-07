@@ -1,0 +1,24 @@
+{
+  "args": {
+    "action": "conditions",
+    "market": "cn",
+    "top_n": 50,
+    "fields": ["$SYMBOL", "$NAME", "$PE_TTM_LAST", "$ROE_TTM_LAST"],
+    "conditions": [
+      {
+        "type": "INDICATOR",
+        "field": "$PE_TTM_LAST",
+        "label": "市盈率(TTM)",
+        "operator": "LTE",
+        "value": { "scalar": { "value": "20" } }
+      },
+      {
+        "type": "INDICATOR",
+        "field": "$ROE_TTM_LAST",
+        "label": "净资产收益率(TTM)",
+        "operator": "GTE",
+        "value": { "scalar": { "value": "0.15" } }
+      }
+    ]
+  }
+}

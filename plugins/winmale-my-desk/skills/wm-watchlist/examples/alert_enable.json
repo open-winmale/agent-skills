@@ -1,0 +1,6 @@
+{
+  "args": {
+    "action": "alert_enable",
+    "group_id": "<group_id from view.groups>"
+  }
+}

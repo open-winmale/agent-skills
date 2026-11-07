@@ -1,0 +1,9 @@
+{
+  "args": {
+    "action": "annotate",
+    "symbol": "600519",
+    "buy_price": 1380,
+    "sell_price": 1600,
+    "note": "等回调"
+  }
+}

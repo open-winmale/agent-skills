@@ -1,0 +1,7 @@
+{
+  "name": "我的关注列表",
+  "source": "skillhub",
+  "version": "0.3.0",
+  "slug": "wm-watchlist",
+  "description_zh": "查看或整理我的关注列表：名称、分组、买卖点与备注、分组盘中提醒。加/删/分组用增量；整理前默认预览。统一跨市场 SoT。"
+}

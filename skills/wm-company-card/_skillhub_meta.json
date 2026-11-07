@@ -1,0 +1,7 @@
+{
+  "name": "公司卡片",
+  "source": "skillhub",
+  "version": "1.4.0",
+  "slug": "wm-company-card",
+  "description_zh": "公司一页纸摸底/初印象/行情+基本面全景/快看（默认全模块 insight_pack；支持多票 symbols 批量）。深度研读走 Role，选股走 wm-screen-index。"
+}

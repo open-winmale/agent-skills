@@ -1,0 +1,7 @@
+{
+  "name": "winmale-report-extract",
+  "version": "0.8.1",
+  "description": "财报 PDF（年报/半年报/季报，A 股 + 港股 IFRS）核心信息提取。默认全量核心包，点名则按需定位。每个数值带页码与原文；本地 --pdf-url 无需 API Key。",
+  "author": "WinMale",
+  "skills": "./skills/"
+}

@@ -1,0 +1,16 @@
+{
+  "_comment": "管理·模板跑批：纯官方种子（无自定义脚本）create→validate→publish→run。confirm:false 只预览。",
+  "mode": "call",
+  "script_ref": "xs/skillhub/wm_backtest.xs",
+  "symbol": "600519",
+  "market": "cn",
+  "args": {
+    "action": "preview_custom",
+    "from_unit_id": "equal_weight_buy_hold",
+    "backtest_market": "cn",
+    "symbols": ["600519", "000858"],
+    "start": "2023-01-01",
+    "end": "2024-06-30",
+    "confirm": false
+  }
+}
